@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 02/26/2017
-Last Updated: 07/29/2017
+Last Updated: 08/07/2017
 Version: 1.0.0
 Description:
     The following python file contains the initial main function for the ICSM program
@@ -62,8 +62,7 @@ def __test(test, testF, config, graphic):
   return doesWork
   
 '''
-The following function is the initial main executable function for this 
-python file.
+The following function is the initial main executable function for this python file.
 '''
 if __name__ == "__main__":
   
@@ -97,7 +96,13 @@ if __name__ == "__main__":
     doesWork = __test(testU, testF, configG.getConfigUpdate(), graphic)
   if doesWork:
     doesWork = __test(testS, testF, configG.getConfigSearch(), graphic)
-    
+
+  # Close Loading Screen
+  # FINISH CODE
+
+  # Open Credentials GUI
+  # FINISH CODE
+
   # Run the Program if everything works
   if doesWork:
     graphic.buildGUI(False, None)
