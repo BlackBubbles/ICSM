@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 02/26/2017
-Last Updated: 07/15/2017
+Last Updated: 08/07/2017
 Version: 1.0.0
 Description:
     The following python file contains the configuration data for the Graphical User Interface
@@ -26,12 +26,12 @@ The following variable contains the active background color for the GUI
 ACTIVE_BACKGROUND = "#0099ff"
 
 '''
-The following variable contains the background color for the panels
+The following variable contains the background color for the GUI
 '''
 BACKGROUND = "#ffffff"
 
 '''
-The following variable contains the default text for the browse button label that displsy information to the user
+The following variable contains the default text for the browse button label that displays information to the user
 '''
 BROWSE_BUTTON_TEXT = "Browse"
 
@@ -126,7 +126,7 @@ The following variable contains the margin spaces around the panels for each tab
 TDI_TAB_MARGINS = [0, 0, 0, 0]
 
 '''
-The following variable contains the Title for the GUI
+The following variable contains the title for the GUI
 '''
 TITLE = "Interfacial Consultant's Systems and Management - ICSM"
 
