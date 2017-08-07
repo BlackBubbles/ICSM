@@ -38,6 +38,14 @@ EXTRUDER_CELLS = {
 '''
 COMMENT
 '''
+FEEDER_CELLS = {
+  "Request Form":["", "", "", "", ""],
+  "Costing":["", "", "", "", ""]
+}
+
+'''
+COMMENT
+'''
 SHEETS = ["Request Form", "Costing", "Formulation", "Blends", "Compounding", "Screw", "Extrusion", "Molding", "Press",
           "Cast Line", "Brabender", "Shrinkage", "Shrinkage with Annealing", "Tensile", "Flex Test", "", "", ""]
 
