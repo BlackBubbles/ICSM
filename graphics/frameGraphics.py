@@ -1,14 +1,13 @@
 #!/usr/bin/python
 
 '''
-Program: Intergrated Interactive Systems and Management - IISM
+Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 02/26/2017
 Last Updated: 06/24/2017
-Version: 0.0.1
+Version: 1.0.0
 Description:
-    The following python file sets up the frame and adds the Tabbed 
-    Document Interface(TDI) to the program
+    The following python file sets up the frame and adds the Tabbed Document Interface(TDI) to the program
 '''
 
 '''

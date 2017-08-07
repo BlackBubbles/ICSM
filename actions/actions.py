@@ -1,14 +1,13 @@
 #!/usr/bin/python
 
 '''
-Program: Intergrated Interactive Systems and Management - IISM
+Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 03/16/2017
 Last Updated: 06/03/2017
-Version: 0.0.1
+Version: 1.0.0
 Description:
-    The following python file contains multiple interaction functions for
-    the Controller for the IISM program
+    The following python file contains multiple interaction functions for the Controller for the ICSM program
 '''
 
 '''

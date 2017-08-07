@@ -1,20 +1,20 @@
 #!/usr/bin/python
 
 '''
-Program: Intergrated Interactive Systems and Management - IISM
+Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 06/24/2017
 Last Updated: 07/06/2017
-Version: 0.0.1
+Version: 1.0.0
 Description:
-    The following python file contains multiple interaction functions for
-    the IISM program to build the specific components of the Graphical
-    User Interface
+    The following python file contains multiple interaction functions for the ICSM program to build the specific
+    components of the Graphical User Interface
 '''
 
 '''
 Imported files/libraries
 '''
+import sys
 import Tkinter as tk
 from types import ModuleType
 
@@ -24,20 +24,17 @@ Global Variables
 ERROR = "AN ERROR HAS OCCURRED"
 
 '''
-The following class contains multiple interaction functions for
-    the IISM program to build the specific components of the Graphical
-    User Interface
+The following class contains multiple interaction functions for the ICSM program to build the specific components of
+the Graphical User Interface
 '''
 class Builder:
   
   '''
-  The following function is the initial instance creation function for
-  the "Builder" class
+  The following function is the initial instance creation function for the "Builder" class
   '''
   def __init__(self, config):
     
-    # Call set functions and is the return is False, then return the
-    # message for the error
+    # Call set functions and is the return is False, then return the message for the error
     doesWork = True
     message = ""
     doesWork, message = self.setConfig(config)
@@ -49,28 +46,24 @@ class Builder:
     self.config = config
     
   '''
-  The following function returns the configuration file for the "Builder"
-  class
+  The following function returns the configuration file for the "Builder" class
   '''
   def getConfig(self):
     return self.config
     
   '''
-  The following function sets the configuration file for the "Builder"
-  class. If the inputted config file does not meet the requirements
-  then the function returns a False and an error message
+  The following function sets the configuration file for the "Builder" class. If the inputted config file does not meet
+  the requirements then the function returns a "False" boolean value and an error message
   '''
   def setConfig(self, config):
     if isinstance(config, ModuleType):
-      if hasattr(config, 'confirm'):
+      if hasattr(config, "confirm"):
         if config.confirm("Graphics"):
           self.config = config
         else:
-          return False, "%s:\nconfig file for Builder is not "\
-                        "configGraphics" % ERROR
+          return False, "%s:\nconfig file for Builder is not configGraphics" % ERROR
       else:
-        return False, "%s:\nconfig file is not a designated config file"\
-                      " for this program" % ERROR
+        return False, "%s:\nconfig file is not a designated config file for this program" % ERROR
     else:
       return False, "%s:\ninputted file is not a Module" % ERROR
     return True, ""

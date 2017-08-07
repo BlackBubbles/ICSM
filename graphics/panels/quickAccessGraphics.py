@@ -1,14 +1,13 @@
 #!/usr/bin/python
 
 '''
-Program: Intergrated Interactive Systems and Management - IISM
+Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 04/24/2017
 Last Updated: 07/06/2017
-Version: 0.0.1
+Version: 1.0.0
 Description:
-    The following python file contains the class and functions for the
-    quick access panel
+    The following python file contains the class and functions for the "Quick Access" panel
 '''
 
 '''

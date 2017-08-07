@@ -1,15 +1,14 @@
 #!/usr/bin/python
 
 '''
-Program: Intergrated Interactive Systems and Management - IISM
+Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 04/19/2017
 Last Updated: 06/19/2017
-Version: 0.0.1
+Version: 1.0.0
 Description:
-    The following python module contains the code that builds the panel 
-    that contains the options for the feeders that are used on the
-    extruders
+    The following python module contains the code that builds the panel that contains the options for the feeders that
+    are used on the extruders
 '''
 
 '''

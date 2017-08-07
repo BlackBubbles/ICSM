@@ -1,14 +1,13 @@
 #!/usr/bin/python
 
 '''
-Program: Intergrated Interactive Systems and Management - IISM
+Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 03/23/2017
 Last Updated: 07/06/2017
-Version: 0.0.1
+Version: 1.0.0
 Description:
-    The following python file contains the code that builds the panel 
-    that updates the workflow .csv files
+    The following python file contains the code that builds the panel that updates the workflow .xlsx files
 '''
 
 '''

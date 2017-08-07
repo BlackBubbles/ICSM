@@ -1,13 +1,14 @@
 #!/usr/bin/python
 
 '''
-Program: Intergrated Interactive Systems and Management - IISM
+Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 03/23/2017
 Last Updated: 06/21/2017
-Version: 0.0.1
+Version: 1.0.0
 Description:
-    The following python file ...
+    The following python file contains the controller actions for the GUI that respond to events from the user
+    interacting with the GUI for the Feeder configurations
 '''
 
 '''

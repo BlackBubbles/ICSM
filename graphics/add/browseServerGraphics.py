@@ -1,14 +1,14 @@
 #!/usr/bin/python
 
 '''
-Program: Intergrated Interactive Systems and Management - IISM
+Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 03/29/2017
 Last Updated: 04/20/2017
-Version: 0.0.1
+Version: 1.0.0
 Description:
-    The following python file builds the add-on GUI that the user will
-    interact with in able to browse the server directory
+    The following python file builds the add-on GUI that the user will interact with in able to browse the server
+    directory
 '''
 
 '''
@@ -32,7 +32,7 @@ def browseServer(graphics, label):
            askopenfilename(parent=graphics.getGUI(),
                            filetypes=[('all files', '.*'), 
                                       ('text files', '.txt'),
-                                      ('excel files', '.csv')],
+                                      ('excel files', '.xlsx')],
                            title="Browse for a file...")
   
   # Change the browse label to inform the user what file was selected

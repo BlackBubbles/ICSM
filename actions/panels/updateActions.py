@@ -1,14 +1,13 @@
 #!/usr/bin/python
 
 '''
-Program: Intergrated Interactive Systems and Management - IISM
+Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 03/29/2017
 Last Updated: 04/20/2017
-Version: 0.0.1
+Version: 1.0.0
 Description:
-    The following python file contains the controller actions for the
-    update panel
+    The following python file contains the controller actions for the "Update" panel
 '''
 
 '''

@@ -1,14 +1,13 @@
 #!/usr/bin/python
 
 '''
-Program: Intergrated Interactive Systems and Management - IISM
+Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 06/18/2017
 Last Updated: 06/24/2017
-Version: 0.0.1
+Version: 1.0.0
 Description:
-    The following python file contains the reaction functions for the
-    TDI for the GUI in the IISM program
+    The following python file contains the reaction functions for the TDI for the GUI in the ICSM program
 '''
 
 '''
