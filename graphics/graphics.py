@@ -310,12 +310,14 @@ class Graphics:
       frames, nb = frameG.buildTDI(self, self.getConfig())
       self.setFrames(frames)
       self.setNotebook(nb)
+      '''
       self.qAG = qAG.QAG(self, self.getBuilder())
       self.qAG.buildPanel()
       self.searchG = searchG.SearchG(self, self.getBuilder())
       self.searchG.buildPanel()
       self.updateG = updateG.UpdateG(self, self.getBuilder())
       self.updateG.buildPanel()
+      '''
       
     # Activate the GUI
     self.getGUI().mainloop()
