@@ -21,7 +21,25 @@ Global variables
 '''
 COMMENT
 '''
-# CODE
+EXTRUDER_CELLS = {
+  "Request Form":["", "", "", "", ""],
+  "Costing":["", "", "", "", ""],
+  "Formulation":["", "", "", "", ""],
+  "Blends":["", "", "", "", ""],
+  "Compounding":["", "", "", "", ""],
+  "Screw":["", "", "", "", ""],
+  "Extrusion":["", "", "", "", ""],
+  "Molding":["", "", "", "", ""],
+  "Press":["", "", "", "", ""],
+  "Cast Line":["", "", "", "", ""],
+  "Brabender":["", "", "", "", ""]
+}
+
+'''
+COMMENT
+'''
+SHEETS = ["Request Form", "Costing", "Formulation", "Blends", "Compounding", "Screw", "Extrusion", "Molding", "Press",
+          "Cast Line", "Brabender", "Shrinkage", "Shrinkage with Annealing", "Tensile", "Flex Test", "", "", ""]
 
 '''
 The following function returns a confirmation that tells the calling code which configuration file this function
