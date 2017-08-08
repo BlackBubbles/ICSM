@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 02/26/2017
-Last Updated: 08/07/2017
+Last Updated: 08/08/2017
 Version: 1.0.0
 Description:
     The following python file contains the configuration data for the Graphical User Interface
@@ -19,6 +19,7 @@ from panels import configExtruder as configE
 from panels import configLab as configL
 from panels import configProject as configP
 
+# REMOVE SOON
 from panels import configUpdate as update
 from panels import configSearch as search
 
@@ -43,7 +44,7 @@ BROWSE_BUTTON_TEXT = "Browse"
 '''
 The following variable contains the default label for the browse button label that displays information to the user
 '''
-BROWSE_LABEL = "Browse for file ..."
+BROWSE_LABEL = "Browse for workflow ..."
 
 '''
 The following variable contains the default height for buttons for the ICSM program
