@@ -7,8 +7,7 @@ Date Created: 06/21/2017
 Last Updated: 07/15/2017
 Version: 0.0.1
 Description:
-    The following python file contains the testing functions used to test
-    the IISM program
+    The following python file contains the testing functions used to test the ICSM program
 '''
 
 '''
