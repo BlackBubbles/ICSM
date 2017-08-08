@@ -7,8 +7,7 @@ Date Created: 06/21/2017
 Last Updated: 08/08/2017
 Version: 1.0.0
 Description:
-    The following python file contains the reaction functions for the "Quick Access" panel for the GUI in the ICSM
-    program
+    The following python file contains the reaction functions for the "Project" panel for the GUI in the ICSM program
 '''
 
 '''
@@ -25,4 +24,4 @@ Global variables
 Default function
 '''
 def react():
-  print "calling from quickAccessActions.py"
+  print "calling from projectActions.py"
