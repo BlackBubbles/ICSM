@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 07/15/2017
-Last Updated: 08/07/2017
+Last Updated: 08/08/2017
 Version: 1.0.0
 Description:
     The following python file contains the code that tests the GUI's panel "Quick Access" to make sure that nothing is
@@ -48,6 +48,11 @@ def __testConfig(testF, config):
     
   # Test config.QA_BUTTON_WIDTH
   doesWork, message = testF.testConfigPosInt(config.QA_BUTTON_WIDTH, "configQuickAccess.QA_BUTTON_WIDTH")
+  if not doesWork:
+    return doesWork, message
+
+  # Test config.QA_BUTTON_WIDTH
+  doesWork, message = testF.testConfigPosInt(config.TOTAL_NUM_OF_PANELS, "configQuickAccess.TOTAL_NUM_OF_PANELS")
   if not doesWork:
     return doesWork, message
     

@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 02/26/2017
-Last Updated: 07/06/2017
+Last Updated: 08/07/2017
 Version: 1.0.0
 Description:
     The following python file contains multiple interaction functions for the Graphical User Interface for the ICSM
@@ -34,7 +34,7 @@ Global Variables
 ERROR = "AN ERROR HAS OCCURRED"
 
 '''
-The following class is the View for the MVC for the IISM program
+The following class is the View for the MVC for the ICSM program
 '''
 class Graphics:
   
@@ -44,7 +44,7 @@ class Graphics:
   '''
   def __init__(self, config):
     
-    # Call set functions and is the return is False, then return the
+    # Call set functions and if the return is False, then return the
     # message for the error
     doesWork = True
     message = ""
@@ -310,14 +310,14 @@ class Graphics:
       frames, nb = frameG.buildTDI(self, self.getConfig())
       self.setFrames(frames)
       self.setNotebook(nb)
-      '''
+
       self.qAG = qAG.QAG(self, self.getBuilder())
       self.qAG.buildPanel()
       self.searchG = searchG.SearchG(self, self.getBuilder())
       self.searchG.buildPanel()
       self.updateG = updateG.UpdateG(self, self.getBuilder())
       self.updateG.buildPanel()
-      '''
+
       
     # Activate the GUI
     self.getGUI().mainloop()

@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 03/16/2017
-Last Updated: 06/03/2017
+Last Updated: 08/07/2017
 Version: 1.0.0
 Description:
     The following python file contains multiple interaction functions for the Controller for the ICSM program
@@ -29,7 +29,7 @@ Global variables
 ERROR = "AN ERROR HAS OCCURRED"
 
 '''
-The following class is the Controller for the MVC for the IISM program
+The following class is the Controller for the MVC for the ICSM program
 '''
 class Actions:
   
@@ -39,7 +39,7 @@ class Actions:
   '''
   def __init__(self, config):
     
-    # Call set functions and is the return is False, then return the
+    # Call set functions and if the return is False, then return the
     # message for the error
     doesWork = True
     message = ""

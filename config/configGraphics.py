@@ -13,7 +13,12 @@ Description:
 '''
 Imported files/libraries
 '''
-from panels import configQuickAccess as QA
+import configFrame as configF
+from panels import configQuickAccess as configQA
+from panels import configExtruder as configE
+from panels import configLab as configL
+from panels import configProject as configP
+
 from panels import configUpdate as update
 from panels import configSearch as search
 
@@ -136,19 +141,43 @@ The following variable contains the starting width for the GUI.
 WIDTH = 800
 
 '''
-The following function returns the module that contains the configuration data for the "Quick Access" panel
+The following function returns the configuration module for the GUI frame
+'''
+def getConfigFrame():
+  return configF
+
+'''
+The following function returns the configuration module for the "Quick Access" panel
 '''
 def getConfigQA():
-  return QA
+  return configQA
+
+'''
+The following function returns the configuration module for the "Extruder" panel
+'''
+def getConfigExtruder():
+  return configE
+
+'''
+The following function returns the configuration module for the "Lab" panel
+'''
+def getConfigLab():
+  return configL
+
+'''
+The following function returns the configuration module for the "Project" panel
+'''
+def getConfigProject():
+  return configP
   
 '''
-The following function returns the module that contains the configuration data for the "Update" panel
+REMOVE SOON
 '''
 def getConfigUpdate():
   return update
   
 '''
-The following function returns the module that contains the configuration data for the "Search" panel
+REMOVE SOON
 '''
 def getConfigSearch():
   return search
