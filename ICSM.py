@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 02/26/2017
-Last Updated: 08/07/2017
+Last Updated: 08/08/2017
 Version: 1.0.0
 Description:
     The following python file contains the initial main function for the ICSM program
@@ -32,7 +32,7 @@ from test import testFunctions as testF
 Imported files/libraries
 '''
 from actions import actions
-from data import model
+from data import data
 from graphics import graphics
 
 '''
@@ -66,12 +66,9 @@ The following function is the initial main executable function for this python f
 '''
 if __name__ == "__main__":
   
-  # Create Loading GUI Screen
-  # FINISH CODE
-  
   # Create all parts of the MVC protocol
   action = actions.Actions(configA)
-  data = model.Data(configD)
+  data = data.Data(configD)
   graphic = graphics.Graphics(configG)
   
   # Create all links
@@ -96,9 +93,6 @@ if __name__ == "__main__":
     doesWork = __test(testU, testF, configG.getConfigUpdate(), graphic)
   if doesWork:
     doesWork = __test(testS, testF, configG.getConfigSearch(), graphic)
-
-  # Close Loading Screen
-  # FINISH CODE
 
   # Open Credentials GUI
   # FINISH CODE

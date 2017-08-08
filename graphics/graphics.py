@@ -18,15 +18,17 @@ import sys
 import Tkinter as tk
 import ttk
 from types import ModuleType
-
 import frameGraphics as frameG
-from components import GUIBuilder as build
-from panels import quickAccessGraphics as qAG
-from panels import updateGraphics as updateG
-from panels import searchGraphics as searchG
-from add import TDIGrpahics as TDIG
 from add import browseServerGraphics as browseServerG
 from add import feederGraphics as feederG
+from add import TDIGraphics as TDIG
+from components import GUIBuilder as build
+from panels import quickAccessGraphics as qAG
+from panels import extruderGraphics as extruderG
+from panels import labGraphics as labG
+from panels import projectGraphics as projectG
+from panels import updateGraphics as updateG
+from panels import searchGraphics as searchG
 
 '''
 Global Variables
@@ -39,15 +41,11 @@ The following class is the View for the MVC for the ICSM program
 class Graphics:
   
   '''
-  The following function is the initial instance creation function for
-  the "Graphics" class
+  The following function is the initial instance creation function for the "Graphics" class
   '''
   def __init__(self, config):
     
-    # Call set functions and if the return is False, then return the
-    # message for the error
-    doesWork = True
-    message = ""
+    # Call set functions and if the return is False, then return the message for the error
     doesWork, message = self.setConfig(config)
     if not doesWork:
       print message
@@ -66,20 +64,18 @@ class Graphics:
     self.updateG = None
     
   '''
-  The following function returns the configuration file for the "Graphics"
-  class
+  The following function returns the configuration file for the "Graphics" class
   '''
   def getConfig(self):
     return self.config
     
   '''
-  The following function sets the configuration file for the "Graphics"
-  class. If the inputted config file does not meet the requirements
-  then the function returns a False and an error message
+  The following function sets the configuration file for the "Graphics" class. If the inputted config file does not
+  meet the requirements then the function returns a "False" boolean value and an error message
   '''
   def setConfig(self, config):
     if isinstance(config, ModuleType):
-      if hasattr(config, 'confirm'):
+      if hasattr(config, "confirm"):
         if config.confirm("Graphics"):
           self.config = config
         else:
