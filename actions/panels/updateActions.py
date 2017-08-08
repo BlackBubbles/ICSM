@@ -43,7 +43,7 @@ def __buildPort(graphics, portMenuPanel, portBoxPanel, extruder,
   for i in range(low, high):
     if i in emptyPort:
       continue
-    if extruder == "11mm":
+    if extruder == "Process 11mm":
       portOptions = graphics.getConfig().getConfigUpdate().\
                                          PORT_OPTIONS_11MM
     else:
@@ -67,7 +67,7 @@ def __buildPort(graphics, portMenuPanel, portBoxPanel, extruder,
                 pady=(0, 0), sticky=tk.W, rowspan=2)
     if i in emptySide:
       continue
-    if extruder == "11mm":
+    if extruder == "Process 11mm":
       sideOptions = ["No Side Stuffer"]
     elif extruder == "27mm Leistritz" or extruder == "27mm Entek":
       sideOptions = graphics.getConfig().getConfigUpdate().\
@@ -98,7 +98,7 @@ def __buildPortPanel(graphics, extruder, portMenuPanel, portBoxPanel):
                                                "Select Extruder")
     message.grid(row=0, column=0, padx=(75, 0), pady=(5, 0), 
                  sticky=tk.W)
-  elif extruder == "11mm":
+  elif extruder == "Process 11mm":
     __buildPort(graphics, portMenuPanel, portBoxPanel, extruder,
                 0, 8, [7],
                 [0, 3, 4, 5, 6, 7])

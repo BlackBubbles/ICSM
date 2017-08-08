@@ -55,6 +55,7 @@ belongs to
 '''
 
 def confirm(value):
+
   # Check to make sure that the inputted value is a string that is equal to the representaion of the configuration file
   if isinstance(value, basestring):
     if value.lower() == "workflow":

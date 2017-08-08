@@ -21,7 +21,7 @@ Global variables
 '''
 The following list contains all the possible extruders that the user can choose
 '''
-EXTRUDERS = ["Select", "11mm", "27mm Entek", "27mm Leistritz", "33mm Entek", "35mm Leistritz"]
+EXTRUDERS = ["Select", "Process 11mm", "27mm Entek", "27mm Leistritz", "33mm Entek", "35mm Leistritz"]
 
 '''
 The following dictionary contains all the possible die options for each extruder that the user can choose

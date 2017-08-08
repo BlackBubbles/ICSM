@@ -18,7 +18,10 @@ Imported files/libraries
 '''
 Global variables
 '''
-# NONE
+'''
+The following variable contains the title for the "Lab" Panel
+'''
+TITLE = "Lab Anaylsis"
 
 '''
 The following function returns a confirmation that tells the calling code which configuration file this function
