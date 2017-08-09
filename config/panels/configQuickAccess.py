@@ -39,11 +39,6 @@ The following variable contains the width of each button on the "Quick Access" P
 QA_BUTTON_WIDTH = 20
 
 '''
-The following variable contains the total number of panels in the Tkinter notebook (besides the Quick Access panel)
-'''
-TOTAL_NUM_OF_PANELS = 3
-
-'''
 The following function returns a confirmation that tells the calling code which configuration file this function
 belongs to
 '''

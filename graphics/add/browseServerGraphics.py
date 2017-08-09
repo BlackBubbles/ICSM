@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 03/29/2017
-Last Updated: 04/20/2017
+Last Updated: 08/09/2017
 Version: 1.0.0
 Description:
     The following python file builds the add-on GUI that the user will interact with in able to browse the server
@@ -22,20 +22,24 @@ Global Variables
 # NONE
 
 '''
-The following function creates the GUI that allows the user to browse
-the server directory to select a file to update/change
+The following function creates the GUI that allows the user to browse the server directory to select a file to
+update/change
 '''
-def browseServer(graphics, label):
+def browseServer(graphics, title, label):
   
   # Build the GUI and record the file name of the file selected
-  text = tkFileDialog.\
-           askopenfilename(parent=graphics.getGUI(),
-                           filetypes=[('all files', '.*'), 
-                                      ('text files', '.txt'),
-                                      ('excel files', '.xlsx')],
-                           title="Browse for a file...")
+  filename = tkFileDialog.askopenfilename(parent=graphics.getGUI(),
+                                          filetypes=[('all files', '.*'),
+                                                     ('text files', '.txt'),
+                                                     ('excel files', '.xlsx')],
+                                          title="Browse for a file...")
   
   # Change the browse label to inform the user what file was selected
-  if not len(text) == 0:
-    fileName = text.split("/")[-1]
-    label['text'] = fileName
+  if not len(filename) == 0:
+    label["text"] = filename.split("/")[-1]
+
+    # Save the file name to the correct data file
+    if title is graphics.getConfig().getConfigExtruder().TITLE:
+      graphics.getData().getExtruderData().setWorkflowFileName(filename)
+    elif title is graphics.getConfig().getConfigLab().TITLE:
+      graphics.getData().getLabData().setWorkflowFileName(filename)

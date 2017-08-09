@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 03/16/2017
-Last Updated: 08/08/2017
+Last Updated: 08/09/2017
 Version: 1.0.0
 Description:
     The following python file contains multiple interaction functions for the Controller for the ICSM program
@@ -23,9 +23,6 @@ from panels import extruderActions as extruderA
 from panels import labActions as labA
 from panels import projectActions as projectA
 
-from panels import updateActions as updateA
-from panels import searchActions as searchA
-
 '''
 Global variables
 '''
@@ -37,8 +34,7 @@ The following class is the Controller for the MVC for the ICSM program
 class Actions:
   
   '''
-  The following function is the initial instance creation function for
-  the "Actions" class
+  The following function is the initial instance creation function for the "Actions" class
   '''
   def __init__(self, config):
     
@@ -126,8 +122,7 @@ class Actions:
     doesWork = True
     message = ""
     
-    # Check to make sure that the inputted parameter is an instance of a
-    # "Graphics" class
+    # Check to make sure that the inputted parameter is an instance of a "Graphics" class
     if hasattr(graphics, "confirm"):
       if graphics.confirm("Graphics"):
         self.graphics = graphics
@@ -169,37 +164,22 @@ class Actions:
     return qaA
 
   '''
-    The following function returns the "feederActions" module
-    '''
-
+  The following function returns the "feederActions" module
+  '''
   def getExtruderActions(self):
     return extruderA
 
   '''
   The following function returns the "TDIActions" module
   '''
-
   def getLabActions(self):
     return labA
 
   '''
   The following function returns the "quickAccessActions" module
   '''
-
   def getProjectActions(self):
     return projectA
-
-  '''
-  REMOVE SOON
-  '''
-  def getUpdateActions(self):
-    return updateA
-    
-  '''
-  REMOVE SOON
-  '''
-  def getSearchActions(self):
-    return searchA
     
   '''
   The following function call the "exit" function which ends the mainloop of the main GUI

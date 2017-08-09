@@ -19,10 +19,6 @@ from panels import configExtruder as configE
 from panels import configLab as configL
 from panels import configProject as configP
 
-# REMOVE SOON
-from panels import configUpdate as update
-from panels import configSearch as search
-
 '''
 Global variables
 '''
@@ -44,7 +40,7 @@ BROWSE_BUTTON_TEXT = "Browse"
 '''
 The following variable contains the default label for the browse button label that displays information to the user
 '''
-BROWSE_LABEL = "Browse for workflow ..."
+BROWSE_LABEL_TEXT = "Browse for workflow ..."
 
 '''
 The following variable contains the default height for buttons for the ICSM program
@@ -67,11 +63,6 @@ The following variable contains the font size for titles of size h2
 H2_FONT_SIZE = 11
 
 '''
-REMOVE SOON
-'''
-HEIGHT = 500
-
-'''
 The following variable contains the color of the separation line
 '''
 LINE_COLOR = "#000000"
@@ -85,61 +76,6 @@ LINE_HIEGHT = 2
 The following variable contains the font size for the panel title
 '''
 PANEL_TITLE_FONT_SIZE = 24
-
-'''
-REMOVE SOON
-'''
-QUICK_ACCESS = "+"
-
-'''
-REMOVE SOON
-'''
-RIGHT_CLICK_QA_MENU = ["Update", "Search"]
-
-'''
-REMOVE SOON
-'''
-RIGHT_CLICK_TDI_MENU = ["Undo Close Tab"]
-
-'''
-REMOVE SOON
-'''
-STARTING_TDI = ["Update", "Search"]
-
-'''
-REMOVE SOON
-'''
-TDI_BACKGROUND_COLOR = "#eeeeee"
-
-'''
-REMOVE SOON
-'''
-TDI_EXPAND = [1, 1, 1, 0]
-
-'''
-REMOVE SOON
-'''
-TDI_PADDING = [20, 5]
-
-'''
-REMOVE SOON
-'''
-TDI_SELECTED_COLOR = "#0099ff"
-
-'''
-REMOVE SOON
-'''
-TDI_TAB_MARGINS = [0, 0, 0, 0]
-
-'''
-REMOVE SOON
-'''
-TITLE = "Interfacial Consultant's Systems and Management - ICSM"
-
-'''
-REMOVE SOON
-'''
-WIDTH = 800
 
 '''
 The following function returns the configuration module for the GUI frame
@@ -170,18 +106,6 @@ The following function returns the configuration module for the "Project" panel
 '''
 def getConfigProject():
   return configP
-  
-'''
-REMOVE SOON
-'''
-def getConfigUpdate():
-  return update
-  
-'''
-REMOVE SOON
-'''
-def getConfigSearch():
-  return search
   
 '''
 The following function returns a confirmation that tells the calling code which configuration file this function

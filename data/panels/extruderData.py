@@ -38,7 +38,7 @@ class ExtruderD:
       sys.exit()
 
     # Set initial values for this instance of the "ExtruderD" class
-    self.default = 0
+    self.workflowFileName = None
 
   '''
   The following function returns the configuration file for this instance of the "ExtruderD" class
@@ -62,6 +62,21 @@ class ExtruderD:
     else:
       return False, "%s:\ninputted file is not a Module" % ERROR
     return True, ""
+
+  '''
+  The following function returns the file name of the workflow sheet that is currently being selected within the 
+  "Extruder" panel
+  '''
+  def getWorkflowFileName(self):
+    return self.workflowFileName
+
+  '''
+  The following function sets the file name of the workflow sheet that is currently being selected within the 
+  "Extruder" panel. If the input does not meet the requirements then the function returns a "False" boolean value and
+  an error message
+  '''
+  def setWorkflowFileName(self, workflowFileName):
+    self.workflowFileName = workflowFileName
 
   '''
   The following function returns a confirmation that tells the calling code which class file this function belongs to

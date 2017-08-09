@@ -50,11 +50,6 @@ def __testConfig(testF, config):
   doesWork, message = testF.testConfigPosInt(config.QA_BUTTON_WIDTH, "configQuickAccess.QA_BUTTON_WIDTH")
   if not doesWork:
     return doesWork, message
-
-  # Test config.QA_BUTTON_WIDTH
-  doesWork, message = testF.testConfigPosInt(config.TOTAL_NUM_OF_PANELS, "configQuickAccess.TOTAL_NUM_OF_PANELS")
-  if not doesWork:
-    return doesWork, message
     
   # If there are no problems found with the config file for the GUI panel, then return the proper values
   return True, ""

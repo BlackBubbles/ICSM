@@ -26,8 +26,7 @@ The following function shows the TDI drop down menus to the user based on where 
 def showMenuDropDown(event, config, QAMenu, TDIMenu):
   
   # Check to make sure that only the quick access tab is being clicked on
-  if event.widget.identify(event.x, event.y) == 'label' or\
-      event.widget.identify(event.x, event.y) == 'padding':
+  if event.widget.identify(event.x, event.y) == 'label' or event.widget.identify(event.x, event.y) == 'padding':
     index = event.widget.index('@%d,%d' % (event.x, event.y))
     if event.widget.tab(index, 'text') == config.QUICK_ACCESS:
       

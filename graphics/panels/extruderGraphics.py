@@ -14,12 +14,13 @@ Description:
 Imported files/libraries
 '''
 import sys
+from types import ModuleType
 import Tkinter as tk
 
 '''
 Global variables
 '''
-# NONE
+ERROR = "AN ERROR HAS OCCURRED"
 
 '''
 The following class builds the GUI for the "Extruder" panel
@@ -62,6 +63,20 @@ class ExtruderG:
     else:
       return False, "%s:\ninputted file is not a Module" % ERROR
     return True, ""
+
+  '''
+  The following function builds the initial state for the "Extruder" panel
+  '''
+  def buildPanel(self, graphics):
+
+    # Get the "Extruder" frame from the instance of the "FrameG" class
+    panel = graphics.getFrameGraphics().getFrame("Extruder")
+
+    # Build the whitebackground and scrollbars
+    frame = graphics.getBuilder().buildScrollingCanvas(panel)
+
+    # Build the Panel's title
+    graphics.getBuilder().buildTitle(graphics, frame, graphics.getConfig().getConfigExtruder().TITLE, True)
 
   '''
   The following function returns a confirmation that tells the calling code which class file this function belongs to

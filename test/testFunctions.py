@@ -4,8 +4,8 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 06/21/2017
-Last Updated: 07/15/2017
-Version: 0.0.1
+Last Updated: 08/09/2017
+Version: 1.0.0
 Description:
     The following python file contains the testing functions used to test the ICSM program
 '''
@@ -13,18 +13,17 @@ Description:
 '''
 Imported files/libraries
 '''
-from types import ModuleType
+# NONE
 
 '''
 Global variables
 '''
 ERROR = "AN ERROR HAS OCCURRED"
-COLOR_RANGE = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "a",
-               "B", "b", "C", "c", "D", "d", "E", "e", "F", "f"]
+COLOR_RANGE = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A",
+               "a", "B", "b", "C", "c", "D", "d", "E", "e", "F", "f"]
 
 '''
-The following function tests to make sure that the inputted dictionary
-contains all arrays of strings
+The following function tests to make sure that the inputted dictionary contains all arrays of strings
 '''
 def testConfigDicString(dictionary, string):
   if not isinstance(dictionary, dict):
@@ -38,8 +37,7 @@ def testConfigDicString(dictionary, string):
   return True, ""
   
 '''
-The following function tests to make sure that the inputted array contains
-all strings
+The following function tests to make sure that the inputted array contains all strings
 '''
 def testConfigListString(array, string):
   if not isinstance(array, list):
@@ -47,14 +45,12 @@ def testConfigListString(array, string):
     return False, message
   for value in array:
     if not isinstance(value, basestring):
-      message = "%s:\n%s " % (ERROR, string) + \
-                "contains a value that is not a string"
+      message = "%s:\n%s " % (ERROR, string) + "contains a value that is not a string"
       return False, message
   return True, ""
   
 '''
-The following function tests to make sure that the inputted array contains
-all positive integer numbers
+The following function tests to make sure that the inputted array contains all positive integer numbers
 '''
 def testConfigListPosInt(array, length, string):
   if not isinstance(array, list):
@@ -65,18 +61,15 @@ def testConfigListPosInt(array, length, string):
     return False, message
   for value in array:
     if not isinstance(value, int):
-      message = "%s:\n%s " % (ERROR, string) + \
-                "contains a value that is not an integer value"
+      message = "%s:\n%s " % (ERROR, string) + "contains a value that is not an integer value"
       return False, message
     if not value >= 0:
-      message = "%s:\n%s " % (ERROR, string) + \
-                "contains a value that is not a positive integer value"
+      message = "%s:\n%s " % (ERROR, string) + "contains a value that is not a positive integer value"
       return False, message
   return True, ""
   
 '''
-The following function tests to make sure that the inputted value is a
-string that can be used on a color scheme
+The following function tests to make sure that the inputted value is a string that can be used on a color scheme
 '''
 def testConfigColors(value, string):
   if not isinstance(value, basestring):
@@ -95,8 +88,7 @@ def testConfigColors(value, string):
   return True, ""
   
 '''
-The following function tests to make sure that the inputted value is a
-positive integer value above 0
+The following function tests to make sure that the inputted value is a positive integer value above 0
 '''
 def testConfigPosInt(num, string):
   if not isinstance(num, int):
@@ -108,8 +100,7 @@ def testConfigPosInt(num, string):
   return True, ""
   
 '''
-The following function tests to make sure that the inputted value is a
-string
+The following function tests to make sure that the inputted value is a string
 '''
 def testConfigString(value, string):
   if not isinstance(value, basestring):

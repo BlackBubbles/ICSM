@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 06/21/2017
-Last Updated: 08/08/2017
+Last Updated: 08/09/2017
 Version: 1.0.0
 Description:
     The following python file tests the code for the "Extruder" panel
@@ -24,6 +24,78 @@ ERROR = "AN ERROR HAS OCCURRED"
 function that tests out to make sure that nothing is wrong with the "configExtruder.py" file
 '''
 def __testConfig(testF, config):
+
+  # Set up return variables
+  doesWork = False
+  message = ""
+
+  # Test config.EXTRUDERS
+  doesWork, message = testF.testConfigListString(config.EXTRUDERS, "configExtruder.EXTRUDERS")
+  if not doesWork:
+    return doesWork, message
+
+  # Test config.EXTRUDER_DIES
+  doesWork, message = testF.testConfigDicString(config.EXTRUDER_DIES, "configExtruder.EXTRUDER_DIES")
+  if not doesWork:
+    return doesWork, message
+
+  # Test config.FEEDERS
+  doesWork, message = testF.testConfigListString(config.FEEDERS, "configExtruder.FEEDERS")
+  if not doesWork:
+    return doesWork, message
+
+  # Test config.FEEDER_SCREWS
+  doesWork, message = testF.testConfigDicString(config.FEEDER_SCREWS, "configExtruder.FEEDER_SCREWS")
+  if not doesWork:
+    return doesWork, message
+
+  # Test config.FEEDER_TUBES
+  doesWork, message = testF.testConfigDicString(config.FEEDER_TUBES, "configExtruder.FEEDER_TUBES")
+  if not doesWork:
+    return doesWork, message
+
+  # Test config.NUM
+  doesWork, message = testF.testConfigListPosInt(config.NUM, 5, "configExtruder.NUM")
+  if not doesWork:
+    return doesWork, message
+
+  # Test config.PELLETIZING
+  doesWork, message = testF.testConfigListString(config.PELLETIZING, "configExtruder.PELLETIZING")
+  if not doesWork:
+    return doesWork, message
+
+  # Test config.PORT_OPTIONS
+  doesWork, message = testF.testConfigListString(config.PORT_OPTIONS, "configExtruder.PORT_OPTIONS")
+  if not doesWork:
+    return doesWork, message
+
+  # Test config.PORT_OPTIONS_11MM
+  doesWork, message = testF.testConfigListString(config.PORT_OPTIONS_11MM, "configExtruder.PORT_OPTIONS_11MM")
+  if not doesWork:
+    return doesWork, message
+
+  # Test config.PRE_DIE
+  doesWork, message = testF.testConfigListString(config.PRE_DIE, "configExtruder.PRE_DIE")
+  if not doesWork:
+    return doesWork, message
+
+  # Test config.SIDE_STUFFER
+  doesWork, message = testF.testConfigListString(config.SIDE_STUFFER, "configExtruder.SIDE_STUFFER")
+  if not doesWork:
+    return doesWork, message
+
+  # Test config.SIDE_STUFFER_WITHOUT_VACCUM
+  doesWork, message = testF.testConfigListString(config.SIDE_STUFFER_WITHOUT_VACCUM,
+                                                 "configExtruder.SIDE_STUFFER_WITHOUT_VACCUM")
+  if not doesWork:
+    return doesWork, message
+
+  # Test config.TITLE
+  doesWork, message = testF.testConfigString(config.TITLE, "configExtruder.TITLE")
+  if not doesWork:
+    return doesWork, message
+
+  # If there are no problems found with the config file for the GUI panel, then return the proper values
   return True, ""
 
 '''

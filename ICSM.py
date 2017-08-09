@@ -1,14 +1,14 @@
 #!/usr/bin/python
 
-'''
+"""
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 02/26/2017
-Last Updated: 08/08/2017
+Last Updated: 08/09/2017
 Version: 1.0.0
 Description:
     The following python file contains the initial main function for the ICSM program
-'''
+"""
 
 '''
 Imported config files
@@ -23,9 +23,11 @@ Imported test files
 from test import testActions as testA
 from test import testData as testD
 from test import testGraphics as testG
+from test import testFrame as testFr
 from test import testQuickAccess as testQ
-from test import testUpdate as testU
-from test import testSearch as testS
+from test import testExtruder as testE
+from test import testLab as testL
+from test import testProject as testP
 from test import testFunctions as testF
 
 '''
@@ -41,8 +43,7 @@ Global variables
 # NONE
 
 '''
-The following function calls a designated test function with the config
-parameter file
+The following function calls a designated test function with the config parameter file
 '''
 def __test(test, testF, config, graphic):
   
@@ -53,8 +54,7 @@ def __test(test, testF, config, graphic):
   # Call the "test" function
   doesWork, message = test.test(testF, config)
   
-  # If the test failed, then call the "buildGUI" function to build a GUI
-  # message for the error
+  # If the test failed, then call the "buildGUI" function to build a GUI message for the error
   if not doesWork:
     graphic.buildGUI(True, message)
     
@@ -78,8 +78,7 @@ if __name__ == "__main__":
   graphic.setActions(True, action)
   graphic.setData(True, data)
   
-  # Call all test functions to make sure that nothing is wrong with the
-  # program
+  # Call all test functions to make sure that nothing is wrong with the program
   doesWork = True
   if doesWork:
     doesWork = __test(testA, testF, configA, graphic)
@@ -88,11 +87,15 @@ if __name__ == "__main__":
   if doesWork:
     doesWork = __test(testG, testF, configG, graphic)
   if doesWork:
+    doesWork = __test(testFr, testF, configG.getConfigFrame(), graphic)
+  if doesWork:
     doesWork = __test(testQ, testF, configG.getConfigQA(), graphic)
   if doesWork:
-    doesWork = __test(testU, testF, configG.getConfigUpdate(), graphic)
+    doesWork = __test(testE, testF, configG.getConfigExtruder(), graphic)
   if doesWork:
-    doesWork = __test(testS, testF, configG.getConfigSearch(), graphic)
+    doesWork = __test(testL, testF, configG.getConfigLab(), graphic)
+  if doesWork:
+    doesWork = __test(testP, testF, configG.getConfigProject(), graphic)
 
   # Open Credentials GUI
   # FINISH CODE

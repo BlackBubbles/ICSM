@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 06/24/2017
-Last Updated: 07/06/2017
+Last Updated: 08/09/2017
 Version: 1.0.0
 Description:
     The following python file contains multiple interaction functions for the ICSM program to build the specific
@@ -69,141 +69,117 @@ class Builder:
     return True, ""
     
   '''
-  COMMENT
+  The following function ... to be honest I have no idea why this is here except that this has to be here
   '''
-  def configureScroll(self, event, canvas, parent):
-    canvas.configure(scrollregion=canvas.bbox("all"),
-                     width=parent.winfo_screenwidth(),
+  def __configureScroll(self, canvas, parent):
+    canvas.configure(scrollregion=canvas.bbox("all"), width=parent.winfo_screenwidth(),
                      height=parent.winfo_screenheight())
     
   '''
-  COMMENT
+  The following function builds and returns a Tkinter frame with both a vertical and horizontal scrollbar
   '''
   def buildScrollingCanvas(self, parent):
     
-    # COMMENT
+    # Build the initial Tkinter canvas and set the background to white
     canvas = tk.Canvas(parent, background=self.getConfig().BACKGROUND)
     panel = tk.Frame(canvas, background=self.getConfig().BACKGROUND)
     
-    # COMMENT
+    # Build both scrollbars
     scroll = tk.Scrollbar(parent, orient="vertical", command=canvas.yview,
-                          activebackground=self.getConfig().
-                                                ACTIVE_BACKGROUND)
-    scrollX = tk.Scrollbar(parent, 
-                          orient="horizontal", command=canvas.xview,
-                          activebackground=self.getConfig().
-                                                ACTIVE_BACKGROUND)
+                          activebackground=self.getConfig().ACTIVE_BACKGROUND)
+    scrollX = tk.Scrollbar(parent, orient="horizontal", command=canvas.xview,
+                           activebackground=self.getConfig().ACTIVE_BACKGROUND)
     canvas.configure(yscrollcommand=scroll.set)
     canvas.configure(xscrollcommand=scrollX.set)
     scroll.pack(side=tk.RIGHT, fill=tk.Y)
     scrollX.pack(side=tk.BOTTOM, fill=tk.X)
-    canvas.pack(side=tk.LEFT)
-    canvas.create_window((0,0), window=panel, anchor='nw')
-    panel.bind("<Configure>", 
-               lambda event: self.configureScroll(event, canvas, parent))
+    canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
+    canvas.create_window((0,0), window=panel, anchor="nw")
+
+    # Bind the canvas to the events created by the scrollbars
+    panel.bind("<Configure>", lambda event: self.__configureScroll(canvas, parent))
     
-    # COMMENT
+    # Return the completed panel
     return panel
     
   '''
-  COMMENT
+  The following function builds the title for each panel in the ICSM GUI
   '''
-  def buildTitle(self, graphics, parent, title):
+  def buildTitle(self, graphics, parent, title, useBrowse):
     
     # Add the Title for the panel
-    title = self.buildTitleLabel(parent, title)
-    title.grid(row=0, column=0, columnspan=20, padx=(75, 0), pady=(50, 0),
-               sticky=tk.W)
+    titleLabel = tk.Label(parent, text=title, background=self.getConfig().BACKGROUND,
+                          foreground=self.getConfig().ACTIVE_BACKGROUND, font=["Arial", 36, "bold"])
+    titleLabel.grid(row=0, column=0, columnspan=20, padx=(75, 0), pady=(50, 0), sticky=tk.W)
     
-    # COMMENT
-    browsePanel = self.buildFrame(parent)
-    browsePanel.grid(row=1, column=0, columnspan=20, padx=(0, 0),
-                     pady=(0, 0), sticky=tk.W)
+    # Check to see if the user wants to include a browse button and label
+    if useBrowse:
+
+      # Create the Frame for the browse button and label
+      browseFrame = self.buildFrame(parent)
+      browseFrame.grid(row=1, column=0, columnspan=20, padx=(0, 0), pady=(0, 0), sticky=tk.W)
     
-    # Build the browse button
-    browseButton = self.buildButton(browsePanel,
-                                    self.getConfig().BROWSE_BUTTON_TEXT)
-    browseButton.configure(
-                   command=lambda: 
-                     graphics.getActions().getUpdateActions().
-                              browseServer(graphics, fileString))
-    browseButton.grid(row=0, column=0, padx=(125, 0), pady=(25, 0),
-                      sticky=tk.W)
+      # Build the browse button
+      browseButton = self.buildButton(browseFrame, self.getConfig().BROWSE_BUTTON_TEXT)
+      if title is self.getConfig().getConfigExtruder().TITLE:
+        browseButton.configure(command=lambda: graphics.getActions().getExtruderActions().callBrowseServer(graphics,
+                                                                                                           title,
+                                                                                                           fileString))
+      elif title is self.getConfig().getConfigLab().TITLE:
+        browseButton.configure(command=lambda: graphics.getActions().getLabActions().callBrowseServer(graphics, title,
+                                                                                                      fileString))
+      browseButton.grid(row=0, column=0, padx=(125, 0), pady=(25, 0), sticky=tk.W)
     
-    # Add line of text for the file name browsed for
-    fileString = self.buildLabel(browsePanel,
-                                 self.getConfig().BROWSE_LABEL)
-    fileString.grid(row=0, column=1, padx=(50, 0), pady=(25, 0),
-                    sticky=tk.W)
+      # Add line of text for the file name browsed for
+      fileString = self.buildLabel(browseFrame, self.getConfig().BROWSE_LABEL_TEXT)
+      fileString.grid(row=0, column=1, padx=(50, 0), pady=(25, 0), sticky=tk.W)
+
+      # Assign row value for the decoration line
+      lineRow = 2
+    else:
+      lineRow = 1
     
     # Add Line for decoration
-    line = tk.Frame(parent, 
-                    background=self.getConfig().LINE_COLOR,
-                    height=self.getConfig().LINE_HIEGHT, 
+    line = tk.Frame(parent, background=self.getConfig().LINE_COLOR, height=self.getConfig().LINE_HIEGHT,
                     width=parent.winfo_screenwidth())
-    line.grid(row=2, column=0, columnspan=20, padx=(0, 0), pady=(25, 0), 
-              sticky=tk.W)
+    line.grid(row=lineRow, column=0, columnspan=20, padx=(0, 0), pady=(75 - (lineRow * 25), 0), sticky=tk.W)
     
   '''
   The following function returns a built Tkinter frame component
   '''
   def buildFrame(self, parent):
-    frame = tk.Frame(parent, background=self.config.BACKGROUND)
+    frame = tk.Frame(parent, background=self.getConfig().BACKGROUND)
     return frame
     
   '''
-  COMMENT
+  The following function builds and returns a Tkinter label
   '''
   def buildLabel(self, parent, text):
     label = tk.Label(parent, text=text, background=self.config.BACKGROUND)
     return label
     
   '''
-  COMMENT
+  The following function builds and returns a Tkinter label with font size of H1
   '''
-  def build11Label(self, parent, text):
-    label = tk.Label(parent, text=text,
-                     background=self.getConfig().BACKGROUND,
-                     font=["Arial", 11, "bold"])
+  def buildH1Label(self, parent, text):
+    label = tk.Label(parent, text=text, background=self.getConfig().BACKGROUND,
+                     font=["Arial", self.getConfig().H1_FONT_SIZE, "bold"])
+    return label
+
+  '''
+  The following function builds and returns a Tkinter label with font size of H2
+  '''
+  def buildH2Label(self, parent, text):
+    label = tk.Label(parent, text=text, background=self.getConfig().BACKGROUND,
+                     font=["Arial", self.getConfig().H2_FONT_SIZE, "bold"])
     return label
     
   '''
-  COMMENT
-  '''
-  def build13Label(self, parent, text):
-    label = tk.Label(parent, text=text,
-                     background=self.getConfig().BACKGROUND,
-                     font=["Arial", 13, "bold"])
-    return label
-    
-  '''
-  COMMENT
-  '''
-  def build14Label(self, parent, text):
-    label = tk.Label(parent, text=text,
-                     background=self.getConfig().BACKGROUND,
-                     foreground=self.getConfig().ACTIVE_BACKGROUND,
-                     font=["Arial", 14, "bold"])
-    return label
-    
-  '''
-  COMMENT
-  '''
-  def buildTitleLabel(self, parent, text):
-    label = tk.Label(parent, text=text,
-                     background=self.getConfig().BACKGROUND,
-                     foreground=self.getConfig().ACTIVE_BACKGROUND,
-                     font=["Arial", 24, "bold"])
-    return label
-    
-  '''
-  COMMENT
+  The following function builds and returns a Tkinter button component
   '''
   def buildButton(self, parent, text):
-    button = tk.Button(parent, text=text,
-                  width=self.getConfig().BUTTON_WIDTH,
-                  height=self.getConfig().BUTTON_HEIGHT,
-                  activebackground=self.getConfig().ACTIVE_BACKGROUND)
+    button = tk.Button(parent, text=text, width=self.getConfig().BUTTON_WIDTH, height=self.getConfig().BUTTON_HEIGHT,
+                       activebackground=self.getConfig().ACTIVE_BACKGROUND)
     return button
     
   '''
@@ -279,6 +255,17 @@ class Builder:
     variable = tk.StringVar(parent)
     variable.set(dic[0])
     menu = tk.OptionMenu(parent, variable, *dic)
-    menu.configure(width=width,
-           activebackground=self.getConfig().ACTIVE_BACKGROUND)
+    menu.configure(width=width, activebackground=self.getConfig().ACTIVE_BACKGROUND)
     return variable, menu
+
+  '''
+  The following function returns a confirmation that tells the calling code which class file this function belongs to
+  '''
+  def confirm(self, value):
+    if isinstance(value, basestring):
+      if value.lower() == "builder":
+        return True
+      else:
+        return False
+    else:
+      return False

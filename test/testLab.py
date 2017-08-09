@@ -24,6 +24,17 @@ ERROR = "AN ERROR HAS OCCURRED"
 function that tests out to make sure that nothing is wrong with the "configLab.py" file
 '''
 def __testConfig(testF, config):
+
+  # Set up return variables
+  doesWork = False
+  message = ""
+
+  # Test config.TITLE
+  doesWork, message = testF.testConfigString(config.TITLE, "configLab.TITLE")
+  if not doesWork:
+    return doesWork, message
+
+  # If there are no problems found with the config file for the GUI, then return the proper values
   return True, ""
 
 '''
