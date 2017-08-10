@@ -29,6 +29,18 @@ def __testConfig(testF, config):
   doesWork = False
   message = ""
 
+  # Test config.CAPTURING_SECTION_TITLE
+  doesWork, message = testF.testConfigString(config.CAPTURING_SECTION_TITLE,
+                                             "configExtruder.CAPTURING_SECTION_TITLE")
+  if not doesWork:
+    return doesWork, message
+
+  # Test config.CLASSIFIED_OPTIONS_SECTION_TITLE
+  doesWork, message = testF.testConfigString(config.CLASSIFIED_OPTIONS_SECTION_TITLE,
+                                             "configExtruder.CLASSIFIED_OPTIONS_SECTION_TITLE")
+  if not doesWork:
+    return doesWork, message
+
   # Test config.EXTRUDERS
   doesWork, message = testF.testConfigListString(config.EXTRUDERS, "configExtruder.EXTRUDERS")
   if not doesWork:
@@ -39,6 +51,12 @@ def __testConfig(testF, config):
   if not doesWork:
     return doesWork, message
 
+  # Test config.EXTRUDER_OPTIONS_SECTION_TITLE
+  doesWork, message = testF.testConfigString(config.EXTRUDER_OPTIONS_SECTION_TITLE,
+                                             "configExtruder.EXTRUDER_OPTIONS_SECTION_TITLE")
+  if not doesWork:
+    return doesWork, message
+
   # Test config.FEEDERS
   doesWork, message = testF.testConfigListString(config.FEEDERS, "configExtruder.FEEDERS")
   if not doesWork:
@@ -46,6 +64,11 @@ def __testConfig(testF, config):
 
   # Test config.FEEDER_SCREWS
   doesWork, message = testF.testConfigDicString(config.FEEDER_SCREWS, "configExtruder.FEEDER_SCREWS")
+  if not doesWork:
+    return doesWork, message
+
+  # Test config.FEEDERS_SECTION_TITLE
+  doesWork, message = testF.testConfigString(config.FEEDERS_SECTION_TITLE, "configExtruder.FEEDERS_SECTION_TITLE")
   if not doesWork:
     return doesWork, message
 
@@ -64,6 +87,12 @@ def __testConfig(testF, config):
   if not doesWork:
     return doesWork, message
 
+  # Test config.PELLETIZING_OPTIONS_SECTION_TITLE
+  doesWork, message = testF.testConfigString(config.PELLETIZING_OPTIONS_SECTION_TITLE,
+                                             "configExtruder.PELLETIZING_OPTIONS_SECTION_TITLE")
+  if not doesWork:
+    return doesWork, message
+
   # Test config.PORT_OPTIONS
   doesWork, message = testF.testConfigListString(config.PORT_OPTIONS, "configExtruder.PORT_OPTIONS")
   if not doesWork:
@@ -71,6 +100,12 @@ def __testConfig(testF, config):
 
   # Test config.PORT_OPTIONS_11MM
   doesWork, message = testF.testConfigListString(config.PORT_OPTIONS_11MM, "configExtruder.PORT_OPTIONS_11MM")
+  if not doesWork:
+    return doesWork, message
+
+  # Test config.PORT_OPTIONS_SECTION_TITLE
+  doesWork, message = testF.testConfigString(config.PORT_OPTIONS_SECTION_TITLE,
+                                             "configExtruder.PORT_OPTIONS_SECTION_TITLE")
   if not doesWork:
     return doesWork, message
 
@@ -87,6 +122,12 @@ def __testConfig(testF, config):
   # Test config.SIDE_STUFFER_WITHOUT_VACCUM
   doesWork, message = testF.testConfigListString(config.SIDE_STUFFER_WITHOUT_VACCUM,
                                                  "configExtruder.SIDE_STUFFER_WITHOUT_VACCUM")
+  if not doesWork:
+    return doesWork, message
+
+  # Test config.STRAND_COOLING_OPTIONS_SECTION_TITLE
+  doesWork, message = testF.testConfigString(config.STRAND_COOLING_OPTIONS_SECTION_TITLE,
+                                             "configExtruder.STRAND_COOLING_OPTIONS_SECTION_TITLE")
   if not doesWork:
     return doesWork, message
 

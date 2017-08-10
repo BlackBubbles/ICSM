@@ -19,6 +19,16 @@ Imported files/libraries
 Global variables
 '''
 '''
+The following string variable contains the title for the add feeders section within the "Extruder" panel
+'''
+CAPTURING_SECTION_TITLE = "Capturing Options"
+
+'''
+The following string variable contains the title for the extruder options section within the "Extruder" panel
+'''
+CLASSIFIED_OPTIONS_SECTION_TITLE = "Classified Options"
+
+'''
 The following list contains all the possible extruders that the user can choose
 '''
 EXTRUDERS = ["Select", "Process 11mm", "27mm Entek", "27mm Leistritz", "33mm Entek", "35mm Leistritz"]
@@ -35,6 +45,11 @@ EXTRUDER_DIES = {
   "35mm Leistritz": ["Select", "7-4.5mm", "10-3.5mm", "16-2mm"]}
 
 '''
+The following string variable contains the title for the extruder options section within the "Extruder" panel
+'''
+EXTRUDER_OPTIONS_SECTION_TITLE = "Extruder Options"
+
+'''
 The following list contains all the possible feeder types that the user can choose
 '''
 FEEDERS = ["Select", "Process 11", "FW40", "DDSR", "K-tron S60-S120", "K-tron S60-S60"]
@@ -49,6 +64,11 @@ FEEDER_SCREWS = {
   "DDSR": ["Select", "Pigtail", "Sm", "Lg"],
   "K-tron S60-S120": ["Select", "15", "25 fine", "25 course", "40 fine", "40 course"],
   "K-tron S60-S60": ["Select", "15", "25 fine", "25 course", "40 fine", "40 course"]}
+
+'''
+The following string variable contains the title for the add feeders section within the "Extruder" panel
+'''
+FEEDERS_SECTION_TITLE = "Feeders"
 
 '''
 The following dictionary contains all the possible tube options for each feeder that the user can choose
@@ -72,6 +92,11 @@ The following list contains all the possible pelletizing options that the user c
 PELLETIZING = ["Select", "Thermo", "Pellet Mill", "Red Eng Bullet 62", "Red Eng Bullet 64", "Red Eng Bullet 66"]
 
 '''
+The following string variable contains the title for the pelletizing options section within the "Extruder" panel
+'''
+PELLETIZING_OPTIONS_SECTION_TITLE = "Pelletizing Options"
+
+'''
 The following list contains all the possible options for each port on the extruder that the user can choose
 '''
 PORT_OPTIONS = ["Closed", "Vent", "Vaccum"]
@@ -81,6 +106,11 @@ The following list contains all the possible options for each port on the "Proce
 choose
 '''
 PORT_OPTIONS_11MM = ["Closed", "Vent", "Feed Throat"]
+
+'''
+The following string variable contains the title for the port options section within the "Extruder" panel
+'''
+PORT_OPTIONS_SECTION_TITLE = "Port Set-Up"
 
 '''
 The following list contains all the possible pre-die options that the user can choose
@@ -97,6 +127,11 @@ The following list contains all the possible options for each side stuffer witho
 that the user can choose
 '''
 SIDE_STUFFER_WITHOUT_VACCUM = ["Closed", "Sides Stuffer"]
+
+'''
+The following string variable contains the title for the strand cooling options section within the "Extruder" panel
+'''
+STRAND_COOLING_OPTIONS_SECTION_TITLE = "Strand Cooling Options"
 
 '''
 The following directory contains the title for the "Update" panel

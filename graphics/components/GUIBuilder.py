@@ -142,8 +142,26 @@ class Builder:
     # Add Line for decoration
     line = tk.Frame(parent, background=self.getConfig().LINE_COLOR, height=self.getConfig().LINE_HIEGHT,
                     width=parent.winfo_screenwidth())
-    line.grid(row=lineRow, column=0, columnspan=20, padx=(0, 0), pady=(75 - (lineRow * 25), 0), sticky=tk.W)
-    
+    line.grid(row=2, column=0, columnspan=20, padx=(0, 0), pady=(75 - (lineRow * 25), 0), sticky=tk.W)
+
+  '''
+  The following function builds and a section with a title and returns the frame within that section
+  '''
+  def buildSection(self, parent, title):
+
+    # Create a Frame and a Label
+    frame = self.buildFrame(parent)
+    frame.configure(highlightbackground=self.getConfig().ACTIVE_BACKGROUND,
+                    highlightcolor=self.getConfig().ACTIVE_BACKGROUND, highlightthickness=2, width=700, height=100)
+    label = self.buildH1Label(parent, title)
+
+    # Bind the Frame and Label
+    frame.grid(row=0, column=0, padx=(25, 0), pady=(25, 0), sticky=tk.W)
+    label.grid(row=0, column=0, padx=(100, 0), pady=(9, 0), sticky=tk.NW)
+
+    # Return the the panel within the section
+    return frame
+
   '''
   The following function returns a built Tkinter frame component
   '''
@@ -163,6 +181,7 @@ class Builder:
   '''
   def buildH1Label(self, parent, text):
     label = tk.Label(parent, text=text, background=self.getConfig().BACKGROUND,
+                     foreground=self.getConfig().ACTIVE_BACKGROUND,
                      font=["Arial", self.getConfig().H1_FONT_SIZE, "bold"])
     return label
 

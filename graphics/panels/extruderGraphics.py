@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 03/23/2017
-Last Updated: 08/08/2017
+Last Updated: 08/10/2017
 Version: 1.0.0
 Description:
     The following python file contains the class and functions for the "Extruder" panel
@@ -65,6 +65,42 @@ class ExtruderG:
     return True, ""
 
   '''
+  COMMENT
+  '''
+  def __buildExtruderOptions(self, graphics, frame):
+    print "__buildExtruderOptions"
+
+  '''
+  COMMENT
+  '''
+  def __buildPortOptions(self, graphics, frame):
+    print "__buildPortOptions"
+
+  '''
+  COMMENT
+  '''
+  def __buildAddFeedersOptions(self, graphics, frame):
+    print "__buildAddFeedersOptions"
+
+  '''
+  COMMENT
+  '''
+  def __buildStrandCoolingOptions(self, graphics, frame):
+    print "__buildStrandCoolingOptions"
+
+  '''
+  COMMENT
+  '''
+  def __buildPelletizingOptions(self, graphics, frame):
+    print "__buildPelletizingOptions"
+
+  '''
+  COMMENT
+  '''
+  def __buildClassifiedOptions(self, graphics, frame):
+    print "__buildClassifiedOptions"
+
+  '''
   The following function builds the initial state for the "Extruder" panel
   '''
   def buildPanel(self, graphics):
@@ -77,6 +113,54 @@ class ExtruderG:
 
     # Build the Panel's title
     graphics.getBuilder().buildTitle(graphics, frame, graphics.getConfig().getConfigExtruder().TITLE, True)
+
+    # Build the "Port Options Section"
+    tempFrame = graphics.getBuilder().buildFrame(frame)
+    tempFrame.grid(row=4, column=0, columnspan=20, padx=(0, 0), pady=(0, 0), sticky=tk.W)
+    portOptionsFrame = graphics.getBuilder().buildSection(tempFrame,
+                                                          graphics.getConfig().getConfigExtruder().
+                                                          PORT_OPTIONS_SECTION_TITLE)
+    self.__buildPortOptions(graphics, portOptionsFrame)
+
+    # Build the "Extruder Options Section"
+    tempFrame = graphics.getBuilder().buildFrame(frame)
+    tempFrame.grid(row=3, column=0, columnspan=20, padx=(0, 0), pady=(0, 0), sticky=tk.W)
+    extruderOptionsFrame = graphics.getBuilder().buildSection(tempFrame,
+                                                              graphics.getConfig().getConfigExtruder().
+                                                              EXTRUDER_OPTIONS_SECTION_TITLE)
+    self.__buildExtruderOptions(graphics, extruderOptionsFrame)
+
+    # Build the "Add Feeders Section"
+    tempFrame = graphics.getBuilder().buildFrame(frame)
+    tempFrame.grid(row=5, column=0, columnspan=20, padx=(0, 0), pady=(0, 0), sticky=tk.W)
+    addFeedersFrame = graphics.getBuilder().buildSection(tempFrame,
+                                                         graphics.getConfig().getConfigExtruder().
+                                                         FEEDERS_SECTION_TITLE)
+    self.__buildAddFeedersOptions(graphics, addFeedersFrame)
+
+    # Build the "Strand Cooling Options Section"
+    tempFrame = graphics.getBuilder().buildFrame(frame)
+    tempFrame.grid(row=6, column=0, columnspan=20, padx=(0, 0), pady=(0, 0), sticky=tk.W)
+    strandCoolingOptionsFrame = graphics.getBuilder().buildSection(tempFrame,
+                                                                   graphics.getConfig().getConfigExtruder().
+                                                                   STRAND_COOLING_OPTIONS_SECTION_TITLE)
+    self.__buildStrandCoolingOptions(graphics, strandCoolingOptionsFrame)
+
+    # Build the "Pelletizing Options Section"
+    tempFrame = graphics.getBuilder().buildFrame(frame)
+    tempFrame.grid(row=7, column=0, columnspan=20, padx=(0, 0), pady=(0, 0), sticky=tk.W)
+    pelletizingOptionsFrame = graphics.getBuilder().buildSection(tempFrame,
+                                                                 graphics.getConfig().getConfigExtruder().
+                                                                 PELLETIZING_OPTIONS_SECTION_TITLE)
+    self.__buildPelletizingOptions(graphics, pelletizingOptionsFrame)
+
+    # Build the "Classified Options Section"
+    tempFrame = graphics.getBuilder().buildFrame(frame)
+    tempFrame.grid(row=8, column=0, columnspan=20, padx=(0, 0), pady=(0, 0), sticky=tk.W)
+    classifiedOptionsFrame = graphics.getBuilder().buildSection(tempFrame,
+                                                                graphics.getConfig().getConfigExtruder().
+                                                                CLASSIFIED_OPTIONS_SECTION_TITLE)
+    self.__buildClassifiedOptions(graphics, classifiedOptionsFrame)
 
   '''
   The following function returns a confirmation that tells the calling code which class file this function belongs to

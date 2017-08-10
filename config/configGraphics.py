@@ -55,12 +55,12 @@ BUTTON_WIDTH = 8
 '''
 The following variable contains the font size for titles of size h1
 '''
-H1_FONT_SIZE = 14
+H1_FONT_SIZE = 24
 
 '''
 The following variable contains the font size for titles of size h2
 '''
-H2_FONT_SIZE = 11
+H2_FONT_SIZE = 18
 
 '''
 The following variable contains the color of the separation line
