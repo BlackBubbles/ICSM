@@ -21,7 +21,28 @@ Global variables
 # NONE
 
 '''
-The following function calls the "browseServer" function in the Graphics the all the user to browse for a file
+The following function calls the "" function in the Graphics to allow the user to add a feeder to the "Extruder"
+panel
+'''
+def addFeeder(graphics):
+  print "addFeeder"
+
+'''
+The following function calls the "browseServer" function in the Graphics to allow the user to browse for a file
 '''
 def callBrowseServer(graphics, title, label):
-  graphics.getBrowseServerGraphics().browseServer(graphics, title, label)
+  filename = graphics.getBrowseServerGraphics().browseServer(graphics, title, label)
+  graphics.getData().getExtruderData().setWorkflowFileName(filename)
+
+'''
+The following function calls the "" function in the Graphics to allow the user to add a feeder to the Ex
+'''
+def changeCooling(graphics, value):
+  print "changeCooling - ", value
+
+'''
+The following function calls the "" function in the Graphics to repsond to the user selecting an option from the
+"Pelletizier" drop down menu
+'''
+def changePellet(graphics, value):
+  print "changePellet - ", value

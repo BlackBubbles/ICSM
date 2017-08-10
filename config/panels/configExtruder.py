@@ -89,12 +89,12 @@ NUM = [0, 1, 2, 3, 4]
 '''
 The following list contains all the possible pelletizing options that the user can choose
 '''
-PELLETIZING = ["Select", "Thermo", "Pellet Mill", "Red Eng Bullet 62", "Red Eng Bullet 64", "Red Eng Bullet 66"]
+PELLETIZIERS = ["Select", "Thermo", "Pellet Mill", "Red Eng Bullet 62", "Red Eng Bullet 64", "Red Eng Bullet 66"]
 
 '''
 The following string variable contains the title for the pelletizing options section within the "Extruder" panel
 '''
-PELLETIZING_OPTIONS_SECTION_TITLE = "Pelletizing Options"
+PELLETIZING_OPTIONS_SECTION_TITLE = "Pelletizier Options"
 
 '''
 The following list contains all the possible options for each port on the extruder that the user can choose
@@ -127,6 +127,12 @@ The following list contains all the possible options for each side stuffer witho
 that the user can choose
 '''
 SIDE_STUFFER_WITHOUT_VACCUM = ["Closed", "Sides Stuffer"]
+
+'''
+The following list contains all the possible options for the possible strand cooling options for the extruder that the
+user can choose
+'''
+STRAND_COOLING_OPTIONS = ["Belt", "Belt w/ Mister", "Water Bath", "Spray Belt", "UWP", "Other"]
 
 '''
 The following string variable contains the title for the strand cooling options section within the "Extruder" panel

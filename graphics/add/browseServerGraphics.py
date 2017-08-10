@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 03/29/2017
-Last Updated: 08/09/2017
+Last Updated: 08/10/2017
 Version: 1.0.0
 Description:
     The following python file builds the add-on GUI that the user will interact with in able to browse the server
@@ -34,12 +34,7 @@ def browseServer(graphics, title, label):
                                                      ('excel files', '.xlsx')],
                                           title="Browse for a file...")
   
-  # Change the browse label to inform the user what file was selected
+  # Change the browse label to inform the user what file was selected and return the filepath
   if not len(filename) == 0:
     label["text"] = filename.split("/")[-1]
-
-    # Save the file name to the correct data file
-    if title is graphics.getConfig().getConfigExtruder().TITLE:
-      graphics.getData().getExtruderData().setWorkflowFileName(filename)
-    elif title is graphics.getConfig().getConfigLab().TITLE:
-      graphics.getData().getLabData().setWorkflowFileName(filename)
+    return filename

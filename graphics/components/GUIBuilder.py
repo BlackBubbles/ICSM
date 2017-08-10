@@ -202,80 +202,90 @@ class Builder:
     return button
     
   '''
-  COMMENT
+  The following function builds and returns a Tkinter button component that will be used on the bottom of the panels
   '''
-  def buildUpdateButton(self, parent, text):
-    button = tk.Button(parent, text=text,
-                  width=15, font=["Arial", 18, "bold"],
-                  height=2, activeforeground=self.getConfig().BACKGROUND,
-                  activebackground=self.getConfig().ACTIVE_BACKGROUND)
+  def buildBottomButton(self, parent, text):
+    button = tk.Button(parent, text=text, width=15, font=["Arial", 18, "bold"], height=2,
+                       activeforeground=self.getConfig().BACKGROUND,
+                       activebackground=self.getConfig().ACTIVE_BACKGROUND)
     return button
     
   '''
-  COMMENT
+  The following function builds and returns a Tkinter checkbox component
   '''
   def buildCheckBox(self, parent, text):
     variable = tk.IntVar(parent)
-    check = tk.Checkbutton(parent, text=text, variable=variable,
-                      background=self.getConfig().BACKGROUND,
-                      activebackground=self.getConfig().ACTIVE_BACKGROUND)
-    return check
+    check = tk.Checkbutton(parent, text=text, variable=variable, background=self.getConfig().BACKGROUND,
+                           activebackground=self.getConfig().ACTIVE_BACKGROUND)
+    return check, variable
     
   '''
-  COMMENT
+  The following function builds and returns a Tkinter scale component
   '''
-  def buildScale(self, parent, smin, smax, length):
-    scale = tk.Scale(parent, from_=smin, to=smax, orient=tk.HORIZONTAL,
-                     background=self.getConfig().BACKGROUND, length=200,
-                     activebackground=self.getConfig().ACTIVE_BACKGROUND)
+  def buildScale(self, parent, smin, smax):
+    scale = tk.Scale(parent, from_=smin, to=smax, orient=tk.HORIZONTAL, background=self.getConfig().BACKGROUND,
+                     length=200, activebackground=self.getConfig().ACTIVE_BACKGROUND)
     return scale
     
   '''
-  COMMENT
+  The following function builds and returns a list of Tkinter radio components
   '''
   def buildRadio(self, parent, names):
     variable = tk.IntVar(parent)
     index = 1
     radios = []
     for value in names:
-      radio = tk.Radiobutton(parent, text=value, variable=variable,
-                      value=index,
-                      background=self.getConfig().BACKGROUND,
-                      activebackground=self.getConfig().ACTIVE_BACKGROUND)
+      radio = tk.Radiobutton(parent, text=value, variable=variable, value=index,
+                             background=self.getConfig().BACKGROUND,
+                             activebackground=self.getConfig().ACTIVE_BACKGROUND)
       index = index + 1
       radios.append(radio)
-    return radios
+    return radios, variable
     
   '''
-  COMMENT
+  The following function builds and returns a list of Tkinter radio components specifically for the strand cooling
+  option section in the "Extruder" panel
   '''
-  def buildCoolingRadio(self, parent, names, graphics, panel):
+  def buildCoolingRadio(self, parent, names, graphics):
     variable = tk.IntVar(parent)
     index = 1
     radios = []
     for value in names:
-      radio = tk.Radiobutton(parent, text=value, variable=variable,
-                      value=index,
-                      background=self.getConfig().BACKGROUND,
-                      command=lambda: graphics.getActions().
-                                      getUpdateActions().
-                                      changeCooling(graphics, 
-                                                    variable.get(),
-                                                    panel),
-                      activebackground=self.getConfig().ACTIVE_BACKGROUND)
+      radio = tk.Radiobutton(parent, text=value, variable=variable, value=index,
+                             background=self.getConfig().BACKGROUND,
+                             activebackground=self.getConfig().ACTIVE_BACKGROUND,
+                             command=lambda: graphics.getActions().getExtruderActions().changeCooling(graphics,
+                                                                                                      variable.get()))
       index = index + 1
       radios.append(radio)
-    return radios
+    return radios, variable
     
   '''
-  COMMENT
+  The following function builds a drop down menu from the input dictionary of components and returns the variable and
+  the menu
   '''
   def buildStringDropDown(self, parent, width, dic):
     variable = tk.StringVar(parent)
     variable.set(dic[0])
     menu = tk.OptionMenu(parent, variable, *dic)
     menu.configure(width=width, activebackground=self.getConfig().ACTIVE_BACKGROUND)
-    return variable, menu
+    return menu, variable
+
+  '''
+  The following function builds a drop down menu from the input dictionary of components and returns the variable and
+  the menu that will call the action command on event
+  '''
+  def buildStringDropDownWithCommand(self, graphics, parent, width, ID, list):
+    variable = tk.StringVar(parent)
+    variable.set(list[0])
+    if ID == "Pelletizier":
+      menu = tk.OptionMenu(parent, variable, *list,
+                           command=lambda x: graphics.getActions().getExtruderActions().changePellet(graphics,
+                                                                                                   variable.get()))
+    else:
+      menu = tk.OptionMenu(parent, variable, *list)
+    menu.configure(width=width, activebackground=self.getConfig().ACTIVE_BACKGROUND)
+    return menu, variable
 
   '''
   The following function returns a confirmation that tells the calling code which class file this function belongs to

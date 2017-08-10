@@ -82,8 +82,8 @@ def __testConfig(testF, config):
   if not doesWork:
     return doesWork, message
 
-  # Test config.PELLETIZING
-  doesWork, message = testF.testConfigListString(config.PELLETIZING, "configExtruder.PELLETIZING")
+  # Test config.PELLETIZIERS
+  doesWork, message = testF.testConfigListString(config.PELLETIZIERS, "configExtruder.PELLETIZIERS")
   if not doesWork:
     return doesWork, message
 
@@ -122,6 +122,12 @@ def __testConfig(testF, config):
   # Test config.SIDE_STUFFER_WITHOUT_VACCUM
   doesWork, message = testF.testConfigListString(config.SIDE_STUFFER_WITHOUT_VACCUM,
                                                  "configExtruder.SIDE_STUFFER_WITHOUT_VACCUM")
+  if not doesWork:
+    return doesWork, message
+
+  # Test config.STRAND_COOLING_OPTIONS
+  doesWork, message = testF.testConfigListString(config.STRAND_COOLING_OPTIONS,
+                                                 "configExtruder.STRAND_COOLING_OPTIONS")
   if not doesWork:
     return doesWork, message
 
