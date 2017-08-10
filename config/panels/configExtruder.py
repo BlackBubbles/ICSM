@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 04/20/2017
-Last Updated: 08/08/2017
+Last Updated: 08/10/2017
 Version: 1.0.0
 Description:
     The following python file contains the configuration data for the "Extruder" panel

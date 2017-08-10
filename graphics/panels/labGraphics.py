@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 08/08/2017
-Last Updated: 08/08/2017
+Last Updated: 08/10/2017
 Version: 1.0.0
 Description:
     The following python file contains the class and functions for the "Lab" panel
@@ -65,6 +65,13 @@ class LabG:
     return True, ""
 
   '''
+  The following function builds the components for the default section within the "Lab" panel
+  '''
+  def __buildDefault(self, graphics, frame):
+    label = graphics.getBuilder().buildH2Label(frame, "Coming Soon...")
+    label.grid(row=0, column=0, padx=(50, 50), pady=(25, 25), sticky=tk.W)
+
+  '''
   The following function builds the initial state for the "Lab" panel
   '''
   def buildPanel(self, graphics):
@@ -77,6 +84,12 @@ class LabG:
 
     # Build the Panel's title
     graphics.getBuilder().buildTitle(graphics, frame, graphics.getConfig().getConfigLab().TITLE, True)
+
+    # Build the "Default Section"
+    tempFrame = graphics.getBuilder().buildFrame(frame)
+    tempFrame.grid(row=3, column=0, columnspan=20, padx=(0, 0), pady=(0, 0), sticky=tk.W)
+    defaultFrame = graphics.getBuilder().buildSection(tempFrame, "Default")
+    self.__buildDefault(graphics, defaultFrame)
 
   '''
   The following function returns a confirmation that tells the calling code which class file this function belongs to
