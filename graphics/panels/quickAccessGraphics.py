@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 04/24/2017
-Last Updated: 08/09/2017
+Last Updated: 08/11/2017
 Version: 1.0.0
 Description:
     The following python file contains the class and functions for the "Quick Access" panel
@@ -30,15 +30,20 @@ class QAG:
   '''
   The following function is the initial function for the "QAG" class
   '''
-  def __init__(self, config):
+  def __init__(self, config, builder):
 
     # Call set functions and if the return is False, then return the message for the error
     doesWork, message = self.setConfig(config)
     if not doesWork:
       print message
       sys.exit()
+    doesWork, message = self.setBuilder(builder)
+    if not doesWork:
+      print message
+      sys.exit()
 
     # Set initial values for this instance of the "QAG" class
+    self.data = None
     self.buttons = {}
 
   '''
@@ -62,6 +67,46 @@ class QAG:
         return False, "%s:\nconfig file is not a designated config file for this program" % ERROR
     else:
       return False, "%s:\ninputted file is not a Module" % ERROR
+    return True, ""
+
+  '''
+  The following function returns the builder for this instance of the "Quick Access" panel
+  '''
+  def getBuilder(self):
+    return self.builder
+
+  '''
+  The following function sets the builder for this instance of the "Quick Access" panel. If the input does not meet the
+  requirements then the function returns a "False" boolean value and an error message
+  '''
+  def setBuilder(self, builder):
+    if hasattr(builder, "confirm"):
+      if builder.confirm("Builder"):
+        self.builder = builder
+      else:
+        return False, "%s:\nbuilder for QAG is not GUIBuilder" % ERROR
+    else:
+      return False, "%s:\ninput is not a file for the ICSM program" % ERROR
+    return True, ""
+
+  '''
+  The following function returns the model for this instance of the "Quick Access" panel
+  '''
+  def getData(self):
+    return self.data
+
+  '''
+  The following function sets the model for this instance of the "Quick Access" panel. If the input does not meet the
+  requirements then the function returns a "False" boolean value and an error message
+  '''
+  def setData(self, data):
+    if hasattr(data, "confirm"):
+      if data.confirm("QA"):
+        self.data = data
+      else:
+        return False, "%s:\ndata for QAG is not quickAccessData" % ERROR
+    else:
+      return False, "%s:\ninput is not a file for the ICSM program" % ERROR
     return True, ""
 
   '''
@@ -96,10 +141,7 @@ class QAG:
   '''
   The following function builds the initial state for the "Quick Access" panel
   '''
-  def buildPanel(self, graphics):
-
-    # Get the "Quick Access" frame from the instance of the "Graphics" class
-    frame = graphics.getFrameGraphics().getFrame(graphics.getConfig().getConfigFrame().QUICK_ACCESS)
+  def buildPanel(self, graphics, frame):
     
     # Change the background color
     panel = graphics.getBuilder().buildFrame(frame)

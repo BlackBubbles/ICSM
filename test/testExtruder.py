@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 06/21/2017
-Last Updated: 08/10/2017
+Last Updated: 08/11/2017
 Version: 1.0.0
 Description:
     The following python file tests the code for the "Extruder" panel
@@ -29,6 +29,11 @@ def __testConfig(testF, config):
   doesWork = False
   message = ""
 
+  # Test config.ACTIVE_BACKGROUND
+  doesWork, message = testF.testConfigColors(config.ACTIVE_BACKGROUND, "configExtruder.ACTIVE_BACKGROUND")
+  if not doesWork:
+    return doesWork, message
+
   # Test config.CAPTURING_SECTION_TITLE
   doesWork, message = testF.testConfigString(config.CAPTURING_SECTION_TITLE,
                                              "configExtruder.CAPTURING_SECTION_TITLE")
@@ -38,6 +43,22 @@ def __testConfig(testF, config):
   # Test config.CLASSIFIED_OPTIONS_SECTION_TITLE
   doesWork, message = testF.testConfigString(config.CLASSIFIED_OPTIONS_SECTION_TITLE,
                                              "configExtruder.CLASSIFIED_OPTIONS_SECTION_TITLE")
+  if not doesWork:
+    return doesWork, message
+
+  # Test config.CLASSIFIED_RADIO_BUTTON_NAMES
+  doesWork, message = testF.testConfigListString(config.CLASSIFIED_RADIO_BUTTON_NAMES,
+                                                 "configExtruder.CLASSIFIED_RADIO_BUTTON_NAMES")
+  if not doesWork:
+    return doesWork, message
+
+  # Test config.COMMENTS_COLOR
+  doesWork, message = testF.testConfigColors(config.COMMENTS_COLOR, "configExtruder.COMMENTS_COLOR")
+  if not doesWork:
+    return doesWork, message
+
+  # Test config.ERROR_COLOR
+  doesWork, message = testF.testConfigColors(config.ERROR_COLOR, "configExtruder.ERROR_COLOR")
   if not doesWork:
     return doesWork, message
 

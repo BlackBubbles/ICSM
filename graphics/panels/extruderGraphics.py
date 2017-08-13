@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 03/23/2017
-Last Updated: 08/10/2017
+Last Updated: 08/11/2017
 Version: 1.0.0
 Description:
     The following python file contains the class and functions for the "Extruder" panel
@@ -16,6 +16,7 @@ Imported files/libraries
 import sys
 from types import ModuleType
 import Tkinter as tk
+import tkMessageBox
 
 '''
 Global variables
@@ -30,19 +31,26 @@ class ExtruderG:
   '''
   The following function is the initial instance creation function for the "ExtruderG" class
   '''
-  def __init__(self, config):
+  def __init__(self, config, builder):
 
     # Call set functions and if the return is False, then return the message for the error
     doesWork, message = self.setConfig(config)
     if not doesWork:
       print message
       sys.exit()
+    doesWork, message = self.setBuilder(builder)
+    if not doesWork:
+      print message
+      sys.exit()
 
     # Set initial values for this instance of the "ExtruderG" class
+    self.actions = None
+    self.data = None
     self.feedersFrame = None
     self.pelletMillFrame = None
     self.portSetUpFrame = None
     self.strandCoolingFrame = None
+    self.labels = {}
 
   '''
   The following function returns the configuration file for this instance of the "ExtruderG" class
@@ -65,6 +73,66 @@ class ExtruderG:
         return False, "%s:\nconfig file is not a designated config file for this program" % ERROR
     else:
       return False, "%s:\ninputted file is not a Module" % ERROR
+    return True, ""
+
+  '''
+  The following function returns the builder for this instance of the "Extruder" panel
+  '''
+  def getBuilder(self):
+    return self.builder
+
+  '''
+  The following function sets the builder for this instance of the "Extruder" panel. If the input does not meet the
+  requirements then the function returns a "False" boolean value and an error message
+  '''
+  def setBuilder(self, builder):
+    if hasattr(builder, "confirm"):
+      if builder.confirm("Builder"):
+        self.builder = builder
+      else:
+        return False, "%s:\nbuilder for ExtruderG is not GUIBuilder" % ERROR
+    else:
+      return False, "%s:\ninput is not a file for the ICSM program" % ERROR
+    return True, ""
+
+  '''
+  The following function returns the controller for this instance of the "Extruder" panel
+  '''
+  def getActions(self):
+    return self.actions
+
+  '''
+  The following function sets the controller for this instance of the "Extruder" panel. If the input does not meet the
+  requirements then the function returns a "False" boolean value and an error message
+  '''
+  def setActions(self, actions):
+    if hasattr(actions, "confirm"):
+      if actions.confirm("Extruder"):
+        self.actions = actions
+      else:
+        return False, "%s:\nactions for ExtruderG is not extruderActions" % ERROR
+    else:
+      return False, "%s:\ninput is not a file for the ICSM program" % ERROR
+    return True, ""
+
+  '''
+  The following function returns the model for this instance of the "Extruder" panel
+  '''
+  def getData(self):
+    return self.data
+
+  '''
+  The following function sets the model for this instance of the "Extruder" panel. If the input does not meet the
+  requirements then the function returns a "False" boolean value and an error message
+  '''
+  def setData(self, data):
+    if hasattr(data, "confirm"):
+      if data.confirm("Extruder"):
+        self.data = data
+      else:
+        return False, "%s:\ndata for ExtruderG is not extruderData" % ERROR
+    else:
+      return False, "%s:\ninput is not a file for the ICSM program" % ERROR
     return True, ""
 
   '''
@@ -180,15 +248,21 @@ class ExtruderG:
     return doesWork, message
 
   '''
+  The following function returns the entire list of labels
+  '''
+  def getLabels(self):
+    return self.labels
+
+  '''
   The following function builds the components for the extruder options section within the "Extruder" panel
   '''
-  def __buildExtruderOptions(self, graphics, frame):
+  def __buildExtruderOptions(self, frame):
     print "__buildExtruderOptions"
 
   '''
   The following function builds the components for the port set-up section within the "Extruder" panel
   '''
-  def __buildPortOptions(self, graphics, frame):
+  def __buildPortOptions(self, frame):
 
     # Set the inputted frame to this instance of the class as the port set-up frame
     doesWork, message = self.setPortSetUpFrame(frame)
@@ -197,21 +271,21 @@ class ExtruderG:
       sys.exit()
 
     # Build and add the label asking the user to choose an extruder
-    label = graphics.getBuilder().buildH2Label(frame, "Please Choose Extruder")
+    label = self.getBuilder().buildH2Label(frame, "Please Choose Extruder")
     label.grid(row=0, column=0, padx=(100, 100), pady=(35, 35), sticky=tk.W)
 
   '''
   The following function builds the components for the feeders section within the "Extruder" panel
   '''
-  def __buildAddFeedersOptions(self, graphics, frame):
+  def __buildAddFeedersOptions(self, frame):
 
     # Build and add the "Add Feeder" Button
-    button = graphics.getBuilder().buildButton(frame, "Add Feeder")
-    button.configure(command=lambda: graphics.getActions().getExtruderActions().addFeeder(graphics))
+    button = self.getBuilder().buildButton(frame, "Add Feeder")
+    button.configure(command=lambda: self.getActions().addFeeder())
     button.grid(row=0, column=0, padx=(50, 0), pady=(25, 0), sticky=tk.W)
 
     # Build and add the frame that will hold all the labels with data on the feeders
-    self.setFeedersFrame(graphics.getBuilder().buildFrame(frame))
+    self.setFeedersFrame(self.getBuilder().buildFrame(frame))
     self.getFeedersFrame().grid(row=1, column=0, padx=(15, 15), pady=(5, 15), sticky=tk.W)
 
   '''
@@ -220,8 +294,9 @@ class ExtruderG:
   def __buildStrandCoolingOptions(self, graphics, frame):
 
     # Build and add the Selection line of radio buttons
-    radios, variable = graphics.getBuilder().buildCoolingRadio(frame, graphics.getConfig().getConfigExtruder().
-                                                                      STRAND_COOLING_OPTIONS, graphics)
+    radios, variable = graphics.getBuilder().buildCoolingRadio(graphics, frame,
+                                                               graphics.getConfig().getConfigExtruder().
+                                                               STRAND_COOLING_OPTIONS)
     index = 0
     for radio in radios:
       if index == 0:
@@ -242,122 +317,157 @@ class ExtruderG:
   '''
   The following function builds the components for the pelletizing options section within the "Extruder" panel
   '''
-  def __buildPelletizingOptions(self, graphics, frame):
+  def __buildPelletizingOptions(self, frame):
 
     # Build and add the "Pelletizier" drop down menu
-    pellitizerLabel = graphics.getBuilder().buildH2Label(frame, "Pelletizier")
+    pellitizerLabel = self.getBuilder().buildH2Label(frame, "Pelletizier")
     pellitizerLabel.grid(row=0, column=0, padx=(50, 0), pady=(25, 0), sticky=tk.W)
-    menu, variable = graphics.getBuilder().buildStringDropDownWithCommand(graphics, frame, 15, pellitizerLabel["text"],
-                                                                          graphics.getConfig().getConfigExtruder().
-                                                                          PELLETIZIERS)
+    menu, variable = self.getBuilder().buildStringDropDown(self.getActions().changePellet, frame, 15,
+                                                           self.getConfig().PELLETIZIERS)
     menu.grid(row=1, column=0, padx=(40, 0), pady=(0, 0), sticky=tk.W)
 
     # Build and add the "Feed Roll" scrollbar
-    feedLabel = graphics.getBuilder().buildH2Label(frame, "Feed Roll:")
+    feedLabel = self.getBuilder().buildH2Label(frame, "Feed Roll:")
     feedLabel.grid(row=2, column=0, padx=(50, 0), pady=(15, 0), sticky=tk.W)
-    feedScale = graphics.getBuilder().buildScale(frame, 0, 1000)
+    feedScale = self.getBuilder().buildScale(frame, 0, 1000)
     feedScale.grid(row=2, column=0, padx=(145, 0), pady=(0, 0), sticky=tk.W)
 
     # Build and add the "Rotor" scrollbar
-    rotorLabel = graphics.getBuilder().buildH2Label(frame, "Rotor:")
+    rotorLabel = self.getBuilder().buildH2Label(frame, "Rotor:")
     rotorLabel.grid(row=2, column=0, padx=(375, 0), pady=(15, 0), sticky=tk.W)
-    rotorScale = graphics.getBuilder().buildScale(frame, 0, 1000)
+    rotorScale = self.getBuilder().buildScale(frame, 0, 1000)
     rotorScale.grid(row=2, column=0, padx=(437, 0), pady=(0, 0), sticky=tk.W)
 
     # Build and add the pellet mill additional frame
-    doesWork, message = self.setPelletMillFrame(graphics.getBuilder().buildFrame(frame))
+    doesWork, message = self.setPelletMillFrame(self.getBuilder().buildFrame(frame))
     if not doesWork:
       print message
       sys.exit()
     self.getPelletMillFrame().grid(row=3, column=0, padx=(0, 0), pady=(0, 0), sticky=tk.W)
 
     # Build and add the "Comments" textbox
-    commentsLabel = graphics.getBuilder().buildH2Label(frame, "Comments")
+    commentsLabel = self.getBuilder().buildH2Label(frame, "Comments")
     commentsLabel.grid(row=4, column=0, padx=(50, 0), pady=(15, 0), sticky=tk.W)
-    textbox = tk.Text(frame, width=70, height=9, highlightbackground=graphics.getConfig().LINE_COLOR,
-                      highlightcolor=graphics.getConfig().ACTIVE_BACKGROUND)
+    textbox = tk.Text(frame, width=70, height=9, highlightbackground=self.getConfig().COMMENTS_COLOR,
+                      highlightcolor=self.getConfig().ACTIVE_BACKGROUND)
     textbox.grid(row=5, column=0, padx=(40, 0), pady=(0, 15), sticky=tk.W)
 
   '''
   The following function builds the components for the classified options section within the "Extruder" panel
   '''
-  def __buildClassifiedOptions(self, graphics, frame):
+  def __buildClassifiedOptions(self, frame):
+
+    # Build and add the "Classified" list of radio buttons
+    text = "Classified:"
+    classifiedLabel = self.getBuilder().buildH3Label(frame, text)
+    classifiedLabel.grid(row=0, column=0, padx=(50, 0), pady=(25, 0), sticky=tk.W)
+    self.labels[self.getConfig().CLASSIFIED_OPTIONS_SECTION_TITLE][text] = classifiedLabel
+    radios, variable = self.getBuilder().buildRadio(self.getActions().checkLabel,
+                                                    self.getConfig().CLASSIFIED_OPTIONS_SECTION_TITLE, classifiedLabel,
+                                                    frame, self.getConfig().CLASSIFIED_RADIO_BUTTON_NAMES)
+    self.getData().setClassifiedVariable(variable)
+    for radio in radios:
+      radio.grid(row=0, column=radios.index(radio) + 1, padx=(0, 0), pady=(25, 0), sticky=tk.W)
 
     # Build and add the "Coming Soon" label
-    label = graphics.getBuilder().buildH2Label(frame, "Coming Soon")
-    label.grid(row=0, column=0, padx=(100, 100), pady=(35, 35), sticky=tk.W)
+    label = self.getBuilder().buildH2Label(frame, "Rest Coming Soon")
+    label.grid(row=1, column=0, columnspan=20, padx=(100, 100), pady=(25, 35), sticky=tk.W)
 
   '''
   The following function builds the components for the capture options section within the "Extruder" panel
   '''
-  def __buildCaptureOptions(self, graphics, frame):
+  def __buildCaptureOptions(self, frame):
 
     # Build and add the "Coming Soon" label
-    label = graphics.getBuilder().buildH2Label(frame, "Coming Soon")
+    label = self.getBuilder().buildH2Label(frame, "Coming Soon")
     label.grid(row=0, column=0, padx=(100, 100), pady=(35, 35), sticky=tk.W)
 
   '''
   The following function builds the initial state for the "Extruder" panel
   '''
-  def buildPanel(self, graphics):
-
-    # Get the "Extruder" frame from the instance of the "FrameG" class
-    panel = graphics.getFrameGraphics().getFrame("Extruder")
+  def buildPanel(self, graphics, panel):
 
     # Build the whitebackground and scrollbars
-    frame = graphics.getBuilder().buildScrollingCanvas(panel)
+    frame = self.getBuilder().buildScrollingCanvas(panel)
 
     # Build the Panel's title
-    graphics.getBuilder().buildTitle(graphics, frame, graphics.getConfig().getConfigExtruder().TITLE, True)
-
-    # Build the "Port Options Section"
-    tempFrame = graphics.getBuilder().buildFrame(frame)
-    tempFrame.grid(row=4, column=0, columnspan=20, padx=(0, 0), pady=(0, 0), sticky=tk.W)
-    portOptionsFrame = graphics.getBuilder().buildSection(tempFrame, graphics.getConfig().getConfigExtruder().
-                                                                     PORT_OPTIONS_SECTION_TITLE)
-    self.__buildPortOptions(graphics, portOptionsFrame)
+    self.getBuilder().buildTitle(graphics, frame, self.getConfig().TITLE, True)
 
     # Build the "Extruder Options Section"
-    tempFrame = graphics.getBuilder().buildFrame(frame)
+    tempFrame = self.getBuilder().buildFrame(frame)
     tempFrame.grid(row=3, column=0, columnspan=20, padx=(0, 0), pady=(0, 0), sticky=tk.W)
-    extruderOptionsFrame = graphics.getBuilder().buildSection(tempFrame, graphics.getConfig().getConfigExtruder().
-                                                                         EXTRUDER_OPTIONS_SECTION_TITLE)
-    self.__buildExtruderOptions(graphics, extruderOptionsFrame)
+    extruderOptionsFrame, extruderOptionsLabel = self.getBuilder().buildSection(tempFrame,
+                                                                                self.getConfig().
+                                                                                EXTRUDER_OPTIONS_SECTION_TITLE)
+    self.__buildExtruderOptions(extruderOptionsFrame)
+
+    # Build the "Port Options Section"
+    tempFrame = self.getBuilder().buildFrame(frame)
+    tempFrame.grid(row=4, column=0, columnspan=20, padx=(0, 0), pady=(0, 0), sticky=tk.W)
+    portOptionsFrame, portOptionsLabel = self.getBuilder().buildSection(tempFrame,
+                                                                        self.getConfig().PORT_OPTIONS_SECTION_TITLE)
+    self.__buildPortOptions(portOptionsFrame)
 
     # Build the "Add Feeders Section"
-    tempFrame = graphics.getBuilder().buildFrame(frame)
+    tempFrame = self.getBuilder().buildFrame(frame)
     tempFrame.grid(row=5, column=0, columnspan=20, padx=(0, 0), pady=(0, 0), sticky=tk.W)
-    addFeedersFrame = graphics.getBuilder().buildSection(tempFrame, graphics.getConfig().getConfigExtruder().
-                                                                    FEEDERS_SECTION_TITLE)
-    self.__buildAddFeedersOptions(graphics, addFeedersFrame)
+    feedersFrame, feedersLabel  = self.getBuilder().buildSection(tempFrame, self.getConfig().FEEDERS_SECTION_TITLE)
+    self.__buildAddFeedersOptions(feedersFrame)
 
     # Build the "Strand Cooling Options Section"
-    tempFrame = graphics.getBuilder().buildFrame(frame)
+    tempFrame = self.getBuilder().buildFrame(frame)
     tempFrame.grid(row=6, column=0, columnspan=20, padx=(0, 0), pady=(0, 0), sticky=tk.W)
-    strandCoolingOptionsFrame = graphics.getBuilder().buildSection(tempFrame, graphics.getConfig().getConfigExtruder().
-                                                                              STRAND_COOLING_OPTIONS_SECTION_TITLE)
+    strandCoolingOptionsFrame, strandCoolingOptionsLabel = self.getBuilder().buildSection(tempFrame,
+                                                                self.getConfig().STRAND_COOLING_OPTIONS_SECTION_TITLE)
     self.__buildStrandCoolingOptions(graphics, strandCoolingOptionsFrame)
 
     # Build the "Pelletizing Options Section"
-    tempFrame = graphics.getBuilder().buildFrame(frame)
+    tempFrame = self.getBuilder().buildFrame(frame)
     tempFrame.grid(row=7, column=0, columnspan=20, padx=(0, 0), pady=(0, 0), sticky=tk.W)
-    pelletizingOptionsFrame = graphics.getBuilder().buildSection(tempFrame, graphics.getConfig().getConfigExtruder().
-                                                                            PELLETIZING_OPTIONS_SECTION_TITLE)
-    self.__buildPelletizingOptions(graphics, pelletizingOptionsFrame)
+    pelletizingOptionsFrame, pelletizingOptionsLabel = self.getBuilder().buildSection(tempFrame,
+                                                                    self.getConfig().PELLETIZING_OPTIONS_SECTION_TITLE)
+    self.__buildPelletizingOptions(pelletizingOptionsFrame)
 
     # Build the "Classified Options Section"
-    tempFrame = graphics.getBuilder().buildFrame(frame)
+    tempFrame = self.getBuilder().buildFrame(frame)
     tempFrame.grid(row=8, column=0, columnspan=20, padx=(0, 0), pady=(0, 0), sticky=tk.W)
-    classifiedOptionsFrame = graphics.getBuilder().buildSection(tempFrame, graphics.getConfig().getConfigExtruder().
-                                                                           CLASSIFIED_OPTIONS_SECTION_TITLE)
-    self.__buildClassifiedOptions(graphics, classifiedOptionsFrame)
+    classifiedOptionsFrame, classifiedOptionsLabel = self.getBuilder().buildSection(tempFrame,
+                                                                                    self.getConfig().
+                                                                                    CLASSIFIED_OPTIONS_SECTION_TITLE)
+    self.labels[self.getConfig().CLASSIFIED_OPTIONS_SECTION_TITLE] = {self.getConfig().
+                                                                      CLASSIFIED_OPTIONS_SECTION_TITLE:
+                                                                        classifiedOptionsLabel}
+    self.__buildClassifiedOptions(classifiedOptionsFrame)
 
     # Build the "Capture Options Section"
-    tempFrame = graphics.getBuilder().buildFrame(frame)
+    tempFrame = self.getBuilder().buildFrame(frame)
     tempFrame.grid(row=9, column=0, columnspan=20, padx=(0, 0), pady=(0, 0), sticky=tk.W)
-    captureOptionsFrame = graphics.getBuilder().buildSection(tempFrame, graphics.getConfig().getConfigExtruder().
-                                                                        CAPTURING_SECTION_TITLE)
-    self.__buildCaptureOptions(graphics, captureOptionsFrame)
+    captureOptionsFrame, captureOptionsLabel = self.getBuilder().buildSection(tempFrame,
+                                                                              self.getConfig().CAPTURING_SECTION_TITLE)
+    self.labels[self.getConfig().CAPTURING_SECTION_TITLE] = {self.getConfig().CAPTURING_SECTION_TITLE:
+                                                               captureOptionsLabel}
+    self.__buildCaptureOptions(captureOptionsFrame)
+
+    # Build and add the "Update Workflow" button
+    updateButton = self.getBuilder().buildBottomButton(frame, "Update Workflow")
+    updateButton.grid(row=10, column=0, padx=(200, 0), pady=(50, 75), sticky=tk.W)
+    updateButton.configure(command=lambda: self.getActions().checkForUpdate())
+
+    # Build and add the "Capture Extruder" button
+    captureButton = self.getBuilder().buildBottomButton(frame, "Capture Extruder")
+    captureButton.grid(row=10, column=0, padx=(500, 0), pady=(50, 75), sticky=tk.W)
+
+  '''
+  The following function displays a list of errors to the user
+  '''
+  def displayUpdateError(self, errors, errorTextLabels):
+
+    # Set the unused labels to red
+    print errorTextLabels
+    print self.getLabels()
+
+    # Display the error message
+    tkMessageBox.showerror("ERROR", "".join(errors))
 
   '''
   The following function returns a confirmation that tells the calling code which class file this function belongs to

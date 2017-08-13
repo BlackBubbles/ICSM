@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 02/26/2017
-Last Updated: 08/08/2017
+Last Updated: 08/11/2017
 Version: 1.0.0
 Description:
     The following python file contains the configuration data for the Graphical User Interface
@@ -60,7 +60,12 @@ H1_FONT_SIZE = 24
 '''
 The following variable contains the font size for titles of size h2
 '''
-H2_FONT_SIZE = 18
+H2_FONT_SIZE = 20
+
+'''
+The following variable contains the font size for titles of size h2
+'''
+H3_FONT_SIZE = 16
 
 '''
 The following variable contains the color of the separation line

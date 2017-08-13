@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 03/05/2017
-Last Updated: 08/07/2017
+Last Updated: 08/11/2017
 Version: 1.0.0
 Description:
     The following python file contains the code that tests the Graphica User Interface to make sure that nothing is
@@ -67,6 +67,11 @@ def __testConfig(testF, config):
     
   # Test config.H2_FONT_SIZE
   doesWork, message = testF.testConfigPosInt(config.H2_FONT_SIZE, "configGraphics.H2_FONT_SIZE")
+  if not doesWork:
+    return doesWork, message
+
+  # Test config.H3_FONT_SIZE
+  doesWork, message = testF.testConfigPosInt(config.H3_FONT_SIZE, "configGraphics.H3_FONT_SIZE")
   if not doesWork:
     return doesWork, message
     

@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 06/18/2017
-Last Updated: 06/24/2017
+Last Updated: 08/11/2017
 Version: 1.0.0
 Description:
     The following python file contains the reaction functions for the TDI for the GUI in the ICSM program
@@ -24,10 +24,10 @@ Global variables
 Default function
 '''
 def react(value):
-  print "calling from TDIActions.py"
+  print "calling from TDIActions.py - ", value
   
 '''
 Default function # 2
 '''
 def react2(value):
-  print "calling from TDIActions.py function # 2"
+  print "calling from TDIActions.py function # 2 - ", value

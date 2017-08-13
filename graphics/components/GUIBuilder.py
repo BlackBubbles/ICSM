@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 06/24/2017
-Last Updated: 08/10/2017
+Last Updated: 08/11/2017
 Version: 1.0.0
 Description:
     The following python file contains multiple interaction functions for the ICSM program to build the specific
@@ -160,7 +160,7 @@ class Builder:
     label.grid(row=0, column=0, padx=(100, 0), pady=(9, 0), sticky=tk.NW)
 
     # Return the the panel within the section
-    return frame
+    return frame, label
 
   '''
   The following function returns a built Tkinter frame component
@@ -192,6 +192,14 @@ class Builder:
     label = tk.Label(parent, text=text, background=self.getConfig().BACKGROUND,
                      font=["Arial", self.getConfig().H2_FONT_SIZE, "bold"])
     return label
+
+  '''
+  The following function builds and returns a Tkinter label with font size of H3
+  '''
+  def buildH3Label(self, parent, text):
+    label = tk.Label(parent, text=text, background=self.getConfig().BACKGROUND,
+                     font=["Arial", self.getConfig().H3_FONT_SIZE, "bold"])
+    return label
     
   '''
   The following function builds and returns a Tkinter button component
@@ -205,7 +213,7 @@ class Builder:
   The following function builds and returns a Tkinter button component that will be used on the bottom of the panels
   '''
   def buildBottomButton(self, parent, text):
-    button = tk.Button(parent, text=text, width=15, font=["Arial", 18, "bold"], height=2,
+    button = tk.Button(parent, text=text,
                        activeforeground=self.getConfig().BACKGROUND,
                        activebackground=self.getConfig().ACTIVE_BACKGROUND)
     return button
@@ -230,14 +238,15 @@ class Builder:
   '''
   The following function builds and returns a list of Tkinter radio components
   '''
-  def buildRadio(self, parent, names):
+  def buildRadio(self, function, section, label, parent, names):
     variable = tk.IntVar(parent)
+    function(variable)
     index = 1
     radios = []
     for value in names:
       radio = tk.Radiobutton(parent, text=value, variable=variable, value=index,
-                             background=self.getConfig().BACKGROUND,
-                             activebackground=self.getConfig().ACTIVE_BACKGROUND)
+                             activebackground=self.getConfig().ACTIVE_BACKGROUND,
+                             background=self.getConfig().BACKGROUND, command=lambda: function([section, label]))
       index = index + 1
       radios.append(radio)
     return radios, variable
@@ -246,7 +255,7 @@ class Builder:
   The following function builds and returns a list of Tkinter radio components specifically for the strand cooling
   option section in the "Extruder" panel
   '''
-  def buildCoolingRadio(self, parent, names, graphics):
+  def buildCoolingRadio(self, graphics, parent, names):
     variable = tk.IntVar(parent)
     index = 1
     radios = []
@@ -264,26 +273,10 @@ class Builder:
   The following function builds a drop down menu from the input dictionary of components and returns the variable and
   the menu
   '''
-  def buildStringDropDown(self, parent, width, dic):
+  def buildStringDropDown(self, function, parent, width, dic):
     variable = tk.StringVar(parent)
     variable.set(dic[0])
-    menu = tk.OptionMenu(parent, variable, *dic)
-    menu.configure(width=width, activebackground=self.getConfig().ACTIVE_BACKGROUND)
-    return menu, variable
-
-  '''
-  The following function builds a drop down menu from the input dictionary of components and returns the variable and
-  the menu that will call the action command on event
-  '''
-  def buildStringDropDownWithCommand(self, graphics, parent, width, ID, list):
-    variable = tk.StringVar(parent)
-    variable.set(list[0])
-    if ID == "Pelletizier":
-      menu = tk.OptionMenu(parent, variable, *list,
-                           command=lambda x: graphics.getActions().getExtruderActions().changePellet(graphics,
-                                                                                                   variable.get()))
-    else:
-      menu = tk.OptionMenu(parent, variable, *list)
+    menu = tk.OptionMenu(parent, variable, *dic, command=lambda x: function(variable))
     menu.configure(width=width, activebackground=self.getConfig().ACTIVE_BACKGROUND)
     return menu, variable
 

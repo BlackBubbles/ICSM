@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 04/20/2017
-Last Updated: 08/10/2017
+Last Updated: 08/11/2017
 Version: 1.0.0
 Description:
     The following python file contains the configuration data for the "Extruder" panel
@@ -19,6 +19,11 @@ Imported files/libraries
 Global variables
 '''
 '''
+The following variable contains the active background color for the GUI
+'''
+ACTIVE_BACKGROUND = "#0099ff"
+
+'''
 The following string variable contains the title for the add feeders section within the "Extruder" panel
 '''
 CAPTURING_SECTION_TITLE = "Capturing Options"
@@ -27,6 +32,22 @@ CAPTURING_SECTION_TITLE = "Capturing Options"
 The following string variable contains the title for the extruder options section within the "Extruder" panel
 '''
 CLASSIFIED_OPTIONS_SECTION_TITLE = "Classified Options"
+
+'''
+The following list contains all the possible radio button names that the user can choose from the classified section
+in the "Extruder" panel
+'''
+CLASSIFIED_RADIO_BUTTON_NAMES = ["None", "Witte", "Hand"]
+
+'''
+The following variable contains the color of the Comments text box border
+'''
+COMMENTS_COLOR = "#000000"
+
+'''
+The following variable contains the color that signals to the user that there is an error
+'''
+ERROR_COLOR = "#FF0000"
 
 '''
 The following list contains all the possible extruders that the user can choose

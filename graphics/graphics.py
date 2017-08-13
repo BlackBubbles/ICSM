@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 02/26/2017
-Last Updated: 08/09/2017
+Last Updated: 08/11/2017
 Version: 1.0.0
 Description:
     The following python file contains multiple interaction functions for the Graphical User Interface for the ICSM
@@ -60,27 +60,25 @@ class Graphics:
     if not doesWork:
       print message
       sys.exit()
-    doesWork, message = self.setQAGraphics(qaG.QAG(self.getConfig().getConfigQA()))
+    doesWork, message = self.setQAGraphics(qaG.QAG(self.getConfig().getConfigQA(), self.getBuilder()))
     if not doesWork:
       print message
       sys.exit()
-    doesWork, message = self.setExtruderGraphics(extruderG.ExtruderG(self.getConfig().getConfigExtruder()))
+    doesWork, message = self.setExtruderGraphics(extruderG.ExtruderG(self.getConfig().getConfigExtruder(),
+                                                                     self.getBuilder()))
     if not doesWork:
       print message
       sys.exit()
-    doesWork, message = self.setLabGraphics(labG.LabG(self.getConfig().getConfigLab()))
+    doesWork, message = self.setLabGraphics(labG.LabG(self.getConfig().getConfigLab(), self.getBuilder()))
     if not doesWork:
       print message
       sys.exit()
-    doesWork, message = self.setProjectGraphics(projectG.ProjectG(self.getConfig().getConfigProject()))
+    doesWork, message = self.setProjectGraphics(projectG.ProjectG(self.getConfig().getConfigProject(),
+                                                                  self.getBuilder()))
     if not doesWork:
       print message
       sys.exit()
     self.gui = None
-
-    # REMOVE SOON
-    self.notebook = None
-    self.frames = {}
 
   '''
   The following function returns the configuration file for the "Graphics" class
@@ -134,6 +132,8 @@ class Graphics:
       if not doesWork:
         print message
         sys.exit()
+      self.getFrameGraphics().setActions(actions.getFrameActions())
+      self.getExtruderGraphics().setActions(actions.getExtruderActions())
     else:
       return doesWork, message
 
@@ -166,6 +166,11 @@ class Graphics:
       if not doesWork:
         print message
         sys.exit()
+      self.getFrameGraphics().setData(data.getFrameData())
+      self.getQAGraphics().setData(data.getQAData())
+      self.getExtruderGraphics().setData(data.getExtruderData())
+      self.getLabGraphics().setData(data.getLabData())
+      self.getProjectGraphics().setData(data.getProjectData())
     else:
       return doesWork, message
 
@@ -407,16 +412,16 @@ class Graphics:
     if error:
 
       # If there is an intial error, build a GUI showing the error
-      self.getFrameGraphics().buildErrorGUI(self, value)
+      self.getFrameGraphics().buildErrorGUI(self.getGUI(), value, self.getActions().exit)
 
     else:
 
       # If everthing is working, then build the intial GUI for the ICSM program
-      self.getFrameGraphics().buildGUIFrame(self)
-      self.getQAGraphics().buildPanel(self)
-      self.getExtruderGraphics().buildPanel(self)
-      self.getLabGraphics().buildPanel(self)
-      self.getProjectGraphics().buildPanel(self)
+      self.getFrameGraphics().buildGUIFrame(self, self.getGUI())
+      self.getQAGraphics().buildPanel(self, self.getFrameGraphics().getFrame("+"))
+      self.getExtruderGraphics().buildPanel(self, self.getFrameGraphics().getFrame("Extruder"))
+      self.getLabGraphics().buildPanel(self, self.getFrameGraphics().getFrame("Lab"))
+      self.getProjectGraphics().buildPanel(self, self.getFrameGraphics().getFrame("Project"))
 
     # Activate the GUI
     self.getGUI().mainloop()

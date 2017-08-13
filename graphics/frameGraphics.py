@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 02/26/2017
-Last Updated: 08/09/2017
+Last Updated: 08/11/2017
 Version: 1.0.0
 Description:
     The following python file sets up the frame and adds the Tabbed Document Interface(TDI) to the program
@@ -40,6 +40,8 @@ class FrameG:
       sys.exit()
 
     # Set initial values for this instance of the "FrameG" class
+    self.actions = None
+    self.data = None
     self.notebook = None
     self.frames = {}
 
@@ -64,6 +66,40 @@ class FrameG:
         return False, "%s:\nconfig file is not a designated config file for this program" % ERROR
     else:
       return False, "%s:\ninputted file is not a Module" % ERROR
+    return True, ""
+
+  '''
+  The following function returns the controller for this instance of the class
+  '''
+  def getActions(self):
+    return self.actions
+
+  '''
+  The following function sets the controller for this instance of the Frame. If the input does not meet the
+  requirements then the function returns a "False" boolean value and an error message
+  '''
+  def setActions(self, actions):
+    self.actions = actions
+    return True, ""
+
+  '''
+  The following function returns the model for this instance of the class
+  '''
+  def getData(self):
+    return self.data
+
+  '''
+  The following function sets the model for this instance of the Frame. If the input does not meet the
+  requirements then the function returns a "False" boolean value and an error message
+  '''
+  def setData(self, data):
+    if hasattr(data, "confirm"):
+      if data.confirm("Frame"):
+        self.data = data
+      else:
+        return False, "%s:\ndata for FrameG is not frameData" % ERROR
+    else:
+      return False, "%s:\ninput is not a file for the ICSM program" % ERROR
     return True, ""
 
   '''
@@ -137,27 +173,27 @@ class FrameG:
   '''
   The following function builds the initial error GUI before the ICSM starts to execute
   '''
-  def buildErrorGUI(self, graphics, message):
+  def buildErrorGUI(self, gui, message, exit):
 
       # Call the "__buildFrame" function to build the frame
-      self.__buildFrame(graphics.getGUI(), "ICSM - ERROR", 800, 200)
-      graphics.getGUI().resizable(width=False, height=False)
+      self.__buildFrame(gui, "ICSM - ERROR", 800, 200)
+      gui.resizable(width=False, height=False)
 
       # Build the label with the error message on it for the GUI and place the message in the middle of the frame
-      errorLabel = tk.Label(graphics.getGUI(), font=("Arial", 16, 'bold'), text=message)
+      errorLabel = tk.Label(gui, font=("Arial", 16, 'bold'), text=message)
       errorLabel.place(relx=0.5, rely=0.35, anchor=tk.CENTER)
 
       # Create and place a "OK" bottom towards the bottom of the frame
-      okButton = tk.Button(graphics.getGUI(), text="OK", width=10, height=2, command=graphics.getActions().exit)
+      okButton = tk.Button(gui, text="OK", width=10, height=2, command=exit)
       okButton.place(relx=0.5, rely=0.65, anchor=tk.CENTER)
 
   '''
   The following function builds the ICSM program GUI frame and TDI system
   '''
-  def buildGUIFrame(self, graphics):
+  def buildGUIFrame(self, graphics, gui):
 
     # Call the "__buildFrame" function to build the frame
-    self.__buildFrame(graphics.getGUI(), self.getConfig().TITLE, self.getConfig().WIDTH, self.getConfig().HEIGHT)
+    self.__buildFrame(gui, self.getConfig().TITLE, self.getConfig().WIDTH, self.getConfig().HEIGHT)
 
     # Create the style for the TDI
     style = ttk.Style()
@@ -171,17 +207,17 @@ class FrameG:
     style.theme_use("ICSMTDI")
 
     # Create the quick access popup menu
-    QAMenu = tk.Menu(graphics.getGUI(), tearoff=0)
+    QAMenu = tk.Menu(gui, tearoff=0)
     for value in self.getConfig().RIGHT_CLICK_QA_MENU:
       QAMenu.add_command(label=value, command=lambda value=value: graphics.getActions().getTDIActions().react(value))
 
     # Create the TDI popup menu
-    TDIMenu = tk.Menu(graphics.getGUI(), tearoff=0)
+    TDIMenu = tk.Menu(gui, tearoff=0)
     for value in self.getConfig().RIGHT_CLICK_TDI_MENU:
       TDIMenu.add_command(label=value, command=lambda value=value: graphics.getActions().getTDIActions().react2(value))
 
     # Create the 'Notebook' python module instance
-    doesWork, message = self.setNotebook(ttk.Notebook(graphics.getGUI()))
+    doesWork, message = self.setNotebook(ttk.Notebook(gui))
     if not doesWork:
       print message
       sys.exit()
@@ -204,9 +240,8 @@ class FrameG:
     # Finish TDI specs
     self.getNotebook().pack(fill='both', expand=1)
     self.getNotebook().bind('<Control-1>',
-                            lambda event: graphics.getActions().getFrameActions().showMenuDropDown(graphics, event,
-                                                                                                   self.getConfig(),
-                                                                                                   QAMenu, TDIMenu))
+                            lambda event: self.getActions().showMenuDropDown(graphics, event, self.getConfig(),
+                                                                             QAMenu, TDIMenu))
 
   '''
   The following function returns a confirmation that tells the calling code which class file this function belongs to

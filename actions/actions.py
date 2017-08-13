@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 03/16/2017
-Last Updated: 08/09/2017
+Last Updated: 08/11/2017
 Version: 1.0.0
 Description:
     The following python file contains multiple interaction functions for the Controller for the ICSM program
@@ -47,6 +47,10 @@ class Actions:
     # Set the rest of the initial "Actions" class variables
     self.data = None
     self.graphics = None
+    doesWork, message = self.setExtruderActions(extruderA.ExtruderA(self.getConfig().getConfigExtruder()))
+    if not doesWork:
+      print message
+      sys.exit()
     
   '''
   The following function returns the configuration file for this instance of the "Actions" class
@@ -102,6 +106,7 @@ class Actions:
       if not doesWork:
         print message
         sys.exit()
+      self.getExtruderActions().setData(data.getExtruderData())
     else:
       return doesWork, message
       
@@ -136,9 +141,10 @@ class Actions:
       if not doesWork:
         print message
         sys.exit()
+      self.getExtruderActions().setGraphics(graphics.getExtruderGraphics())
     else:
       return doesWork, message
-      
+
   '''
   The following function returns the "frameActions" module
   '''
@@ -164,10 +170,33 @@ class Actions:
     return qaA
 
   '''
-  The following function returns the "feederActions" module
+  The following function returns the actions class for the "Extruder" panel
   '''
   def getExtruderActions(self):
-    return extruderA
+    return self.extruder
+
+  '''
+  The following function sets the actions class for the "Extruder" panel
+  '''
+  def setExtruderActions(self, extruder):
+
+    # Create the initial return variables and their values
+    doesWork = True
+    message = ""
+
+    # Check to make sure that the inputted parameter is an instance of a "ExtruderA" class
+    if hasattr(extruder, "confirm"):
+      if extruder.confirm("Extruder"):
+        self.extruder = extruder
+      else:
+        doesWork = False
+        message = "%s:\ninputted file for Actions is not a ExtruderA class file" % ERROR
+    else:
+      doesWork = False
+      message = "%s:\ninputted file is not a designated Actions class file for this program" % ERROR
+
+    # return the initial variables
+    return doesWork, message
 
   '''
   The following function returns the "TDIActions" module

@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 06/18/2017
-Last Updated: 08/10/2017
+Last Updated: 08/11/2017
 Version: 1.0.0
 Description:
     The following python file contains the class and functions for the "Project" panel
@@ -30,16 +30,20 @@ class ProjectG:
   '''
   The following function is the initial instance creation function for the "ProjectG" class
   '''
-  def __init__(self, config):
+  def __init__(self, config, builder):
 
     # Call set functions and if the return is False, then return the message for the error
     doesWork, message = self.setConfig(config)
     if not doesWork:
       print message
       sys.exit()
+    doesWork, message = self.setBuilder(builder)
+    if not doesWork:
+      print message
+      sys.exit()
 
     # Set initial values for this instance of the "ProjectG" class
-    self.default = 0
+    self.data = None
 
   '''
   The following function returns the configuration file for this instance of the "ProjectG" class
@@ -65,6 +69,46 @@ class ProjectG:
     return True, ""
 
   '''
+  The following function returns the builder for this instance of the "Project" panel
+  '''
+  def getBuilder(self):
+    return self.builder
+
+  '''
+  The following function sets the builder for this instance of the "Project" panel. If the input does not meet the
+  requirements then the function returns a "False" boolean value and an error message
+  '''
+  def setBuilder(self, builder):
+    if hasattr(builder, "confirm"):
+      if builder.confirm("Builder"):
+        self.builder = builder
+      else:
+        return False, "%s:\nbuilder for ProjectG is not GUIBuilder" % ERROR
+    else:
+      return False, "%s:\ninput is not a file for the ICSM program" % ERROR
+    return True, ""
+
+  '''
+  The following function returns the model for this instance of the "Project" panel
+  '''
+  def getData(self):
+    return self.data
+
+  '''
+  The following function sets the model for this instance of the "Project" panel. If the input does not meet the
+  requirements then the function returns a "False" boolean value and an error message
+  '''
+  def setData(self, data):
+    if hasattr(data, "confirm"):
+      if data.confirm("Project"):
+        self.data = data
+      else:
+        return False, "%s:\ndata for ProjectG is not projectData" % ERROR
+    else:
+      return False, "%s:\ninput is not a file for the ICSM program" % ERROR
+    return True, ""
+
+  '''
   The following function builds the components for the default section within the "Project" panel
   '''
   def __buildDefault(self, graphics, frame):
@@ -74,10 +118,7 @@ class ProjectG:
   '''
   The following function builds the initial state for the "Project" panel
   '''
-  def buildPanel(self, graphics):
-
-    # Get the "Project" frame from the instance of the "FrameG" class
-    panel = graphics.getFrameGraphics().getFrame("Project")
+  def buildPanel(self, graphics, panel):
 
     # Build the whitebackground and scrollbars
     frame = graphics.getBuilder().buildScrollingCanvas(panel)
@@ -88,7 +129,7 @@ class ProjectG:
     # Build the "Default Section"
     tempFrame = graphics.getBuilder().buildFrame(frame)
     tempFrame.grid(row=3, column=0, columnspan=20, padx=(0, 0), pady=(0, 0), sticky=tk.W)
-    defaultFrame = graphics.getBuilder().buildSection(tempFrame, "Default")
+    defaultFrame, defaultLabel = graphics.getBuilder().buildSection(tempFrame, "Default")
     self.__buildDefault(graphics, defaultFrame)
     defaultFrame.configure(width=700, height=100)
 
