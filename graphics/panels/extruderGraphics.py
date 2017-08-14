@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 03/23/2017
-Last Updated: 08/11/2017
+Last Updated: 08/14/2017
 Version: 1.0.0
 Description:
     The following python file contains the class and functions for the "Extruder" panel
@@ -51,6 +51,13 @@ class ExtruderG:
     self.portSetUpFrame = None
     self.strandCoolingFrame = None
     self.labels = {}
+    self.dieMenu = None
+    self.meshEntry = None
+    self.feedRollScale = None
+    self.rotorScale = None
+    self.feederSpeedScale = None
+    self.pumpSpeedScale = None
+    self.pelletizingComments = None
 
   '''
   The following function returns the configuration file for this instance of the "ExtruderG" class
@@ -254,10 +261,151 @@ class ExtruderG:
     return self.labels
 
   '''
+  The following function returns the menu for the die options
+  '''
+  def getDieMenu(self):
+    return self.dieMenu
+
+  '''
+  The following function sets the menu for the die options
+  '''
+  def setDieMenu(self, dieMenu):
+    self.dieMenu = dieMenu
+
+  '''
+  The following function returns the Tkinter Entry that stores the users notes on the mesh
+  '''
+  def getMeshEntry(self):
+    return self.meshEntry
+
+  '''
+  The following function sets the Tkinter Entry that stores the users notes on the mesh
+  '''
+  def setMeshEntry(self, meshEntry):
+    self.meshEntry = meshEntry
+
+  '''
+  The following function returns the Tkinter scale instance that represents the feed roll speed
+  '''
+  def getFeedRollScale(self):
+    return self.feedRollScale
+
+  '''
+  The following function sets the Tkinter scale instance that represents the feed roll speed
+  '''
+  def setFeedRollScale(self, feedRollScale):
+    self.feedRollScale = feedRollScale
+
+  '''
+  The following function returns the Tkinter scale instance that represents the rotor speed
+  '''
+  def getRotorScale(self):
+    return self.rotorScale
+
+  '''
+  The following function sets the Tkinter scale instance that represents the rotor speed
+  '''
+  def setRotorScale(self, rotorScale):
+    self.rotorScale = rotorScale
+
+  '''
+    The following function returns the Tkinter scale instance that represents the feeder speed
+    '''
+  def getFeederSpeedScale(self):
+    return self.feederSpeedScale
+
+  '''
+  The following function sets the Tkinter scale instance that represents the feeder speed
+  '''
+  def setFeederSpeedScale(self, feederSpeedScale):
+    self.feederSpeedScale = feederSpeedScale
+
+  '''
+  The following function returns the Tkinter scale instance that represents the pump speed
+  '''
+  def getPumpSpeedScale(self):
+    return self.pumpSpeedScale
+
+  '''
+  The following function sets the Tkinter scale instance that represents the pump speed
+  '''
+  def setPumpSpeedScale(self, pumpSpeedScale):
+    self.pumpSpeedScale = pumpSpeedScale
+
+  '''
+  The following function returns the Tkinter text box that the user types his/her comments into
+  '''
+  def getPelletizingComments(self):
+    return self.pelletizingComments
+
+  '''
+  The following function sets the Tkinter text box that the user types his/her comments into
+  '''
+  def setPelletizingComments(self, pelletizingComments):
+    self.pelletizingComments = pelletizingComments
+
+  '''
   The following function builds the components for the extruder options section within the "Extruder" panel
   '''
   def __buildExtruderOptions(self, frame):
-    print "__buildExtruderOptions"
+
+    # Build and add the "Extruder" drop down menu
+    extruderText = "Extruder"
+    extruderLabel = self.getBuilder().buildH3Label(frame, extruderText)
+    self.getLabels()[self.getConfig().EXTRUDER_OPTIONS_SECTION_TITLE][extruderText] = extruderLabel
+    extruderLabel.grid(row=0, column=0, padx=(50, 0), pady=(25, 0), sticky=tk.W)
+    extruderMenu, extruderVariable = self.getBuilder().buildStringDropDown(self.getActions().changeExtruderOptions,
+                                                                           self.getConfig().
+                                                                             EXTRUDER_OPTIONS_SECTION_TITLE,
+                                                                           extruderLabel, frame, 15,
+                                                                           self.getConfig().EXTRUDERS)
+    self.getData().setExtruderVariable(extruderVariable)
+    extruderMenu.grid(row=1, column=0, padx=(40, 0), pady=(0, 0), sticky=tk.W)
+
+    # Build and add the "Die Options" drop down menu
+    dieText = "Die Options"
+    dieLabel = self.getBuilder().buildH3Label(frame, dieText)
+    self.getLabels()[self.getConfig().EXTRUDER_OPTIONS_SECTION_TITLE][dieText] = dieLabel
+    dieLabel.grid(row=0, column=0, padx=(250, 0), pady=(25, 0), sticky=tk.W)
+    dieMenu, dieVariable = self.getBuilder().buildStringDropDown(self.getActions().selectDropDown,
+                                                                 self.getConfig().EXTRUDER_OPTIONS_SECTION_TITLE,
+                                                                 dieLabel, frame, 15,
+                                                                 self.getConfig().EXTRUDER_DIES[
+                                                                   self.getData().getExtruderVariable().get()])
+    self.getData().setDieVariable(dieVariable)
+    self.setDieMenu(dieMenu)
+    dieMenu.grid(row=1, column=0, padx=(240, 0), pady=(0, 0), sticky=tk.W)
+
+    # Build and add the "Pre-Die" drop down menu
+    preDieText = "Pre-Die"
+    preDieLabel = self.getBuilder().buildH3Label(frame, preDieText)
+    self.getLabels()[self.getConfig().EXTRUDER_OPTIONS_SECTION_TITLE][preDieText] = preDieLabel
+    preDieLabel.grid(row=0, column=0, padx=(450, 0), pady=(25, 0), sticky=tk.W)
+    preDieMenu, preDieVariable = self.getBuilder().buildStringDropDown(self.getActions().selectDropDown,
+                                                                       self.getConfig().EXTRUDER_OPTIONS_SECTION_TITLE,
+                                                                       preDieLabel, frame, 15,
+                                                                       self.getConfig().PRE_DIE)
+    self.getData().setPreDieVariable(preDieVariable)
+    preDieMenu.grid(row=1, column=0, padx=(440, 50), pady=(0, 0), sticky=tk.W)
+
+    # Build and add the "Screen Pack" checkbox
+    screenLabel = self.getBuilder().buildH3Label(frame, "Screen Pack:")
+    screenLabel.grid(row=2, column=0, padx=(50, 0), pady=(15, 35), sticky=tk.W)
+    screenBox, screenVariable = self.getBuilder().buildCheckBox(frame, "")
+    self.getData().setScreenPackVariable(screenVariable)
+    screenBox.grid(row=2, column=0, padx=(150, 0), pady=(16, 34), sticky=tk.W)
+
+    # Build and add the "Mesh" text input line
+    meshText = "Mesh:"
+    meshLabel = self.getBuilder().buildH3Label(frame, meshText)
+    self.getLabels()[self.getConfig().EXTRUDER_OPTIONS_SECTION_TITLE][meshText] = meshLabel
+    meshLabel.grid(row=2, column=0, padx=(250, 0), pady=(15, 35), sticky=tk.W)
+    self.setMeshEntry(tk.Entry(frame, width=26))
+    self.getMeshEntry().bind("<Key>",
+                             lambda event: self.getActions().checkLabel([self.getConfig().
+                                                                           EXTRUDER_OPTIONS_SECTION_TITLE,
+                                                                         meshLabel]))
+    self.getMeshEntry().grid(row=2, column=0, padx=(305, 0), pady=(15, 35), sticky=tk.W)
 
   '''
   The following function builds the components for the port set-up section within the "Extruder" panel
@@ -282,7 +430,7 @@ class ExtruderG:
     # Build and add the "Add Feeder" Button
     button = self.getBuilder().buildButton(frame, "Add Feeder")
     button.configure(command=lambda: self.getActions().addFeeder())
-    button.grid(row=0, column=0, padx=(50, 0), pady=(25, 0), sticky=tk.W)
+    button.grid(row=0, column=0, padx=(50, 50), pady=(25, 0), sticky=tk.W)
 
     # Build and add the frame that will hold all the labels with data on the feeders
     self.setFeedersFrame(self.getBuilder().buildFrame(frame))
@@ -294,9 +442,10 @@ class ExtruderG:
   def __buildStrandCoolingOptions(self, graphics, frame):
 
     # Build and add the Selection line of radio buttons
-    radios, variable = graphics.getBuilder().buildCoolingRadio(graphics, frame,
-                                                               graphics.getConfig().getConfigExtruder().
-                                                               STRAND_COOLING_OPTIONS)
+    radios, variable = graphics.getBuilder().buildRadio(self.getActions().changeCooling,
+                                                        self.getConfig().STRAND_COOLING_OPTIONS_SECTION_TITLE,
+                                                        None, frame, self.getConfig().STRAND_COOLING_OPTIONS)
+    self.getData().setSrandCoolingFrameVariable(variable)
     index = 0
     for radio in radios:
       if index == 0:
@@ -320,37 +469,41 @@ class ExtruderG:
   def __buildPelletizingOptions(self, frame):
 
     # Build and add the "Pelletizier" drop down menu
-    pellitizerLabel = self.getBuilder().buildH2Label(frame, "Pelletizier")
+    text = "Pelletizier"
+    pellitizerLabel = self.getBuilder().buildH3Label(frame, text)
     pellitizerLabel.grid(row=0, column=0, padx=(50, 0), pady=(25, 0), sticky=tk.W)
-    menu, variable = self.getBuilder().buildStringDropDown(self.getActions().changePellet, frame, 15,
-                                                           self.getConfig().PELLETIZIERS)
-    menu.grid(row=1, column=0, padx=(40, 0), pady=(0, 0), sticky=tk.W)
+    self.labels[self.getConfig().PELLETIZING_OPTIONS_SECTION_TITLE][text] = pellitizerLabel
+    menu, variable = self.getBuilder().buildStringDropDown(self.getActions().changePellet,
+                                                           self.getConfig().PELLETIZING_OPTIONS_SECTION_TITLE,
+                                                           pellitizerLabel, frame, 15, self.getConfig().PELLETIZIERS)
+    self.getData().setPelletizierVariable(variable)
+    menu.grid(row=1, column=0, columnspan=20, padx=(40, 0), pady=(0, 0), sticky=tk.W)
 
     # Build and add the "Feed Roll" scrollbar
-    feedLabel = self.getBuilder().buildH2Label(frame, "Feed Roll:")
-    feedLabel.grid(row=2, column=0, padx=(50, 0), pady=(15, 0), sticky=tk.W)
-    feedScale = self.getBuilder().buildScale(frame, 0, 1000)
-    feedScale.grid(row=2, column=0, padx=(145, 0), pady=(0, 0), sticky=tk.W)
+    feedLabel = self.getBuilder().buildH3Label(frame, "Feed Roll:")
+    feedLabel.grid(row=2, column=0, padx=(50, 0), pady=(18, 0), sticky=tk.W)
+    self.setFeedRollScale(self.getBuilder().buildScale(frame, 0, 1000))
+    self.getFeedRollScale().grid(row=2, column=1, padx=(0, 0), pady=(0, 0), sticky=tk.W)
 
     # Build and add the "Rotor" scrollbar
-    rotorLabel = self.getBuilder().buildH2Label(frame, "Rotor:")
-    rotorLabel.grid(row=2, column=0, padx=(375, 0), pady=(15, 0), sticky=tk.W)
-    rotorScale = self.getBuilder().buildScale(frame, 0, 1000)
-    rotorScale.grid(row=2, column=0, padx=(437, 0), pady=(0, 0), sticky=tk.W)
+    rotorLabel = self.getBuilder().buildH3Label(frame, "Rotor:")
+    rotorLabel.grid(row=2, column=2, padx=(25, 0), pady=(18, 0), sticky=tk.W)
+    self.setRotorScale(self.getBuilder().buildScale(frame, 0, 1000))
+    self.getRotorScale().grid(row=2, column=3, padx=(0, 25), pady=(0, 0), sticky=tk.W)
 
     # Build and add the pellet mill additional frame
     doesWork, message = self.setPelletMillFrame(self.getBuilder().buildFrame(frame))
     if not doesWork:
       print message
       sys.exit()
-    self.getPelletMillFrame().grid(row=3, column=0, padx=(0, 0), pady=(0, 0), sticky=tk.W)
+    self.getPelletMillFrame().grid(row=3, column=0, columnspan=20, padx=(0, 0), pady=(0, 0), sticky=tk.W)
 
     # Build and add the "Comments" textbox
-    commentsLabel = self.getBuilder().buildH2Label(frame, "Comments")
+    commentsLabel = self.getBuilder().buildH3Label(frame, "Comments")
     commentsLabel.grid(row=4, column=0, padx=(50, 0), pady=(15, 0), sticky=tk.W)
-    textbox = tk.Text(frame, width=70, height=9, highlightbackground=self.getConfig().COMMENTS_COLOR,
-                      highlightcolor=self.getConfig().ACTIVE_BACKGROUND)
-    textbox.grid(row=5, column=0, padx=(40, 0), pady=(0, 15), sticky=tk.W)
+    self.setPelletizingComments(tk.Text(frame, width=70, height=9, highlightbackground=self.getConfig().COMMENTS_COLOR,
+                                        highlightcolor=self.getConfig().ACTIVE_BACKGROUND))
+    self.getPelletizingComments().grid(row=5, column=0, columnspan=20, padx=(40, 0), pady=(0, 15), sticky=tk.W)
 
   '''
   The following function builds the components for the classified options section within the "Extruder" panel
@@ -399,6 +552,8 @@ class ExtruderG:
     extruderOptionsFrame, extruderOptionsLabel = self.getBuilder().buildSection(tempFrame,
                                                                                 self.getConfig().
                                                                                 EXTRUDER_OPTIONS_SECTION_TITLE)
+    self.labels[self.getConfig().EXTRUDER_OPTIONS_SECTION_TITLE] = {self.getConfig().EXTRUDER_OPTIONS_SECTION_TITLE:
+                                                                      extruderOptionsLabel}
     self.__buildExtruderOptions(extruderOptionsFrame)
 
     # Build the "Port Options Section"
@@ -406,12 +561,15 @@ class ExtruderG:
     tempFrame.grid(row=4, column=0, columnspan=20, padx=(0, 0), pady=(0, 0), sticky=tk.W)
     portOptionsFrame, portOptionsLabel = self.getBuilder().buildSection(tempFrame,
                                                                         self.getConfig().PORT_OPTIONS_SECTION_TITLE)
+    self.labels[self.getConfig().PORT_OPTIONS_SECTION_TITLE] = {self.getConfig().PORT_OPTIONS_SECTION_TITLE:
+                                                                  portOptionsLabel}
     self.__buildPortOptions(portOptionsFrame)
 
     # Build the "Add Feeders Section"
     tempFrame = self.getBuilder().buildFrame(frame)
     tempFrame.grid(row=5, column=0, columnspan=20, padx=(0, 0), pady=(0, 0), sticky=tk.W)
     feedersFrame, feedersLabel  = self.getBuilder().buildSection(tempFrame, self.getConfig().FEEDERS_SECTION_TITLE)
+    self.labels[self.getConfig().FEEDERS_SECTION_TITLE] = {self.getConfig().FEEDERS_SECTION_TITLE:feedersLabel}
     self.__buildAddFeedersOptions(feedersFrame)
 
     # Build the "Strand Cooling Options Section"
@@ -419,13 +577,20 @@ class ExtruderG:
     tempFrame.grid(row=6, column=0, columnspan=20, padx=(0, 0), pady=(0, 0), sticky=tk.W)
     strandCoolingOptionsFrame, strandCoolingOptionsLabel = self.getBuilder().buildSection(tempFrame,
                                                                 self.getConfig().STRAND_COOLING_OPTIONS_SECTION_TITLE)
+    self.labels[self.getConfig().STRAND_COOLING_OPTIONS_SECTION_TITLE] = {self.getConfig().
+                                                                          STRAND_COOLING_OPTIONS_SECTION_TITLE:
+                                                                            strandCoolingOptionsLabel}
     self.__buildStrandCoolingOptions(graphics, strandCoolingOptionsFrame)
 
     # Build the "Pelletizing Options Section"
     tempFrame = self.getBuilder().buildFrame(frame)
     tempFrame.grid(row=7, column=0, columnspan=20, padx=(0, 0), pady=(0, 0), sticky=tk.W)
     pelletizingOptionsFrame, pelletizingOptionsLabel = self.getBuilder().buildSection(tempFrame,
-                                                                    self.getConfig().PELLETIZING_OPTIONS_SECTION_TITLE)
+                                                                                      self.getConfig().
+                                                                                      PELLETIZING_OPTIONS_SECTION_TITLE)
+    self.labels[self.getConfig().PELLETIZING_OPTIONS_SECTION_TITLE] = {self.getConfig().
+                                                                       PELLETIZING_OPTIONS_SECTION_TITLE:
+                                                                         pelletizingOptionsLabel}
     self.__buildPelletizingOptions(pelletizingOptionsFrame)
 
     # Build the "Classified Options Section"
@@ -458,13 +623,129 @@ class ExtruderG:
     captureButton.grid(row=10, column=0, padx=(500, 0), pady=(50, 75), sticky=tk.W)
 
   '''
+  The following function changes the drop down menu contents of the "Die Options" and the "Pre-Die"
+  '''
+  def changeDieMenus(self):
+    function = self.getActions().respondToDieMenu
+    dictionary = self.getConfig().EXTRUDER_DIES
+    extruder = self.getData().getExtruderVariable().get()
+    section = self.getConfig().EXTRUDER_OPTIONS_SECTION_TITLE
+    label = self.getLabels()[section]["Die Options"]
+    self.getDieMenu()["menu"].delete(0, "end")
+    for string in dictionary[extruder]:
+      self.getDieMenu()["menu"].add_command(label=string, command=lambda value=string: function(section, label, value))
+    self.getData().getDieVariable().set(dictionary[extruder][0])
+
+  '''
+  The following function builds the "Port Set-Up" frame
+  '''
+  def buildPortFrame(self):
+    print "buildPortFrame"
+
+  '''
+  The following function builds the user options for the strand cooling "Belt" option
+  '''
+  def buildSCBelt(self):
+    print "buildSCBelt"
+
+  '''
+  The following function builds the user options for the strand cooling "Belt w/ Mister" or "Water Bath" options
+  '''
+  def buildSCMisterOrBath(self):
+    print "buildSCMisterOrBath"
+
+  '''
+  The following function builds the user options for the strand cooling "Spray Belt" option
+  '''
+  def buildSCSprayBelt(self):
+
+    # Build and add the "Misters" radio buttons
+    mistersLabel = self.getBuilder().buildH3Label(self.getStrandCoolingFrame(), "Misters")
+    mistersLabel.grid(row=0, column=0, padx=(100, 100), pady=(15, 0), sticky=tk.W)
+    misters = []
+    for index in range(0, 12):
+      mistersRadio, mistersVariable = self.getBuilder().buildRadio(self.getActions().checkMisters,
+                                                                   self.getConfig().
+                                                                     STRAND_COOLING_OPTIONS_SECTION_TITLE,
+                                                                   mistersLabel, self.getStrandCoolingFrame(),
+                                                                   ["On", "Off"])
+      misters.append(mistersVariable)
+      if index is 0:
+        mistersRadio[0].grid(row=1, column=index, padx=(50, 0), pady=(0, 0), sticky=tk.W)
+        mistersRadio[1].grid(row=2, column=index, padx=(50, 0), pady=(0, 0), sticky=tk.W)
+      else:
+        mistersRadio[0].grid(row=1, column=index, padx=(0, 0), pady=(0, 0), sticky=tk.W)
+        mistersRadio[1].grid(row=2, column=index, padx=(0, 0), pady=(0, 0), sticky=tk.W)
+
+    # Build and add the "Belt Misters" radio buttons
+    beltMisterslabel = self.getBuilder().buildH3Label(self.getStrandCoolingFrame(), "Belt Misters")
+    beltMisterslabel.grid(row=0, column=1, padx=(100, 100), pady=(15, 0), sticky=tk.W)
+
+  '''
+  The following function builds the user options for the strand cooling "UWP" or "Other" options
+  '''
+  def buildSCOther(self):
+
+    # Build and add the "Coming Soon" label
+    label = self.getBuilder().buildH2Label(self.getStrandCoolingFrame(), "Coming Soon")
+    label.grid(row=0, column=0, columnspan=20, padx=(100, 100), pady=(25, 35), sticky=tk.W)
+
+  '''
+  The following function builds the pellet mill frame if the "Pellet Mill" option was selected from the "Pelletizier"
+  drop down menu
+  '''
+  def buildPelletMillFrame(self):
+
+    # Build and add the "Feeder Speed" scrollbar
+    label = self.getBuilder().buildH3Label(self.getPelletMillFrame(), "Feeder Speed(%):")
+    label.grid(row=0, column=0, padx=(50, 0), pady=(18, 0), sticky=tk.W)
+    self.setFeederSpeedScale(self.getBuilder().buildScale(self.getPelletMillFrame(), 0, 100))
+    self.getFeederSpeedScale().grid(row=0, column=1, padx=(0, 25), pady=(0, 0), sticky=tk.W)
+
+    # Build and add the "Pump Speed" scrollbar
+    label = self.getBuilder().buildH3Label(self.getPelletMillFrame(), "Pump Speed(Hz):")
+    label.grid(row=0, column=2, padx=(25, 0), pady=(18, 0), sticky=tk.W)
+    self.setPumpSpeedScale(self.getBuilder().buildScale(self.getPelletMillFrame(), 0, 60))
+    self.getPumpSpeedScale().grid(row=0, column=3, padx=(0, 25), pady=(0, 0), sticky=tk.W)
+
+  '''
+  The following function checks to see if all the labels in a section have been changed back from the error color, red.
+  If so then the function also turns the section header label back to it's original color
+  '''
+  def checkSectionLabels(self, section):
+    allNormal = True
+    labels = self.getLabels()[section]
+    for key, label in labels.iteritems():
+      if key is section:
+        continue
+      if label["foreground"] == self.getConfig().ERROR_COLOR:
+        allNormal = False
+        break
+    if allNormal:
+      labels[section]["foreground"] = self.getConfig().ACTIVE_BACKGROUND
+
+  '''
+  The following function destroy's all the content on a frame
+  '''
+  def destroyAllWidgets(self, frame):
+    for widget in frame.winfo_children():
+      widget.destroy()
+    frame.configure(height=1)
+
+  '''
   The following function displays a list of errors to the user
   '''
   def displayUpdateError(self, errors, errorTextLabels):
 
     # Set the unused labels to red
-    print errorTextLabels
-    print self.getLabels()
+    for section, list in errorTextLabels.iteritems():
+      labels = self.getLabels()[section]
+      if not len(list) is 0:
+        labels[section]["foreground"] = self.getConfig().ERROR_COLOR
+      for item in list:
+        if item == "":
+          continue
+        labels[item]["foreground"] = self.getConfig().ERROR_COLOR
 
     # Display the error message
     tkMessageBox.showerror("ERROR", "".join(errors))

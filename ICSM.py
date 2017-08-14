@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 02/26/2017
-Last Updated: 08/09/2017
+Last Updated: 08/14/2017
 Version: 1.0.0
 Description:
     The following python file contains the initial main function for the ICSM program
@@ -75,6 +75,7 @@ if __name__ == "__main__":
   action.setData(True, data)
   action.setGraphics(True, graphic)
   data.setActions(True, action)
+  data.setGraphics(True, graphic)
   graphic.setActions(True, action)
   graphic.setData(True, data)
   

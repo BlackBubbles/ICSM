@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 03/29/2017
-Last Updated: 08/11/2017
+Last Updated: 08/14/2017
 Version: 1.0.0
 Description:
     The following python file contains the reaction functions for the "Extruder" panel for the GUI in the ICSM program
@@ -100,37 +100,102 @@ class ExtruderA:
       if graphics.confirm("Extruder"):
         self.graphics = graphics
       else:
-        return False, "%s:\ndata for ExtruderA is not extruderGraphics" % ERROR
+        return False, "%s:\ngraphics for ExtruderA is not extruderGraphics" % ERROR
     else:
       return False, "%s:\ninput is not a file for the ICSM program" % ERROR
     return True, ""
 
   '''
-  The following function calls the "" function in the Graphics to allow the user to add a feeder to the "Extruder"
-  panel
-  '''
-  def addFeeder(self):
-    print "addFeeder"
-
-  '''
-  The following function calls the "browseServer" function in the Graphics to allow the user to browse for a file
+  The following function repsonds to the user selecting the "Browse" button
   '''
   def callBrowseServer(self, graphics, title, label):
     filename = graphics.getBrowseServerGraphics().browseServer(graphics, title, label)
     graphics.getData().getExtruderData().setWorkflowFileName(filename)
 
   '''
-  The following function calls the "" function in the Graphics to allow the user to add a feeder to the Ex
+  The following function responds to the user selecting a option from the extruder drop down menu
   '''
-  def changeCooling(self, graphics, value):
-    print "changeCooling - ", value
+  def changeExtruderOptions(self, section, label):
+
+    # Check the label
+    self.checkLabel([section, label])
+
+    # Change the values within the "Die Options" and "Pre-Die" drop down menus
+    self.getGraphics().changeDieMenus()
+
+    # Build the port options frame
+    self.getGraphics().buildPortFrame()
 
   '''
-  The following function calls the "" function in the Graphics to repsond to the user selecting an option from the
-  "Pelletizier" drop down menu
+  The following function responds to the event made by the ICSM program when the user selects an extruder
   '''
-  def changePellet(self, variable):
-    print "changePellet - ", variable.get()
+  def respondToDieMenu(self, section, label, value):
+    self.getData().getDieVariable().set(value)
+    self.selectDropDown(section, label)
+
+  '''
+  The following function repsonds to the user selecting the "Add" button in the "Feeders" section
+  '''
+  def addFeeder(self):
+    print "addFeeder"
+
+  '''
+  The following function repsonds to the user selecting the type of cooling he/she would like to use
+  '''
+  def changeCooling(self, input):
+
+    # If the input is the initial input created by the widget ignore it
+    if isinstance(input, tk.IntVar):
+      return 0
+
+    # Destroy all elements on the strand cooling frame
+    self.getGraphics().destroyAllWidgets(self.getGraphics().getStrandCoolingFrame())
+
+    # Check to see which option the user has selected an adjust accordingly
+    cooling = self.getData().getSrandCoolingFrameVariable().get()
+    if cooling is 1:
+      self.getGraphics().buildSCBelt()
+    elif cooling is 2 or cooling is 3:
+      self.getGraphics().buildSCMisterOrBath()
+    elif cooling is 4:
+      self.getGraphics().buildSCSprayBelt()
+    elif cooling is 5 or cooling is 6:
+      self.getGraphics().buildSCOther()
+
+    # Check to see if the section title is red
+    self.getGraphics().checkSectionLabels(input[0])
+
+  '''
+  The following function responds to the user selecting options from the line of mister radio buttons
+  '''
+  def checkMisters(self, input):
+
+    if not isinstance(input, tk.IntVar):
+      print "checkMisters"
+
+  '''
+  The following function responds to the user selecting an option from the "Pelletizier" drop down menu
+  '''
+  def changePellet(self, section, label):
+
+    # Destroy all elements on the pellet mill frame
+    self.getGraphics().destroyAllWidgets(self.getGraphics().getPelletMillFrame())
+    self.getGraphics().setFeederSpeedScale(None)
+    self.getGraphics().setPumpSpeedScale(None)
+
+    # Check the variable to see if the pelletizier variable has changed to "Pellet Mill"
+    if self.getData().getPelletizierVariable().get() == self.getConfig().PELLETIZIERS[2]:
+      self.getGraphics().buildPelletMillFrame()
+
+    # Check the label to see if it is red
+    self.checkLabel([section, label])
+
+  '''
+  The following function responds to the user selecting an option from a dropdown menu and all that needs to happen is
+  to check the label with the drop down menu
+  '''
+  def selectDropDown(self, section, label):
+    self.checkLabel([section, label])
 
   '''
   The following function responds to the user selecting a radio button from the "Classified:" list and 
@@ -143,9 +208,8 @@ class ExtruderA:
       label = input[1]
       if isinstance(label, tk.Label):
         if label["foreground"] == self.getConfig().ERROR_COLOR:
-          print label
-        else:
-          print "hello"
+          label["foreground"] = self.getConfig().COMMENTS_COLOR
+          self.getGraphics().checkSectionLabels(section)
 
   '''
   The following function responds to the user clicking on the large "Update Workflow" button on the bottom of the GUI

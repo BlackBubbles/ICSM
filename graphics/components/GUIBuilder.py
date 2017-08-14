@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 06/24/2017
-Last Updated: 08/11/2017
+Last Updated: 08/14/2017
 Version: 1.0.0
 Description:
     The following python file contains multiple interaction functions for the ICSM program to build the specific
@@ -252,31 +252,13 @@ class Builder:
     return radios, variable
     
   '''
-  The following function builds and returns a list of Tkinter radio components specifically for the strand cooling
-  option section in the "Extruder" panel
-  '''
-  def buildCoolingRadio(self, graphics, parent, names):
-    variable = tk.IntVar(parent)
-    index = 1
-    radios = []
-    for value in names:
-      radio = tk.Radiobutton(parent, text=value, variable=variable, value=index,
-                             background=self.getConfig().BACKGROUND,
-                             activebackground=self.getConfig().ACTIVE_BACKGROUND,
-                             command=lambda: graphics.getActions().getExtruderActions().changeCooling(graphics,
-                                                                                                      variable.get()))
-      index = index + 1
-      radios.append(radio)
-    return radios, variable
-    
-  '''
   The following function builds a drop down menu from the input dictionary of components and returns the variable and
   the menu
   '''
-  def buildStringDropDown(self, function, parent, width, dic):
+  def buildStringDropDown(self, function, section, label, parent, width, dic):
     variable = tk.StringVar(parent)
     variable.set(dic[0])
-    menu = tk.OptionMenu(parent, variable, *dic, command=lambda x: function(variable))
+    menu = tk.OptionMenu(parent, variable, *dic, command=lambda x: function(section, label))
     menu.configure(width=width, activebackground=self.getConfig().ACTIVE_BACKGROUND)
     return menu, variable
 

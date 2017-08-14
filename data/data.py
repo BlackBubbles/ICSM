@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 03/05/2017
-Last Updated: 08/08/2017
+Last Updated: 08/14/2017
 Version: 1.0.0
 Description:
     The following python file contains multiple interaction functions for the model of the program
@@ -44,6 +44,7 @@ class Data:
 
     # Set initial values for this instance of the "Data" class
     self.actions = None
+    self.graphics = None
     doesWork, message = self.setFrameData(frameD.FrameD(self.getConfig().getConfigFrame()))
     if not doesWork:
       print message
@@ -118,6 +119,40 @@ class Data:
       if not doesWork:
         print message
         sys.exit()
+    else:
+      return doesWork, message
+
+  '''
+  The following function returns the instance of the "Graphics" class for this instance of the "Data" class
+  '''
+  def getGraphics(self):
+    return self.graphics
+
+  '''
+  The following function sets the instance of the "Graphics" class for the "Data" class. If the inputted Graphics class
+  file does not meet the requirements then the function returns a "False" boolean value and an error message
+  '''
+  def setGraphics(self, first, graphics):
+
+    # Create the initial return variables and their values
+    doesWork = True
+    message = ""
+
+    # Check to make sure that the inputted value is an instance of the "Graphics" class
+    if hasattr(graphics, "confirm"):
+      if graphics.confirm("Graphics"):
+        self.actions = graphics
+      else:
+        doesWork = False
+        message = "%s:\ninputted file for Data is not a Graphics class file" % ERROR
+    else:
+      doesWork = False
+      message = "%s:\ninputted file is not a designated Actions class file for this program" % ERROR
+    if first:
+      if not doesWork:
+        print message
+        sys.exit()
+      self.getExtruderData().setGraphics(graphics.getExtruderGraphics())
     else:
       return doesWork, message
 
