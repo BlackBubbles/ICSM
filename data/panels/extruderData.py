@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 08/07/2017
-Last Updated: 08/14/2017
+Last Updated: 08/15/2017
 Version: 1.0.0
 Description:
     The following python file contains the model code functions for the "Extruder" panel for the ICSM program
@@ -44,9 +44,17 @@ class ExtruderD:
     self.dieVariable = None
     self.preDieVariable = None
     self.screenVariable = None
-    self.classifiedVariable = None
-    self.pelletizierVariable = None
+    self.portVariables = []
+    self.sideVariables = []
     self.strandCoolingFrameVariable = None
+    self.separatorVariable = None
+    self.fansVariable = None
+    self.airKnivesVariable = None
+    self.numAirKnivesVariable = None
+    self.beltMisters = []
+    self.sluiceMisters = []
+    self.pelletizierVariable = None
+    self.classifiedVariable = None
 
   '''
   The following function returns the configuration file for this instance of the "ExtruderD" class
@@ -154,16 +162,112 @@ class ExtruderD:
     self.screenVariable = screenVariable
 
   '''
-  The following function returns the variable for the classified radio buttons
+  The following function returns the list of variables for the port drop down menus and their location on the extruder
   '''
-  def getClassifiedVariable(self):
-    return self.classifiedVariable
+  def getPortVariables(self):
+    return self.portVariables
 
   '''
-  The following function sets the variable for the classified radio buttons
+  The following function sets the list of variables for the port drop down menus and their location on the extruder
   '''
-  def setClassifiedVariable(self, classifiedVariable):
-    self.classifiedVariable = classifiedVariable
+  def setPortVariables(self, portVariables):
+    self.portVariables = portVariables
+
+  '''
+  The following function returns the list of variables for the side drop down menus and their location on the extruder
+  '''
+  def getSideVariables(self):
+    return self.sideVariables
+
+  '''
+  The following function sets the list of variables for the side drop down menus and their location on the extruder
+  '''
+  def setSideVariables(self, sideVariables):
+    self.sideVariables = sideVariables
+
+  '''
+  The following function returns the variable for the strand cooling frame
+  '''
+  def getStrandCoolingFrameVariable(self):
+    return self.strandCoolingFrameVariable
+
+  '''
+  The following function sets the variable for the strand cooling frame
+  '''
+  def setStrandCoolingFrameVariable(self, strandCoolingFrameVariable):
+    self.strandCoolingFrameVariable = strandCoolingFrameVariable
+
+  '''
+  The following function returns the variable for the strand separator
+  '''
+  def getSeparatorVariable(self):
+    return self.separatorVariable
+
+  '''
+  The following function sets the variable for the strand separator
+  '''
+  def setSeparatorVariable(self, separatorVariable):
+    self.separatorVariable = separatorVariable
+
+  '''
+  The following function returns the variable for the number of fans used on the extruder
+  '''
+  def getFansVariable(self):
+    return self.fansVariable
+
+  '''
+  The following function sets the variable for the number of fans used on the extruder
+  '''
+  def setFansVariable(self, fansVariable):
+    self.fansVariable = fansVariable
+
+  '''
+  The following function returns the variable that holds if the operator is using air knives on the extruder
+  '''
+  def getAirKnivesVariable(self):
+    return self.airKnivesVariable
+
+  '''
+  The following function sets the variable that holds if the operator is using air knives on the extruder
+  '''
+  def setAirKnivesVariable(self, airKnivesVariable):
+    self.airKnivesVariable = airKnivesVariable
+
+  '''
+  The following function returns the variable for the number of air knives used on the extruder
+  '''
+  def getNumAirKnivesVariable(self):
+    return self.numAirKnivesVariable
+
+  '''
+  The following function sets the variable for the number of air knives used on the extruder
+  '''
+  def setNumAirKnivesVariable(self, numAirKnivesVariable):
+    self.numAirKnivesVariable = numAirKnivesVariable
+
+  '''
+  The following function returns the list of belt mister varibles
+  '''
+  def getBeltMisters(self):
+    return self.beltMisters
+
+  '''
+  The following function sets the list of belt mister varibles
+  '''
+  def setBeltMisters(self, beltMisters):
+    self.beltMisters = beltMisters
+
+  '''
+  The following function returns the list of sluice mister varibles
+  '''
+  def getSluiceMisters(self):
+    return self.sluiceMisters
+
+  '''
+  The following function sets the list of sluice mister varibles
+  '''
+  def setSluiceMisters(self, sluiceMisters):
+    self.sluiceMisters = sluiceMisters
 
   '''
   The following function returns the variable for the pelletizer drop down menu
@@ -178,16 +282,25 @@ class ExtruderD:
     self.pelletizierVariable = pelletizierVariable
 
   '''
-  The following function returns the variable for the strand cooling frame
+  The following function returns the variable for the classified radio buttons
   '''
-  def getSrandCoolingFrameVariable(self):
-    return self.strandCoolingFrameVariable
+  def getClassifiedVariable(self):
+    return self.classifiedVariable
 
   '''
-  The following function sets the variable for the strand cooling frame
+  The following function sets the variable for the classified radio buttons
   '''
-  def setSrandCoolingFrameVariable(self, strandCoolingFrameVariable):
-    self.strandCoolingFrameVariable = strandCoolingFrameVariable
+  def setClassifiedVariable(self, classifiedVariable):
+    self.classifiedVariable = classifiedVariable
+
+  '''
+  The following function turns a list of variables into a list of values
+  '''
+  def __toValues(self, input):
+    list = []
+    for index in input:
+      list.append([index[0], index[1].get()])
+    return list
 
   '''
   The following function checks the data to see if the data is ready to update the workflow .xlsx sheet
@@ -227,14 +340,26 @@ class ExtruderD:
     labels = errorTextLabels[self.getConfig().STRAND_COOLING_OPTIONS_SECTION_TITLE]
 
     # Check the strand cooling radio buttons on the top of the section frame
-    if self.getSrandCoolingFrameVariable().get() is 0:
+    if self.getStrandCoolingFrameVariable().get() is 0:
       ready = False
       errors.append("Choose a \"Strand Cooling\" method\n")
       labels.append("")
-    else:
-
-      # FINISH
-      x = 0
+    elif self.getStrandCoolingFrameVariable().get() is 2:
+      if self.getAirKnivesVariable().get():
+        if self.getGraphics().getLocationEntry().get() == "":
+          ready = False
+          errors.append("Enter message into Air Knives: \"Location\"\n")
+          labels.append("Location:")
+    elif self.getStrandCoolingFrameVariable().get() is 3:
+      if self.getGraphics().getLengthEntry().get() == "":
+        ready = False
+        errors.append("Enter message into \"Length of Dip\"\n")
+        labels.append("Length of Dip:")
+      if self.getAirKnivesVariable().get():
+        if self.getGraphics().getLocationEntry().get() == "":
+          ready = False
+          errors.append("Enter message into Air Knives: \"Location\"\n")
+          labels.append("Location:")
 
     # Check the pelletizing section
     errorTextLabels[self.getConfig().PELLETIZING_OPTIONS_SECTION_TITLE] = []
@@ -274,6 +399,34 @@ class ExtruderD:
     update[section]["Pre-Die"] = self.getPreDieVariable().get()
     update[section]["Screen Pack"] = self.getScreenPackVariable().get()
     update[section]["Mesh"] = self.getGraphics().getMeshEntry().get()
+
+    # Add the data on the Port Set-Up Section
+    section = self.getConfig().PORT_OPTIONS_SECTION_TITLE
+    update[section] = {"Ports": self.__toValues(self.getPortVariables())}
+    update[section]["Sides"] = self.__toValues(self.getSideVariables())
+
+    # Add the data on the Strand Cooling Section
+    section = self.getConfig().STRAND_COOLING_OPTIONS_SECTION_TITLE
+    update[section] = {}
+    if self.getStrandCoolingFrameVariable().get() is 1 or self.getStrandCoolingFrameVariable().get() is 2 or\
+         self.getStrandCoolingFrameVariable().get() is 3:
+      update[section]["Separator"] = self.getSeparatorVariable().get()
+      update[section]["Fans"] = self.getFansVariable().get()
+    if self.getStrandCoolingFrameVariable().get() is 2 or self.getStrandCoolingFrameVariable().get() is 3:
+      update[section]["AirKnives"] = self.getAirKnivesVariable().get()
+      if self.getAirKnivesVariable().get():
+        update[section]["Location"] = self.getGraphics().getLocationEntry().get()
+        update[section]["AirKnivesNum"] = self.getNumAirKnivesVariable().get()
+    if self.getStrandCoolingFrameVariable().get() is 2 or self.getStrandCoolingFrameVariable().get() is 4:
+      update[section]["WaterTemp"] = self.getGraphics().getWaterTempScale().get()
+    if self.getStrandCoolingFrameVariable().get() is 3:
+      update[section]["LengthOfBath"] = self.getGraphics().getLengthEntry().get()
+    if self.getStrandCoolingFrameVariable().get() is 4:
+      update[section]["BeltMisters"] = self.__toValues(self.getBeltMisters())
+      update[section]["SluiceMisters"] = self.__toValues(self.getSluiceMisters())
+      update[section]["Conveyor"] = self.getGraphics().getConveyorScale().get()
+      update[section]["Blower"] = self.getGraphics().getBlowerScale().get()
+      update[section]["BlowerVac"] = self.getGraphics().getVacBlowerScale().get()
 
     # Add the data on the Pelletizing Section
     section = self.getConfig().PELLETIZING_OPTIONS_SECTION_TITLE

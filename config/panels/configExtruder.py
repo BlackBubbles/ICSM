@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 04/20/2017
-Last Updated: 08/11/2017
+Last Updated: 08/15/2017
 Version: 1.0.0
 Description:
     The following python file contains the configuration data for the "Extruder" panel
@@ -71,6 +71,42 @@ The following string variable contains the title for the extruder options sectio
 EXTRUDER_OPTIONS_SECTION_TITLE = "Extruder Options"
 
 '''
+The following dictionary contains all the port lengths for each extruder
+'''
+EXTRUDER_PORT_SIZES = {
+  EXTRUDERS[0]: [0],
+  EXTRUDERS[1]: [8],
+  EXTRUDERS[2]: [13],
+  EXTRUDERS[3]: [10],
+  EXTRUDERS[4]: [13],
+  EXTRUDERS[5]: [13]
+}
+
+'''
+The following dictionary contains the array of spots along the extruder where a port exists
+'''
+EXTRUDER_PORT_SPOTS = {
+  EXTRUDERS[0]: [0],
+  EXTRUDERS[1]: [1, 2, 3, 4, 5, 6, 7],
+  EXTRUDERS[2]: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+  EXTRUDERS[3]: [1, 5, 6],
+  EXTRUDERS[4]: [4, 6, 7, 10, 11],
+  EXTRUDERS[5]: [1, 4, 5, 6, 7, 10, 11]
+}
+
+'''
+The following dictionary contains the array of spots along the extruder where a side stuffer exists
+'''
+EXTRUDER_SIDE_SPOTS = {
+  EXTRUDERS[0]: [0],
+  EXTRUDERS[1]: [],
+  EXTRUDERS[2]: [5, 6],
+  EXTRUDERS[3]: [4],
+  EXTRUDERS[4]: [4, 6, 10],
+  EXTRUDERS[5]: [5, 7, 10]
+}
+
+'''
 The following list contains all the possible feeder types that the user can choose
 '''
 FEEDERS = ["Select", "Process 11", "FW40", "DDSR", "K-tron S60-S120", "K-tron S60-S60"]
@@ -106,6 +142,11 @@ FEEDER_TUBES = {
 The following list contains the numbers from 0 to 4
 '''
 NUM = [0, 1, 2, 3, 4]
+
+'''
+The following list contains the numbers from 1 to 4
+'''
+NUM_NO_ZERO = [1, 2, 3, 4]
 
 '''
 The following list contains all the possible pelletizing options that the user can choose

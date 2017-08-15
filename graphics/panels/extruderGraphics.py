@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 03/23/2017
-Last Updated: 08/14/2017
+Last Updated: 08/15/2017
 Version: 1.0.0
 Description:
     The following python file contains the class and functions for the "Extruder" panel
@@ -53,6 +53,13 @@ class ExtruderG:
     self.labels = {}
     self.dieMenu = None
     self.meshEntry = None
+    self.airKnivesFrame = None
+    self.waterTempScale = None
+    self.lengthEntry = None
+    self.locationEntry = None
+    self.conveyorScale = None
+    self.blowerScale = None
+    self.vacBlowerScale = None
     self.feedRollScale = None
     self.rotorScale = None
     self.feederSpeedScale = None
@@ -285,6 +292,90 @@ class ExtruderG:
     self.meshEntry = meshEntry
 
   '''
+  The following function returns the Tkinter frame that displays the air knives options
+  '''
+  def getAirKnivesFrame(self):
+    return self.airKnivesFrame
+
+  '''
+  The following function sets the Tkinter frame that displays the air knives options
+  '''
+  def setAirKnivesFrame(self, airKnivesFrame):
+    self.airKnivesFrame = airKnivesFrame
+
+  '''
+  The following function returns the Tkinter scale for the water temp
+  '''
+  def getWaterTempScale(self):
+    return self.waterTempScale
+
+  '''
+  The following function sets the Tkinter scale for the water temp
+  '''
+  def setWaterTempScale(self, waterTempScale):
+    self.waterTempScale = waterTempScale
+
+  '''
+  The following function returns the Tkinter entry for the length of the water bath dip
+  '''
+  def getLengthEntry(self):
+    return self.lengthEntry
+
+  '''
+  The following function sets the Tkinter entry for the length of the water bath dip
+  '''
+  def setLengthEntry(self, lengthEntry):
+    self.lengthEntry = lengthEntry
+
+  '''
+  The following function returns the Tkinter entry for the location of the air knives
+  '''
+  def getLocationEntry(self):
+    return self.locationEntry
+
+  '''
+  The following function sets the Tkinter entry for the location of the air knives
+  '''
+  def setLocationEntry(self, locationEntry):
+    self.locationEntry = locationEntry
+
+  '''
+  The following function returns the Tkinter scale for the conveyor speed
+  '''
+  def getConveyorScale(self):
+    return self.conveyorScale
+
+  '''
+  The following function sets the Tkinter scale for the conveyor speed
+  '''
+  def setConveyorScale(self, conveyorScale):
+    self.conveyorScale = conveyorScale
+
+  '''
+  The following function returns the Tkinter scale for the blower speed
+  '''
+  def getBlowerScale(self):
+    return self.blowerScale
+
+  '''
+  The following function sets the Tkinter scale for the blower speed
+  '''
+  def setBlowerScale(self, blowerScale):
+    self.blowerScale = blowerScale
+
+  '''
+  The following function returns the Tkinter scale for the blower vac speed
+  '''
+  def getVacBlowerScale(self):
+    return self.vacBlowerScale
+
+  '''
+  The following function sets the Tkinter scale for the blower vac speed
+  '''
+  def setVacBlowerScale(self, vacBlowerScale):
+    self.vacBlowerScale = vacBlowerScale
+
+  '''
   The following function returns the Tkinter scale instance that represents the feed roll speed
   '''
   def getFeedRollScale(self):
@@ -445,11 +536,13 @@ class ExtruderG:
     radios, variable = graphics.getBuilder().buildRadio(self.getActions().changeCooling,
                                                         self.getConfig().STRAND_COOLING_OPTIONS_SECTION_TITLE,
                                                         None, frame, self.getConfig().STRAND_COOLING_OPTIONS)
-    self.getData().setSrandCoolingFrameVariable(variable)
+    self.getData().setStrandCoolingFrameVariable(variable)
     index = 0
     for radio in radios:
       if index == 0:
         radio.grid(row=0, column=index, padx=(50, 0), pady=(15, 0), sticky=tk.W)
+      elif index == len(radios) - 1:
+        radio.grid(row=0, column=index, padx=(0, 50), pady=(15, 0), sticky=tk.W)
       else:
         radio.grid(row=0, column=index, padx=(0, 0), pady=(15, 0), sticky=tk.W)
       index = index + 1
@@ -459,9 +552,9 @@ class ExtruderG:
     if not doesWork:
       print message
       sys.exit()
-    self.getStrandCoolingFrame().grid(row=1, column=0, columnspan=20, padx=(0, 0), pady=(5, 15), sticky=tk.W)
+    self.getStrandCoolingFrame().grid(row=1, column=0, columnspan=20, padx=(0, 35), pady=(0, 35), sticky=tk.W)
     label = graphics.getBuilder().buildH2Label(self.getStrandCoolingFrame(), "Please Select a Strand Cooling Option")
-    label.grid(row=0, column=0, padx=(100, 100), pady=(25, 35), sticky=tk.W)
+    label.grid(row=0, column=0, padx=(100, 65), pady=(15, 0), sticky=tk.W)
 
   '''
   The following function builds the components for the pelletizing options section within the "Extruder" panel
@@ -637,49 +730,259 @@ class ExtruderG:
     self.getData().getDieVariable().set(dictionary[extruder][0])
 
   '''
-  The following function builds the "Port Set-Up" frame
+  The following function builds the label asking the user to select an extruder from the options
   '''
-  def buildPortFrame(self):
-    print "buildPortFrame"
+  def buildInitialPortFrame(self):
+    label = self.getBuilder().buildH2Label(self.getPortSetUpFrame(), "Please Choose Extruder")
+    label.grid(row=0, column=0, padx=(100, 100), pady=(35, 35), sticky=tk.W)
+
+  '''
+  The following function builds the "Port Set-Up" frame based on the inputted parameters
+  '''
+  def buildPortFrame(self, length, ports, sides, portOptions, sideOptions):
+
+    # Build the frame for the diagram
+    frame = self.getBuilder().buildFrame(self.getPortSetUpFrame())
+    frame.configure(highlightbackground=self.getConfig().COMMENTS_COLOR,
+                    highlightcolor=self.getConfig().COMMENTS_COLOR, highlightthickness=1)
+    frame.grid(row=1, column=0, columnspan=20, padx=(50, 50), pady=(0, 35), sticky=tk.W)
+
+    # Loop through all the ports spots in the extruder
+    for index in range(0, length):
+
+      # Build the square frame
+      portFrame = self.getBuilder().buildFrame(frame)
+      portFrame.configure(width=100, height=100, highlightbackground=self.getConfig().COMMENTS_COLOR,
+                          highlightcolor=self.getConfig().COMMENTS_COLOR, highlightthickness=1)
+      portFrame.grid_propagate(False)
+      portFrame.grid(row=0, column=0, padx=((100 * (length - 1)) - (100 * index), 0), pady=(0, 0), sticky=tk.W)
+
+      # Build and add the port number label
+      portNum = self.getBuilder().buildLabel(self.getPortSetUpFrame(), index + 1)
+      portNum.configure(font=["Arial", 10, "bold"])
+      portNum.grid(row=0, column=0, padx=(((100 * (length - 1)) - (100 * index) + 50), 0), pady=(45, 0), sticky=tk.W)
+
+      # Build and add the port options drop down menus
+      if index in ports:
+        port, variable = self.getBuilder().buildStringDropDown(self.getActions().respondToPortMenu,
+                                                     self.getConfig().PORT_OPTIONS_SECTION_TITLE, portFrame,
+                                                     self.getPortSetUpFrame(), 6, portOptions)
+        self.getData().getPortVariables().append([index + 1, variable])
+        port.grid(row=0, column=0, padx=(((100 * (length - 1)) - (100 * index) + 65), 0), pady=(45, 0), sticky=tk.W)
+
+      # Build and add the side stuffer drop down menus
+      if index in sides:
+        side, variable = self.getBuilder().buildStringDropDown(self.getActions().respondToPortMenu,
+                                                     self.getConfig().PORT_OPTIONS_SECTION_TITLE, portFrame,
+                                                     portFrame, 6, sideOptions)
+        self.getData().getSideVariables().append([index + 1, variable])
+        side.grid(row=0, column=0, padx=(14, 0), pady=(35, 0), sticky=tk.W)
+
+  '''
+  The following hidden function builds the water temp found on mister, bath and spray
+  '''
+  def __buildWaterTemp(self, frame):
+    label = self.getBuilder().buildH3Label(frame, "Water Temp " + u"\u00b0" + "C:")
+    label.grid(row=0, column=0, padx=(50, 0), pady=(15, 0), sticky=tk.W)
+    self.setWaterTempScale(self.getBuilder().buildScale(frame, 55, 80))
+    self.getWaterTempScale().grid(row=0, column=0, padx=(175, 0), pady=(0, 0), sticky=tk.W)
+
+  '''
+  The following hidden function builds the two components found on each of the belt, mister and bath
+  '''
+  def __buildStrandAndFans(self, frame):
+
+    # Build and add the strand seperator check box
+    strandLabel = self.getBuilder().buildH3Label(frame, "Strand Separator:")
+    strandLabel.grid(row=0, column=0, padx=(50, 0), pady=(15, 0), sticky=tk.W)
+    strandCheck, strandVariable = self.getBuilder().buildCheckBox(frame, "")
+    self.getData().setSeparatorVariable(strandVariable)
+    strandCheck.grid(row=0, column=0, padx=(185, 0), pady=(16, 0), sticky=tk.W)
+
+    # Build and add the "# of fans" drop down menu
+    fansLabel = self.getBuilder().buildH3Label(frame, "# of Fans:")
+    fansLabel.grid(row=0, column=0, padx=(250, 0), pady=(15, 0), sticky=tk.W)
+    fansMenu, fansVariable = self.getBuilder().buildStringDropDown(self.getActions().selectDropDown,
+                                                                   self.getConfig().
+                                                                     STRAND_COOLING_OPTIONS_SECTION_TITLE,
+                                                                   fansLabel, frame, 4, self.getConfig().NUM)
+    self.getData().setFansVariable(fansVariable)
+    fansMenu.grid(row=0, column=0, padx=(330, 0), pady=(16, 0), sticky=tk.W)
+
+  '''
+  The following hidden function builds the air knives section
+  '''
+  def __buildAirKnives(self, frame):
+
+    # Build and add the "air knives" section checkbox
+    label = self.getBuilder().buildH3Label(frame, "Air Knives:")
+    label.grid(row=0, column=0, padx=(50, 0), pady=(15, 0), sticky=tk.W)
+    box, variable = self.getBuilder().buildCheckBox(frame, "")
+    self.getData().setAirKnivesVariable(variable)
+    box.configure(command=lambda: self.getActions().repsondToAirKnives())
+    box.grid(row=0, column=0, padx=(135, 0), pady=(16, 0), sticky=tk.W)
+
+    # Build and add the frame for the air knives
+    self.setAirKnivesFrame(self.getBuilder().buildFrame(frame))
+    self.getAirKnivesFrame().grid(row=1, column=0, padx=(0, 0), pady=(0, 0), sticky=tk.W)
+
+  '''
+  The following function builds the rest of the air knives section
+  '''
+  def buildAirKnivesFrame(self):
+
+    # Build and add the "location" entry
+    text = "Location:"
+    locationLabel = self.getBuilder().buildH3Label(self.getAirKnivesFrame(), text)
+    self.getLabels()[self.getConfig().STRAND_COOLING_OPTIONS_SECTION_TITLE][text] = locationLabel
+    locationLabel.grid(row=0, column=0, padx=(75, 0), pady=(15, 0), sticky=tk.W)
+    self.setLocationEntry(tk.Entry(self.getAirKnivesFrame(), width=26))
+    self.getLocationEntry().insert(tk.END, "At End of Belt")
+    self.getLocationEntry().grid(row=0, column=0, padx=(150, 0), pady=(15, 0), sticky=tk.W)
+    self.getLocationEntry().bind("<Key>",
+                                 lambda event: self.getActions().checkLabel([self.getConfig().
+                                                                               STRAND_COOLING_OPTIONS_SECTION_TITLE,
+                                                                             locationLabel]))
+
+    # Build and add the "# of air knives" drop down menu
+    numLabel = self.getBuilder().buildH3Label(self.getAirKnivesFrame(), "# of Air Knives:")
+    numLabel.grid(row=0, column=0, padx=(425, 0), pady=(15, 0), sticky=tk.W)
+    menu, variable = self.getBuilder().buildStringDropDown(self.getActions().selectDropDown,
+                                                           self.getConfig().STRAND_COOLING_OPTIONS_SECTION_TITLE,
+                                                           numLabel, self.getAirKnivesFrame(), 4,
+                                                           self.getConfig().NUM_NO_ZERO)
+    self.getData().setNumAirKnivesVariable(variable)
+    menu.grid(row=0, column=0, padx=(540, 0), pady=(16, 0), sticky=tk.W)
 
   '''
   The following function builds the user options for the strand cooling "Belt" option
   '''
   def buildSCBelt(self):
-    print "buildSCBelt"
+    self.__buildStrandAndFans(self.getStrandCoolingFrame())
 
   '''
-  The following function builds the user options for the strand cooling "Belt w/ Mister" or "Water Bath" options
+  The following function builds the user options for the strand cooling "Belt w/ Mister" option
   '''
-  def buildSCMisterOrBath(self):
-    print "buildSCMisterOrBath"
+  def buildSCMister(self):
+
+    # Build and add the water temp scale
+    frame = self.getBuilder().buildFrame(self.getStrandCoolingFrame())
+    frame.grid(row=0, column=0, padx=(0, 0), pady=(0, 0), sticky=tk.W)
+    self.__buildWaterTemp(frame)
+
+    # Build and add the "strand seperator" checkbox and the "# of fans" drop down menu
+    frame = self.getBuilder().buildFrame(self.getStrandCoolingFrame())
+    frame.grid(row=1, column=0, padx=(0, 0), pady=(0, 0), sticky=tk.W)
+    self.__buildStrandAndFans(frame)
+
+    # Build and add the "air knives" section
+    frame = self.getBuilder().buildFrame(self.getStrandCoolingFrame())
+    frame.grid(row=2, column=0, padx=(0, 0), pady=(0, 0), sticky=tk.W)
+    self.__buildAirKnives(frame)
+
+  '''
+  The following function builds the user options for the strand cooling "Water Bath" option
+  '''
+  def buildSCBath(self):
+
+    # Build and add the "length of dip" entry
+    text = "Length of Dip:"
+    label = self.getBuilder().buildH3Label(self.getStrandCoolingFrame(), text)
+    self.getLabels()[self.getConfig().STRAND_COOLING_OPTIONS_SECTION_TITLE][text] = label
+    label.grid(row=0, column=0, padx=(50, 0), pady=(15, 0), sticky=tk.W)
+    self.setLengthEntry(tk.Entry(self.getStrandCoolingFrame(), width=26))
+    self.getLengthEntry().grid(row=0, column=0, padx=(165, 0), pady=(15, 0), sticky=tk.W)
+    self.getLengthEntry().bind("<Key>",
+                               lambda event: self.getActions().checkLabel([self.getConfig().
+                                                                            STRAND_COOLING_OPTIONS_SECTION_TITLE,
+                                                                           label]))
+
+    # Build and add the "strand seperator" checkbox and the "# of fans" drop down menu
+    frame = self.getBuilder().buildFrame(self.getStrandCoolingFrame())
+    frame.grid(row=1, column=0, padx=(0, 0), pady=(0, 0), sticky=tk.W)
+    self.__buildStrandAndFans(frame)
+
+    # Build and add the "air knives" section
+    frame = self.getBuilder().buildFrame(self.getStrandCoolingFrame())
+    frame.grid(row=2, column=0, padx=(0, 0), pady=(0, 0), sticky=tk.W)
+    self.__buildAirKnives(frame)
 
   '''
   The following function builds the user options for the strand cooling "Spray Belt" option
   '''
   def buildSCSprayBelt(self):
 
+    # Build and add misters frame
+    frame = self.getBuilder().buildFrame(self.getStrandCoolingFrame())
+    frame.grid(row=0, column=0, columnspan=20, padx=(0, 0), pady=(0, 0), sticky=tk.W)
+
     # Build and add the "Misters" radio buttons
-    mistersLabel = self.getBuilder().buildH3Label(self.getStrandCoolingFrame(), "Misters")
-    mistersLabel.grid(row=0, column=0, padx=(100, 100), pady=(15, 0), sticky=tk.W)
+    mistersLabel = self.getBuilder().buildH3Label(frame, "Belt Misters")
+    mistersLabel.grid(row=0, column=0, columnspan=20, padx=(300, 0), pady=(15, 0), sticky=tk.W)
     misters = []
     for index in range(0, 12):
+      label = self.getBuilder().buildLabel(frame, 12 - index)
+      label.configure(font=["Arial", 10, "bold"])
       mistersRadio, mistersVariable = self.getBuilder().buildRadio(self.getActions().checkMisters,
                                                                    self.getConfig().
                                                                      STRAND_COOLING_OPTIONS_SECTION_TITLE,
-                                                                   mistersLabel, self.getStrandCoolingFrame(),
-                                                                   ["On", "Off"])
-      misters.append(mistersVariable)
+                                                                   mistersLabel, frame, ["On", "Off"])
+      misters.append([index + 1, mistersVariable])
+      mistersVariable.set(2)
       if index is 0:
-        mistersRadio[0].grid(row=1, column=index, padx=(50, 0), pady=(0, 0), sticky=tk.W)
-        mistersRadio[1].grid(row=2, column=index, padx=(50, 0), pady=(0, 0), sticky=tk.W)
+        label.grid(row=1, column=index, padx=(50, 0), pady=(0, 0), sticky=tk.W)
+        mistersRadio[0].grid(row=2, column=index, padx=(50, 0), pady=(0, 0), sticky=tk.W)
+        mistersRadio[1].grid(row=3, column=index, padx=(50, 0), pady=(0, 0), sticky=tk.W)
       else:
-        mistersRadio[0].grid(row=1, column=index, padx=(0, 0), pady=(0, 0), sticky=tk.W)
-        mistersRadio[1].grid(row=2, column=index, padx=(0, 0), pady=(0, 0), sticky=tk.W)
+        label.grid(row=1, column=index, padx=(0, 0), pady=(0, 0), sticky=tk.W)
+        mistersRadio[0].grid(row=2, column=index, padx=(0, 0), pady=(0, 0), sticky=tk.W)
+        mistersRadio[1].grid(row=3, column=index, padx=(0, 0), pady=(0, 0), sticky=tk.W)
+    self.getData().setBeltMisters(misters)
 
     # Build and add the "Belt Misters" radio buttons
-    beltMisterslabel = self.getBuilder().buildH3Label(self.getStrandCoolingFrame(), "Belt Misters")
-    beltMisterslabel.grid(row=0, column=1, padx=(100, 100), pady=(15, 0), sticky=tk.W)
+    sluicelabel = self.getBuilder().buildH3Label(frame, "Sluice Misters")
+    sluicelabel.grid(row=0, column=0, columnspan=20, padx=(685, 0), pady=(15, 0), sticky=tk.W)
+    sluices = []
+    for index in range(0, 2):
+      label = self.getBuilder().buildLabel(frame, 2 - index)
+      label.configure(font=["Arial", 10, "bold"])
+      sluiceRadio, sluiceVariable = self.getBuilder().buildRadio(self.getActions().checkMisters,
+                                                                 self.getConfig().STRAND_COOLING_OPTIONS_SECTION_TITLE,
+                                                                 sluicelabel, frame, ["On", "Off"])
+      sluices.append([index + 1, sluiceVariable])
+      sluiceVariable.set(2)
+      if index is 0:
+        label.grid(row=1, column=index + 12, padx=(50, 0), pady=(0, 0), sticky=tk.W)
+        sluiceRadio[0].grid(row=2, column=index + 12, padx=(50, 0), pady=(0, 0), sticky=tk.W)
+        sluiceRadio[1].grid(row=3, column=index + 12, padx=(50, 0), pady=(0, 0), sticky=tk.W)
+      else:
+        label.grid(row=1, column=index + 12, padx=(0, 0), pady=(0, 0), sticky=tk.W)
+        sluiceRadio[0].grid(row=2, column=index + 12, padx=(0, 0), pady=(0, 0), sticky=tk.W)
+        sluiceRadio[1].grid(row=3, column=index + 12, padx=(0, 0), pady=(0, 0), sticky=tk.W)
+    self.getData().setSluiceMisters(sluices)
+
+    # Build and add the "Water Temp" scale
+    frame = self.getBuilder().buildFrame(self.getStrandCoolingFrame())
+    frame.grid(row=1, column=0, padx=(0, 0), pady=(0, 0), sticky=tk.W)
+    self.__buildWaterTemp(frame)
+
+    # Build and add the "Conveyor Speed" scale
+    conveyorLabel = self.getBuilder().buildH3Label(self.getStrandCoolingFrame(), "Conveyor Speed:")
+    conveyorLabel.grid(row=1, column=0, padx=(400, 0), pady=(15, 0), sticky=tk.W)
+    self.setConveyorScale(self.getBuilder().buildScale(self.getStrandCoolingFrame(), 0, 100))
+    self.getConveyorScale().grid(row=1, column=0, padx=(550, 0), pady=(0, 0), sticky=tk.W)
+
+    # Build and add the "Blower Speed" scale
+    blowerLabel = self.getBuilder().buildH3Label(self.getStrandCoolingFrame(), "Blower Speed:")
+    blowerLabel.grid(row=2, column=0, padx=(50, 0), pady=(15, 0), sticky=tk.W)
+    self.setBlowerScale(self.getBuilder().buildScale(self.getStrandCoolingFrame(), 0, 100))
+    self.getBlowerScale().grid(row=2, column=0, padx=(175, 0), pady=(0, 0), sticky=tk.W)
+
+    # Build and add the "Blower Vac Speed" scale
+    vacLabel = self.getBuilder().buildH3Label(self.getStrandCoolingFrame(), "Blower Vac Speed:")
+    vacLabel.grid(row=2, column=0, padx=(400, 0), pady=(15, 0), sticky=tk.W)
+    self.setVacBlowerScale(self.getBuilder().buildScale(self.getStrandCoolingFrame(), 0, 100))
+    self.getVacBlowerScale().grid(row=2, column=0, padx=(550, 0), pady=(0, 0), sticky=tk.W)
 
   '''
   The following function builds the user options for the strand cooling "UWP" or "Other" options
@@ -688,7 +991,7 @@ class ExtruderG:
 
     # Build and add the "Coming Soon" label
     label = self.getBuilder().buildH2Label(self.getStrandCoolingFrame(), "Coming Soon")
-    label.grid(row=0, column=0, columnspan=20, padx=(100, 100), pady=(25, 35), sticky=tk.W)
+    label.grid(row=0, column=0, columnspan=20, padx=(100, 65), pady=(15, 0), sticky=tk.W)
 
   '''
   The following function builds the pellet mill frame if the "Pellet Mill" option was selected from the "Pelletizier"

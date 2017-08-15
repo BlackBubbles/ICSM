@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 03/29/2017
-Last Updated: 08/14/2017
+Last Updated: 08/15/2017
 Version: 1.0.0
 Description:
     The following python file contains the reaction functions for the "Extruder" panel for the GUI in the ICSM program
@@ -123,8 +123,28 @@ class ExtruderA:
     # Change the values within the "Die Options" and "Pre-Die" drop down menus
     self.getGraphics().changeDieMenus()
 
-    # Build the port options frame
-    self.getGraphics().buildPortFrame()
+    # Destroy contents of the port frame
+    self.getGraphics().destroyAllWidgets(self.getGraphics().getPortSetUpFrame())
+    self.getData().setPortVariables([])
+    self.getData().setSideVariables([])
+
+    # Build the port options frame based on extruder contained
+    extruder = self.getData().getExtruderVariable().get()
+    if extruder == self.getConfig().EXTRUDERS[0]:
+      self.getGraphics().buildInitialPortFrame()
+      return 0
+    elif extruder == self.getConfig().EXTRUDERS[1]:
+      portOptions = self.getConfig().PORT_OPTIONS_11MM
+      sideOptions = ["None"]
+    elif extruder == self.getConfig().EXTRUDERS[2] or extruder == self.getConfig().EXTRUDERS[3]:
+      portOptions = self.getConfig().PORT_OPTIONS
+      sideOptions = self.getConfig().SIDE_STUFFER_WITHOUT_VACCUM
+    else:
+      portOptions = self.getConfig().PORT_OPTIONS
+      sideOptions = self.getConfig().SIDE_STUFFER
+    self.getGraphics().buildPortFrame(self.getConfig().EXTRUDER_PORT_SIZES[extruder][0],
+                                      self.getConfig().EXTRUDER_PORT_SPOTS[extruder],
+                                      self.getConfig().EXTRUDER_SIDE_SPOTS[extruder], portOptions, sideOptions)
 
   '''
   The following function responds to the event made by the ICSM program when the user selects an extruder
@@ -132,6 +152,12 @@ class ExtruderA:
   def respondToDieMenu(self, section, label, value):
     self.getData().getDieVariable().set(value)
     self.selectDropDown(section, label)
+
+  '''
+  The following function responds to the user selecting an option from a drop down menu from the port set-up
+  '''
+  def respondToPortMenu(self, section, frame):
+    return 0
 
   '''
   The following function repsonds to the user selecting the "Add" button in the "Feeders" section
@@ -151,12 +177,18 @@ class ExtruderA:
     # Destroy all elements on the strand cooling frame
     self.getGraphics().destroyAllWidgets(self.getGraphics().getStrandCoolingFrame())
 
+    # Reset Labels
+    sectionLabel = self.getGraphics().getLabels()[input[0]][input[0]]
+    self.getGraphics().getLabels()[input[0]] = {input[0]: sectionLabel}
+
     # Check to see which option the user has selected an adjust accordingly
-    cooling = self.getData().getSrandCoolingFrameVariable().get()
+    cooling = self.getData().getStrandCoolingFrameVariable().get()
     if cooling is 1:
       self.getGraphics().buildSCBelt()
-    elif cooling is 2 or cooling is 3:
-      self.getGraphics().buildSCMisterOrBath()
+    elif cooling is 2:
+      self.getGraphics().buildSCMister()
+    elif cooling is 3:
+      self.getGraphics().buildSCBath()
     elif cooling is 4:
       self.getGraphics().buildSCSprayBelt()
     elif cooling is 5 or cooling is 6:
@@ -166,12 +198,23 @@ class ExtruderA:
     self.getGraphics().checkSectionLabels(input[0])
 
   '''
+  The following function repsonds to the user clicking on the "air knives" checkbox
+  '''
+  def repsondToAirKnives(self):
+
+    # Destroy all elements on the strand cooling frame
+    self.getGraphics().destroyAllWidgets(self.getGraphics().getAirKnivesFrame())
+
+    # check to see if the variable if 1 or 0
+    if self.getData().getAirKnivesVariable().get():
+      self.getGraphics().buildAirKnivesFrame()
+
+  '''
   The following function responds to the user selecting options from the line of mister radio buttons
   '''
   def checkMisters(self, input):
-
     if not isinstance(input, tk.IntVar):
-      print "checkMisters"
+      return 0
 
   '''
   The following function responds to the user selecting an option from the "Pelletizier" drop down menu

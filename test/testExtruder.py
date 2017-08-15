@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 06/21/2017
-Last Updated: 08/11/2017
+Last Updated: 08/15/2017
 Version: 1.0.0
 Description:
     The following python file tests the code for the "Extruder" panel
@@ -78,6 +78,21 @@ def __testConfig(testF, config):
   if not doesWork:
     return doesWork, message
 
+  # Test config.EXTRUDER_PORT_SIZES
+  doesWork, message = testF.testConfigDicInt(config.EXTRUDER_PORT_SIZES, "configExtruder.EXTRUDER_PORT_SIZES")
+  if not doesWork:
+    return doesWork, message
+
+  # Test config.EXTRUDER_PORT_SPOTS
+  doesWork, message = testF.testConfigDicInt(config.EXTRUDER_PORT_SPOTS, "configExtruder.EXTRUDER_PORT_SPOTS")
+  if not doesWork:
+    return doesWork, message
+
+  # Test config.EXTRUDER_SIDE_SPOTS
+  doesWork, message = testF.testConfigDicInt(config.EXTRUDER_SIDE_SPOTS, "configExtruder.EXTRUDER_SIDE_SPOTS")
+  if not doesWork:
+    return doesWork, message
+
   # Test config.FEEDERS
   doesWork, message = testF.testConfigListString(config.FEEDERS, "configExtruder.FEEDERS")
   if not doesWork:
@@ -100,6 +115,11 @@ def __testConfig(testF, config):
 
   # Test config.NUM
   doesWork, message = testF.testConfigListPosInt(config.NUM, 5, "configExtruder.NUM")
+  if not doesWork:
+    return doesWork, message
+
+  # Test config.NUM_NO_ZERO
+  doesWork, message = testF.testConfigListPosInt(config.NUM_NO_ZERO, 4, "configExtruder.NUM_NO_ZERO")
   if not doesWork:
     return doesWork, message
 

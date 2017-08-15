@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 06/21/2017
-Last Updated: 08/09/2017
+Last Updated: 08/15/2017
 Version: 1.0.0
 Description:
     The following python file contains the testing functions used to test the ICSM program
@@ -35,7 +35,21 @@ def testConfigDicString(dictionary, string):
     if not doesWork:
       return doesWork, message
   return True, ""
-  
+
+'''
+The following function tests to make sure that the inputted dictionary contains all arrays of integers
+'''
+def testConfigDicInt(dictionary, string):
+  if not isinstance(dictionary, dict):
+    message = "%s:\n%s is not an dictionary" % (ERROR, string)
+    return False, message
+  for key, array in dictionary.iteritems():
+    secString = string + ":" + key
+    doesWork, message = testConfigListPosInt(array, len(array), secString)
+    if not doesWork:
+      return doesWork, message
+  return True, ""
+
 '''
 The following function tests to make sure that the inputted array contains all strings
 '''
