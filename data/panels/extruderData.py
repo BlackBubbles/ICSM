@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 08/07/2017
-Last Updated: 08/15/2017
+Last Updated: 08/16/2017
 Version: 1.0.0
 Description:
     The following python file contains the model code functions for the "Extruder" panel for the ICSM program
@@ -15,6 +15,7 @@ Imported files/libraries
 '''
 import sys
 from types import ModuleType
+from add import feederData
 
 '''
 Global variables
@@ -46,6 +47,7 @@ class ExtruderD:
     self.screenVariable = None
     self.portVariables = []
     self.sideVariables = []
+    self.feeders = {}
     self.strandCoolingFrameVariable = None
     self.separatorVariable = None
     self.fansVariable = None
@@ -186,6 +188,12 @@ class ExtruderD:
     self.sideVariables = sideVariables
 
   '''
+  The following function returns the dictionary of feeder models for this instance
+  '''
+  def getFeeders(self):
+    return self.feeders
+
+  '''
   The following function returns the variable for the strand cooling frame
   '''
   def getStrandCoolingFrameVariable(self):
@@ -294,6 +302,37 @@ class ExtruderD:
     self.classifiedVariable = classifiedVariable
 
   '''
+  The following function builds and returns a feeder model
+  '''
+  def buildFeeder(self):
+    return feederData.FeederD(self.getConfig(), self.getTotalPercentage())
+
+  '''
+  The following function returns the total percentage of the materials in the feeder
+  '''
+  def getTotalPercentage(self):
+    total = 0.0
+    for frame, feeder in self.getFeeders().iteritems():
+      total = total + feeder["Total"]
+    return total
+
+  '''
+  The following function
+  '''
+  def listFeeders(self):
+
+    # Get feeders from data
+    feeders = self.getFeeders()
+    list = []
+
+    # Constuct the list by filling it with the values of the dictionary
+    for key, value in feeders.iteritems():
+      list.append(value)
+
+    # Return the list of feeders
+    return list
+
+  '''
   The following function turns a list of variables into a list of values
   '''
   def __toValues(self, input):
@@ -334,6 +373,16 @@ class ExtruderD:
       ready = False
       errors.append("Enter message into \"Mesh\"\n")
       labels.append("Mesh:")
+
+    # Check the feeders section
+    errorTextLabels[self.getConfig().FEEDERS_SECTION_TITLE] = []
+    labels = errorTextLabels[self.getConfig().FEEDERS_SECTION_TITLE]
+
+    # Check to make sure that there is at least one feeder in the list
+    if len(self.getFeeders()) is 0:
+      ready = False
+      errors.append("Need at least one \"Feeder\"\n")
+      labels.append("")
 
     # Check the strand cooling section
     errorTextLabels[self.getConfig().STRAND_COOLING_OPTIONS_SECTION_TITLE] = []
@@ -404,6 +453,10 @@ class ExtruderD:
     section = self.getConfig().PORT_OPTIONS_SECTION_TITLE
     update[section] = {"Ports": self.__toValues(self.getPortVariables())}
     update[section]["Sides"] = self.__toValues(self.getSideVariables())
+
+    # Add the data on the Feeders
+    section = self.getConfig().FEEDERS_SECTION_TITLE
+    update[section] = {"Feeders": self.listFeeders()}
 
     # Add the data on the Strand Cooling Section
     section = self.getConfig().STRAND_COOLING_OPTIONS_SECTION_TITLE

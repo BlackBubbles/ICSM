@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 02/26/2017
-Last Updated: 08/11/2017
+Last Updated: 08/16/2017
 Version: 1.0.0
 Description:
     The following python file contains multiple interaction functions for the Graphical User Interface for the ICSM
@@ -14,19 +14,18 @@ Description:
 '''
 Imported files/libraries
 '''
-import sys
 import Tkinter as tk
-import ttk
+import sys
 from types import ModuleType
+
 import frameGraphics as frameG
-from add import browseServerGraphics as browseServerG
-from add import feederGraphics as feederG
 from add import TDIGraphics as TDIG
+from add import browseServerGraphics as browseServerG
 from components import GUIBuilder as build
-from panels import quickAccessGraphics as qaG
 from panels import extruderGraphics as extruderG
 from panels import labGraphics as labG
 from panels import projectGraphics as projectG
+from panels import quickAccessGraphics as qaG
 
 '''
 Global Variables
@@ -210,12 +209,6 @@ class Graphics:
   '''
   def getBrowseServerGraphics(self):
     return browseServerG
-
-  '''
-  The following function returns the "feederGraphics" module
-  '''
-  def getFeederGraphics(self):
-    return feederG
 
   '''
   The following function returns the instance of the "TDIGraphics" module

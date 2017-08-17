@@ -240,7 +240,6 @@ class Builder:
   '''
   def buildRadio(self, function, section, label, parent, names):
     variable = tk.IntVar(parent)
-    function(variable)
     index = 1
     radios = []
     for value in names:

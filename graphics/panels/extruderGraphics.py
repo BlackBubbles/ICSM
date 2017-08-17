@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 03/23/2017
-Last Updated: 08/15/2017
+Last Updated: 08/16/2017
 Version: 1.0.0
 Description:
     The following python file contains the class and functions for the "Extruder" panel
@@ -17,6 +17,7 @@ import sys
 from types import ModuleType
 import Tkinter as tk
 import tkMessageBox
+from add import feederGraphics
 
 '''
 Global variables
@@ -46,6 +47,7 @@ class ExtruderG:
     # Set initial values for this instance of the "ExtruderG" class
     self.actions = None
     self.data = None
+    self.feederGraphics = feederGraphics.FeederG(self.getConfig(), self.getBuilder())
     self.feedersFrame = None
     self.pelletMillFrame = None
     self.portSetUpFrame = None
@@ -123,6 +125,7 @@ class ExtruderG:
     if hasattr(actions, "confirm"):
       if actions.confirm("Extruder"):
         self.actions = actions
+        self.getFeederGraphics().setActions(actions.getFeederActions())
       else:
         return False, "%s:\nactions for ExtruderG is not extruderActions" % ERROR
     else:
@@ -148,6 +151,12 @@ class ExtruderG:
     else:
       return False, "%s:\ninput is not a file for the ICSM program" % ERROR
     return True, ""
+
+  '''
+  The following function returns the instance of the "FeederG" class for this instance
+  '''
+  def getFeederGraphics(self):
+    return self.feederGraphics
 
   '''
   The following function returns the Tkinter frame that was built to be manipulated for the feeders section in the
@@ -777,6 +786,71 @@ class ExtruderG:
                                                      portFrame, 6, sideOptions)
         self.getData().getSideVariables().append([index + 1, variable])
         side.grid(row=0, column=0, padx=(14, 0), pady=(35, 0), sticky=tk.W)
+
+  '''
+  The following function converts the inputted feeder dictionary into a string for the label
+  '''
+  def buildFeederLabelString(self, feeder):
+
+    # Build the initial string variable
+    string = ""
+
+    # Build the string value
+    if "Tube" in feeder:
+      string = string + "Feeder: " + feeder["Feeder"] + " - Tube: " + feeder["Tube"] + " - Screw: " + feeder["Screw"]
+    else:
+      string = string + "Feeder: " + feeder["Feeder"] + " - Screw: " + feeder["Screw"]
+    if feeder["Location"] is 2:
+      location = "Side Stuffer"
+    else:
+      location = "Throat"
+    if feeder["Location"] is 1:
+      set = "lbs/hr"
+    else:
+      set = "kg/hr"
+    RM = "{"
+    first = True
+    for key, val in feeder["RM"].iteritems():
+      if first:
+        RM = RM + key + ":" + str(val)
+        first = False
+      else:
+        RM = RM + ", " + key + ":" + str(val)
+    RM = RM + "}"
+    string = string + " - Location: " + location + " - Weight In: " + set + " - RM: " + RM
+    string = string + " - Total %: " + str(feeder["Total"])
+
+    # Return the initial string variable
+    return string
+
+  '''
+  The following function adds the feeder labels to the GUI
+  '''
+  def addFeederLabel(self, feeder):
+
+    # Build the initial frame
+    frame = self.getBuilder().buildFrame(self.getFeedersFrame())
+    frame.configure(highlightbackground=self.getConfig().COMMENTS_COLOR,
+                    highlightcolor=self.getConfig().COMMENTS_COLOR, highlightthickness=2)
+    frame.pack(fill=tk.X)
+
+    # Build the label that will be used
+    text = self.buildFeederLabelString(feeder)
+    label = self.getBuilder().buildH3Label(frame, text)
+    label.grid(row=0, column=0, padx=(50, 0), pady=(15, 15), sticky=tk.W)
+
+    # Build the edit button
+    delete = self.getBuilder().buildButton(frame, "Edit")
+    delete.grid(row=0, column=1, padx=(25, 0), pady=(15, 15), sticky=tk.W)
+    delete.configure(command=lambda: self.getActions().respondToEdit(frame))
+
+    # Build the delete buton
+    delete = self.getBuilder().buildButton(frame, "Delete")
+    delete.grid(row=0, column=2, padx=(25, 50), pady=(15, 15), sticky=tk.W)
+    delete.configure(command=lambda: self.getActions().respondToDelete(frame))
+
+    # Return the frame that is used
+    return frame
 
   '''
   The following hidden function builds the water temp found on mister, bath and spray

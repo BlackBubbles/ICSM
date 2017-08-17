@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 03/16/2017
-Last Updated: 08/11/2017
+Last Updated: 08/16/2017
 Version: 1.0.0
 Description:
     The following python file contains multiple interaction functions for the Controller for the ICSM program
@@ -15,13 +15,13 @@ Imported files/libraries
 '''
 import sys
 from types import ModuleType
+
 import frameActions as frameA
-from add import feederActions as feederA
 from add import TDIActions as TDIA
-from panels import quickAccessActions as qaA
 from panels import extruderActions as extruderA
 from panels import labActions as labA
 from panels import projectActions as projectA
+from panels import quickAccessActions as qaA
 
 '''
 Global variables
@@ -150,12 +150,6 @@ class Actions:
   '''
   def getFrameActions(self):
     return frameA
-
-  '''
-  The following function returns the "feederActions" module
-  '''
-  def getFeederActions(self):
-    return feederA
 
   '''
   The following function returns the "TDIActions" module

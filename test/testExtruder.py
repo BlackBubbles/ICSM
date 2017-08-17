@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 06/21/2017
-Last Updated: 08/15/2017
+Last Updated: 08/16/2017
 Version: 1.0.0
 Description:
     The following python file tests the code for the "Extruder" panel
@@ -98,6 +98,16 @@ def __testConfig(testF, config):
   if not doesWork:
     return doesWork, message
 
+  # Test config.FEEDER_LOCATIONS
+  doesWork, message = testF.testConfigListString(config.FEEDER_LOCATIONS, "configExtruder.FEEDER_LOCATIONS")
+  if not doesWork:
+    return doesWork, message
+
+  # Test config.FEEDER_OPTIONS_TITLE
+  doesWork, message = testF.testConfigString(config.FEEDER_OPTIONS_TITLE, "configExtruder.FEEDER_OPTIONS_TITLE")
+  if not doesWork:
+    return doesWork, message
+
   # Test config.FEEDER_SCREWS
   doesWork, message = testF.testConfigDicString(config.FEEDER_SCREWS, "configExtruder.FEEDER_SCREWS")
   if not doesWork:
@@ -105,6 +115,11 @@ def __testConfig(testF, config):
 
   # Test config.FEEDERS_SECTION_TITLE
   doesWork, message = testF.testConfigString(config.FEEDERS_SECTION_TITLE, "configExtruder.FEEDERS_SECTION_TITLE")
+  if not doesWork:
+    return doesWork, message
+
+  # Test config.FEEDER_SET_POINTS
+  doesWork, message = testF.testConfigListString(config.FEEDER_SET_POINTS, "configExtruder.FEEDER_SET_POINTS")
   if not doesWork:
     return doesWork, message
 
@@ -152,6 +167,16 @@ def __testConfig(testF, config):
 
   # Test config.PRE_DIE
   doesWork, message = testF.testConfigListString(config.PRE_DIE, "configExtruder.PRE_DIE")
+  if not doesWork:
+    return doesWork, message
+
+  # Test config.RADIO_BUTTON_TITLE
+  doesWork, message = testF.testConfigString(config.RADIO_BUTTON_TITLE, "configExtruder.RADIO_BUTTON_TITLE")
+  if not doesWork:
+    return doesWork, message
+
+  # Test config.RM_TITLE
+  doesWork, message = testF.testConfigString(config.RM_TITLE, "configExtruder.RM_TITLE")
   if not doesWork:
     return doesWork, message
 

@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 04/20/2017
-Last Updated: 08/15/2017
+Last Updated: 08/16/2017
 Version: 1.0.0
 Description:
     The following python file contains the configuration data for the "Extruder" panel
@@ -112,6 +112,16 @@ The following list contains all the possible feeder types that the user can choo
 FEEDERS = ["Select", "Process 11", "FW40", "DDSR", "K-tron S60-S120", "K-tron S60-S60"]
 
 '''
+The following list contains all possible locations for the feeder
+'''
+FEEDER_LOCATIONS = ["Throat", "Side Stuffer"]
+
+'''
+The following string variable is the feeder options section title for the feeder GUI
+'''
+FEEDER_OPTIONS_TITLE = "Feeder Options"
+
+'''
 The following dictionary contains all the possible screw options for each feeder that the user can choose
 '''
 FEEDER_SCREWS = {
@@ -126,6 +136,11 @@ FEEDER_SCREWS = {
 The following string variable contains the title for the add feeders section within the "Extruder" panel
 '''
 FEEDERS_SECTION_TITLE = "Feeders"
+
+'''
+The following list contains all the possible weight set points for the feeder
+'''
+FEEDER_SET_POINTS = ["lbs/hr", "kg/hr"]
 
 '''
 The following dictionary contains all the possible tube options for each feeder that the user can choose
@@ -178,6 +193,16 @@ PORT_OPTIONS_SECTION_TITLE = "Port Set-Up"
 The following list contains all the possible pre-die options that the user can choose
 '''
 PRE_DIE = ["Select", "Melt Pump", "Breaker Plate", "Through"]
+
+'''
+The following string holds the title for the feeder gui with the two radio button selections
+'''
+RADIO_BUTTON_TITLE = "Location/Measurement"
+
+'''
+The following string holds the title for the RM Code section in the feeder GUI
+'''
+RM_TITLE = "RM CODE"
 
 '''
 The following list contains all the possible options for each side stuffer on the extruder that the user can choose

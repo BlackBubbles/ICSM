@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 03/29/2017
-Last Updated: 08/15/2017
+Last Updated: 08/16/2017
 Version: 1.0.0
 Description:
     The following python file contains the reaction functions for the "Extruder" panel for the GUI in the ICSM program
@@ -16,6 +16,7 @@ Imported files/libraries
 import sys
 from types import ModuleType
 import Tkinter as tk
+from add import feederActions
 
 '''
 Global variables
@@ -41,6 +42,7 @@ class ExtruderA:
     # Set initial values for this instance of the "ExtruderA" class
     self.data = None
     self.graphics = None
+    self.feederActions = feederActions.FeederA(self.getConfig(), self.addFeederLabel)
 
   '''
   The following function returns the configuration file for this instance of the "ExtruderA" class
@@ -99,11 +101,18 @@ class ExtruderA:
     if hasattr(graphics, "confirm"):
       if graphics.confirm("Extruder"):
         self.graphics = graphics
+        self.getFeederActions().setGraphics(graphics.getFeederGraphics())
       else:
         return False, "%s:\ngraphics for ExtruderA is not extruderGraphics" % ERROR
     else:
       return False, "%s:\ninput is not a file for the ICSM program" % ERROR
     return True, ""
+
+  '''
+  The following function returns the instance of the "FeederA" class for this instance
+  '''
+  def getFeederActions(self):
+    return self.feederActions
 
   '''
   The following function repsonds to the user selecting the "Browse" button
@@ -163,7 +172,53 @@ class ExtruderA:
   The following function repsonds to the user selecting the "Add" button in the "Feeders" section
   '''
   def addFeeder(self):
-    print "addFeeder"
+
+    # Build the 3 classes with the input config file
+    feederD = self.getData().buildFeeder()
+
+    # Link 3 classes
+    self.getFeederActions().setData(feederD)
+    feederD.setActions(self.getFeederActions())
+    feederD.setGraphics(self.getGraphics().getFeederGraphics())
+    self.getGraphics().getFeederGraphics().setData(feederD)
+
+    # Build the initial Feeder GUI
+    self.getGraphics().getFeederGraphics().buildGUI()
+
+  '''
+  The following function responds to the user clicking on the "apply" button on the feeder GUI
+  '''
+  def addFeederLabel(self, feeder):
+
+    # Build the Feeder frame on the ICSM GUI
+    frame = self.getGraphics().addFeederLabel(feeder)
+
+    # Add feeder to Data
+    self.getData().getFeeders()[frame] = feeder
+
+    # Check the header label
+    self.getGraphics().checkSectionLabels(self.getConfig().FEEDERS_SECTION_TITLE)
+
+  '''
+  The following function responds to the user clicking on a delete button next to a feeder label
+  '''
+  def respondToDelete(self, frame):
+
+    # Remove the feeder data from the list of feeders in the Data
+    del self.getData().getFeeders()[frame]
+
+    # Destroy the feeder frame
+    frame.destroy()
+
+    # Resize the frame
+    if len(self.getData().getFeeders()) == 0:
+      self.getGraphics().getFeedersFrame().configure(height=1)
+
+  '''
+  The following function responds to the user clicking on an edit button next to a feeder label
+  '''
+  def respondToEdit(self, frame):
+    print "respondToEdit"
 
   '''
   The following function repsonds to the user selecting the type of cooling he/she would like to use
