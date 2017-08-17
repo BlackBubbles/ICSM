@@ -1110,6 +1110,18 @@ class ExtruderG:
     frame.configure(height=1)
 
   '''
+  The following function displays an error message with the inputted string
+  '''
+  def displayError(self, message):
+    tkMessageBox.showerror("ERROR", message)
+
+  '''
+  The following function displays an message with the inputted string
+  '''
+  def displayMessage(self, message):
+    tkMessageBox.showinfo("ICSM", message)
+
+  '''
   The following function displays a list of errors to the user
   '''
   def displayUpdateError(self, errors, errorTextLabels):

@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 03/05/2017
-Last Updated: 08/14/2017
+Last Updated: 08/17/2017
 Version: 1.0.0
 Description:
     The following python file contains multiple interaction functions for the model of the program
@@ -45,6 +45,7 @@ class Data:
     # Set initial values for this instance of the "Data" class
     self.actions = None
     self.graphics = None
+    self.socket = None
     doesWork, message = self.setFrameData(frameD.FrameD(self.getConfig().getConfigFrame()))
     if not doesWork:
       print message
@@ -53,7 +54,7 @@ class Data:
     if not doesWork:
       print message
       sys.exit()
-    doesWork, message = self.setExtruderData(extruderD.ExtruderD(self.getConfig().getConfigExtruder()))
+    doesWork, message = self.setExtruderData(extruderD.ExtruderD(self.getConfig().getConfigExtruder(), self.socket))
     if not doesWork:
       print message
       sys.exit()
@@ -155,6 +156,12 @@ class Data:
       self.getExtruderData().setGraphics(graphics.getExtruderGraphics())
     else:
       return doesWork, message
+
+  '''
+  The following function returns the socket that connects to the server
+  '''
+  def getSocket(self):
+    return self.getSocket()
 
   '''
   The following function returns the model code for the GUI frame for this instance of the "Data" class

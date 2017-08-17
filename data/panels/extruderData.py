@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 08/07/2017
-Last Updated: 08/16/2017
+Last Updated: 08/17/2017
 Version: 1.0.0
 Description:
     The following python file contains the model code functions for the "Extruder" panel for the ICSM program
@@ -13,9 +13,12 @@ Description:
 '''
 Imported files/libraries
 '''
+import os
 import sys
 from types import ModuleType
+import openpyxl
 from add import feederData
+import tkMessageBox
 
 '''
 Global variables
@@ -30,7 +33,7 @@ class ExtruderD:
   '''
   The following function is the initial instance creation function for the "ExtruderD" class
   '''
-  def __init__(self, config):
+  def __init__(self, config, socket):
 
     # Call set functions and if the return is False, then return the message for the error
     doesWork, message = self.setConfig(config)
@@ -40,6 +43,7 @@ class ExtruderD:
 
     # Set initial values for this instance of the "ExtruderD" class
     self.graphics = None
+    self.socket = socket
     self.workflowFileName = None
     self.extruderVariable = None
     self.dieVariable = None
@@ -100,6 +104,12 @@ class ExtruderD:
     else:
       return False, "%s:\ninput is not a file for the ICSM program" % ERROR
     return True, ""
+
+  '''
+  The following function returns the socket that connects to the server
+  '''
+  def getSocket(self):
+    return self.socket
 
   '''
   The following function returns the file name of the workflow sheet that is currently being selected within the 
@@ -308,6 +318,20 @@ class ExtruderD:
     return feederData.FeederD(self.getConfig(), self.getTotalPercentage())
 
   '''
+  The following function returns a boolen value dictating on whether or not the application is connected to the server
+  '''
+  def areConnected(self):
+    return False
+
+  '''
+  The following function returns a boolean value dictating on whether or not the server is mounted to the local machine
+  '''
+  def areMounted(self):
+    if os.path.isdir("/Volumes/Workflow"):
+      return True
+    return False
+
+  '''
   The following function returns the total percentage of the materials in the feeder
   '''
   def getTotalPercentage(self):
@@ -460,7 +484,7 @@ class ExtruderD:
 
     # Add the data on the Strand Cooling Section
     section = self.getConfig().STRAND_COOLING_OPTIONS_SECTION_TITLE
-    update[section] = {}
+    update[section] = {"Strand Cooling": self.getStrandCoolingFrameVariable().get()}
     if self.getStrandCoolingFrameVariable().get() is 1 or self.getStrandCoolingFrameVariable().get() is 2 or\
          self.getStrandCoolingFrameVariable().get() is 3:
       update[section]["Separator"] = self.getSeparatorVariable().get()
@@ -496,14 +520,153 @@ class ExtruderD:
     names = self.getConfig().CLASSIFIED_RADIO_BUTTON_NAMES
     update[section] = {"Classified": names[self.getClassifiedVariable().get() - 1]}
 
-    # Send the Server the update dictionary
-    print update
+    # Check workflow file name
+    if self.getWorkflowFileName() is None:
+      self.getGraphics().displayError("Please Select a Workflow")
+      return 0
 
-    # Wait for a response
-    # FINISH CODE
+    # Check on Server connection
+    if self.areConnected():
+      print "" # Finish code
+    elif self.areMounted():
+      if self.editXLSXFile(update):
+        self.getGraphics().displayMessage("Workflow was Updated")
+      else:
+        self.getGraphics().displayError("Workflow was not updated")
+    else:
+      self.getGraphics().displayError("The Appication is Unable to Connect to the Workflow")
+      return 0
 
-    # Message the user on the results
-    # FINISH CODE
+  '''
+  The following function updates the workflow with the edited information
+  '''
+  def editXLSXFile(self, update):
+
+    # Open the Workflow
+    wb = openpyxl.load_workbook("/Volumes/Workflow/TK_WF_DONT_TOUCH/wf_template_new.xlsx")
+
+    # Edit the extruding area
+    extruderDict = update["Extruder Options"]
+    wb["TK_Compounding"]["A6"] = extruderDict["Extruder"]
+    wb["TK_Compounding"]["C6"] = extruderDict["Die"].split("-")[0]
+    wb["TK_Compounding"]["D6"] = extruderDict["Die"].split("-")[1]
+    wb["TK_Compounding"]["F6"] = extruderDict["Pre-Die"]
+    if extruderDict["Screen Pack"] is 1:
+      wb["TK_Compounding"]["D8"] = "Yes"
+    else:
+      wb["TK_Compounding"]["D8"] = "No"
+    wb["TK_Compounding"]["D9"] = extruderDict["Mesh"]
+
+    # Edit the Port set-up area
+    portDict = update["Port Set-Up"]
+    ports = portDict["Ports"]
+    sides = portDict["Sides"]
+
+    # Edit the Feeder area
+    feederDict = update["Feeders"]
+    feeders = feederDict["Feeders"]
+    index = 0
+    for feeder in feeders:
+      row = (index * 5) + 16
+      wb["TK_Compounding"]["B" + str(row)] = feeder["Feeder"]
+      if "Tube" in feeder:
+        wb["TK_Compounding"]["E" + str(row)] = feeder["Tube"]
+      wb["TK_Compounding"]["G" + str(row)] = feeder["Screw"]
+      if feeder["Location"] is 2:
+        wb["TK_Compounding"]["L" + str(row)] = "Side Stuffer"
+      else:
+        wb["TK_Compounding"]["L" + str(row)] = "Throat"
+      index2 = 0
+      for RM, per in feeder["RM"].iteritems():
+        wb["TK_Compounding"]["N" + str(row + index2)] = RM
+        wb["TK_Compounding"]["R" + str(row + index2)] = str(per)
+        if feeder["Set Point"] is 1:
+          wb["TK_Compounding"]["T" + str(row + index2)] = "lbs/hr"
+        else:
+          wb["TK_Compounding"]["T" + str(row + index2)] = "kg/hr"
+        index2 = index2 + 1
+      index = index + 1
+
+    # Edit the Strand Cooling area
+    strandDict = update["Strand Cooling Options"]
+    if strandDict["Strand Cooling"] is 1:
+      cooling = "Belt"
+    elif strandDict["Strand Cooling"] is 2:
+      cooling = "Belt with Mister"
+    elif strandDict["Strand Cooling"] is 3:
+      cooling = "Water Bath"
+    elif strandDict["Strand Cooling"] is 4:
+      cooling = "Spray Belt"
+    elif strandDict["Strand Cooling"] is 5:
+      cooling = "UWP"
+    else:
+      cooling = "Other"
+    wb["TK_Compounding"]["L6"] = cooling
+    wb["TK_Compounding"]["E64"] = cooling
+    if strandDict["Strand Cooling"] is 1 or strandDict["Strand Cooling"] is 2 or strandDict["Strand Cooling"] is 3:
+      if strandDict["Separator"] is 1:
+        wb["TK_Compounding"]["E66"] = "Yes"
+      else:
+        wb["TK_Compounding"]["E66"] = "No"
+      wb["TK_Compounding"]["I66"] = strandDict["Fans"]
+    if strandDict["Strand Cooling"] is 2 or strandDict["Strand Cooling"] is 3:
+      if strandDict["AirKnives"] is 1:
+        wb["TK_Compounding"]["S64"] = "Yes"
+        wb["TK_Compounding"]["S65"] = strandDict["AirKnivesNum"]
+        wb["TK_Compounding"]["R66"] = strandDict["Location"]
+      else:
+        wb["TK_Compounding"]["S64"] = "No"
+    if strandDict["Strand Cooling"] is 2:
+      wb["TK_Compounding"]["K66"] = "Water Temp:"
+      wb["TK_Compounding"]["M66"] = strandDict["WaterTemp"]
+    if strandDict["Strand Cooling"] is 3:
+      wb["TK_Compounding"]["K66"] = "Length of Dip"
+      wb["TK_Compounding"]["M66"] = strandDict["LengthOfBath"]
+    if strandDict["Strand Cooling"] is 4:
+      wb["TK_Compounding"]["R69"] = strandDict["Conveyor"]
+      wb["TK_Compounding"]["S69"] = strandDict["Blower"]
+      wb["TK_Compounding"]["T69"] = strandDict["BlowerVac"]
+      wb["TK_Compounding"]["U69"] = strandDict["WaterTemp"]
+      index = 0
+      for mister in strandDict["BeltMisters"]:
+        if mister[1] is 1:
+          row = 69
+          value = "On"
+        else:
+          row = 70
+          value = "Off"
+        wb["TK_Compounding"].cell(row=row, column=(3 + index), value=value)
+        index = index + 1
+      index = 0
+      for sluice in strandDict["SluiceMisters"]:
+        if sluice[1] is 1:
+          row = 69
+          value = "On"
+        else:
+          row = 70
+          value = "Off"
+        wb["TK_Compounding"].cell(row=row, column=(16 + index), value=value)
+        index = index + 1
+
+    # Edit the Pelletizier area
+    pelletizierDict = update["Pelletizier Options"]
+    wb["TK_Compounding"]["P6"] = pelletizierDict["Pelletizier"]
+    wb["TK_Compounding"]["S6"] = pelletizierDict["Feed Roll"]
+    wb["TK_Compounding"]["S8"] = pelletizierDict["Rotor"]
+    if "Feeder Speed" in pelletizierDict:
+      feederSpeed = pelletizierDict["Feeder Speed"]
+    if "Pump Speed" in pelletizierDict:
+      pumpSpeed = pelletizierDict["Pump Speed"]
+    comments = pelletizierDict["Comments"]
+
+    # Edit the classified area
+    classifiedDict = update["Classified Options"]
+    wb["TK_Compounding"]["U6"] = classifiedDict["Classified"]
+
+    # Save the Workflow
+    wb.save("/Volumes/Workflow/TK_WF_DONT_TOUCH/wf_modified.xlsx")
+
+    return True
 
   '''
   The following function returns a confirmation that tells the calling code which class file this function belongs to
