@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 08/07/2017
-Last Updated: 08/17/2017
+Last Updated: 08/22/2017
 Version: 1.0.0
 Description:
     The following python file contains the model code functions for the "Extruder" panel for the ICSM program
@@ -17,8 +17,9 @@ import os
 import sys
 from types import ModuleType
 import openpyxl
+from openpyxl.styles import colors
+from openpyxl.styles import Border, Side
 from add import feederData
-import tkMessageBox
 
 '''
 Global variables
@@ -61,6 +62,10 @@ class ExtruderD:
     self.sluiceMisters = []
     self.pelletizierVariable = None
     self.classifiedVariable = None
+    self.dataShiftVariable = None
+    self.numDataVariable = None
+    self.fromVariable = None
+    self.toVariable = None
 
   '''
   The following function returns the configuration file for this instance of the "ExtruderD" class
@@ -312,6 +317,54 @@ class ExtruderD:
     self.classifiedVariable = classifiedVariable
 
   '''
+  The following function returns the variable for the data point every menu
+  '''
+  def getDataShiftVariable(self):
+    return self.dataShiftVariable
+
+  '''
+  The following function sets the variable for the data point every menu
+  '''
+  def setDataShiftVariable(self, dataShiftVariable):
+    self.dataShiftVariable = dataShiftVariable
+
+  '''
+  The following function returns the variable for the num of data points menu
+  '''
+  def getNumDataVariable(self):
+    return self.numDataVariable
+
+  '''
+  The following function returns the variable for the num of data points menu
+  '''
+  def setNumDataVariable(self, numDataVariable):
+    self.numDataVariable = numDataVariable
+
+  '''
+  The following function returns the variable for the from radio buttons
+  '''
+  def getFromVariable(self):
+    return self.fromVariable
+
+  '''
+  The following function sets the variable for the from radio buttons
+  '''
+  def setFromVariable(self, fromVariable):
+    self.fromVariable = fromVariable
+
+  '''
+  The following function returns the variable for the to radio buttons
+  '''
+  def getToVariable(self):
+    return self.toVariable
+
+  '''
+  The following function sets the variable for the to radio buttons
+  '''
+  def setToVariable(self, toVariable):
+    self.toVariable = toVariable
+
+  '''
   The following function builds and returns a feeder model
   '''
   def buildFeeder(self):
@@ -458,6 +511,33 @@ class ExtruderD:
     return ready, errors, errorTextLabels
 
   '''
+  The following function checks to make sure that the program is ready to capture data from the extruder
+  '''
+  def checkForCapture(self):
+
+    # Build the initial error variables and values
+    ready = True
+    errors = []
+    errorTextLabels = {}
+
+    # Add the section label
+    errorTextLabels[self.getConfig().CAPTURING_SECTION_TITLE] = []
+    labels = errorTextLabels[self.getConfig().CAPTURING_SECTION_TITLE]
+
+    # Check capture data point menu variables
+    if self.getDataShiftVariable().get() == self.getConfig().DATA_POINT_EVERY[0]:
+      ready = False
+      errors.append("Choose how often you want a \"Data Point\"\n")
+      labels.append(self.getConfig().DATA_POINT_EVERY_LABEL)
+    if self.getNumDataVariable().get() == self.getConfig().NUM_OF_DATA_POINTS[0]:
+      ready = False
+      errors.append("Choose total # of \"Data Points\"\n")
+      labels.append(self.getConfig().NUM_OF_DATA_POINTS_LABEL)
+
+    # Return the error variables
+    return ready, errors, errorTextLabels
+
+  '''
   The following function updates the workflow .xlsx sheets
   '''
   def updateWorkflow(self):
@@ -538,6 +618,34 @@ class ExtruderD:
       return 0
 
   '''
+  The following function tells the program on the server to capture data from the extruder and add it to the workflow
+  '''
+  def captureExtruder(self):
+
+    # Build the initial dictionary variable
+    capture = {}
+
+    # Add the data on the Classified Section
+    section = self.getConfig().CAPTURING_SECTION_TITLE
+    capture[section] = {"Data": self.getDataShiftVariable().get()}
+    capture[section]["Num"] = self.getNumDataVariable().get()
+    if self.getGraphics().getFromEntry().get():
+      capture[section]["From"] = [self.getGraphics().getFromEntry().get(), self.getFromVariable().get()]
+    else:
+      capture[section]["From"] = 0
+    if self.getGraphics().getToEntry().get():
+      capture[section]["To"] = [self.getGraphics().getToEntry().get(), self.getToVariable().get()]
+    else:
+      capture[section]["To"] = 0
+
+    # Check on Server connection
+    if True:#self.areConnected():
+      print capture # Finish code
+    else:
+      self.getGraphics().displayError("The Appication is Unable to Connect to the Server")
+      return 0
+
+  '''
   The following function updates the workflow with the edited information
   '''
   def editXLSXFile(self, update):
@@ -565,6 +673,10 @@ class ExtruderD:
     # Edit the Feeder area
     feederDict = update["Feeders"]
     feeders = feederDict["Feeders"]
+    for row in [13, 14, 15, 20, 25, 30, 35, 37, 62, 70]:
+      for column in range(1, 22):
+        wb["TK_Compounding"].cell(row=row, column=column).border = Border(bottom=Side(border_style="medium",
+                                                                                      color=colors.BLACK))
     index = 0
     for feeder in feeders:
       row = (index * 5) + 16

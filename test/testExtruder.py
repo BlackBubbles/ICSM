@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 06/21/2017
-Last Updated: 08/16/2017
+Last Updated: 08/22/2017
 Version: 1.0.0
 Description:
     The following python file tests the code for the "Extruder" panel
@@ -34,6 +34,11 @@ def __testConfig(testF, config):
   if not doesWork:
     return doesWork, message
 
+  # Test config.AM_PM_RADIO_NAMES
+  doesWork, message = testF.testConfigListString(config.AM_PM_RADIO_NAMES, "configExtruder.AM_PM_RADIO_NAMES")
+  if not doesWork:
+    return doesWork, message
+
   # Test config.CAPTURING_SECTION_TITLE
   doesWork, message = testF.testConfigString(config.CAPTURING_SECTION_TITLE,
                                              "configExtruder.CAPTURING_SECTION_TITLE")
@@ -54,6 +59,16 @@ def __testConfig(testF, config):
 
   # Test config.COMMENTS_COLOR
   doesWork, message = testF.testConfigColors(config.COMMENTS_COLOR, "configExtruder.COMMENTS_COLOR")
+  if not doesWork:
+    return doesWork, message
+
+  # Test config.DATA_POINT_EVERY
+  doesWork, message = testF.testConfigListString(config.DATA_POINT_EVERY, "configExtruder.DATA_POINT_EVERY")
+  if not doesWork:
+    return doesWork, message
+
+  # Test config.DATA_POINT_EVERY_LABEL
+  doesWork, message = testF.testConfigString(config.DATA_POINT_EVERY_LABEL, "configExtruder.DATA_POINT_EVERY_LABEL")
   if not doesWork:
     return doesWork, message
 
@@ -128,6 +143,11 @@ def __testConfig(testF, config):
   if not doesWork:
     return doesWork, message
 
+  # Test config.FROM_LABEL
+  doesWork, message = testF.testConfigString(config.FROM_LABEL, "configExtruder.FROM_LABEL")
+  if not doesWork:
+    return doesWork, message
+
   # Test config.NUM
   doesWork, message = testF.testConfigListPosInt(config.NUM, 5, "configExtruder.NUM")
   if not doesWork:
@@ -135,6 +155,11 @@ def __testConfig(testF, config):
 
   # Test config.NUM_NO_ZERO
   doesWork, message = testF.testConfigListPosInt(config.NUM_NO_ZERO, 4, "configExtruder.NUM_NO_ZERO")
+  if not doesWork:
+    return doesWork, message
+
+  # Test config.NUM_OF_DATA_POINTS
+  doesWork, message = testF.testConfigListString(config.NUM_OF_DATA_POINTS, "configExtruder.NUM_OF_DATA_POINTS")
   if not doesWork:
     return doesWork, message
 
@@ -205,6 +230,11 @@ def __testConfig(testF, config):
 
   # Test config.TITLE
   doesWork, message = testF.testConfigString(config.TITLE, "configExtruder.TITLE")
+  if not doesWork:
+    return doesWork, message
+
+  # Test config.TO_LABEL
+  doesWork, message = testF.testConfigString(config.TO_LABEL, "configExtruder.TO_LABEL")
   if not doesWork:
     return doesWork, message
 

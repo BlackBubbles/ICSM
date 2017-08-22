@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 04/20/2017
-Last Updated: 08/16/2017
+Last Updated: 08/22/2017
 Version: 1.0.0
 Description:
     The following python file contains the configuration data for the "Extruder" panel
@@ -22,6 +22,11 @@ Global variables
 The following variable contains the active background color for the GUI
 '''
 ACTIVE_BACKGROUND = "#0099ff"
+
+'''
+The following list contains all the possible text strings for the am/pm radio buttons
+'''
+AM_PM_RADIO_NAMES = ["AM", "PM"]
 
 '''
 The following string variable contains the title for the add feeders section within the "Extruder" panel
@@ -45,6 +50,17 @@ The following variable contains the color of the Comments text box border
 COMMENTS_COLOR = "#000000"
 
 '''
+The following variable contains all possible time spaces for getting data from the extruder
+'''
+DATA_POINT_EVERY = ["Select", "15 secs", "30 secs", "1 min", "2 min", "5 min", "10 mins"]
+
+'''
+The following variable contains the string for the drop down menu for all the possible time spaces for getting data
+from the extruder
+'''
+DATA_POINT_EVERY_LABEL = "Data Point Every:"
+
+'''
 The following variable contains the color that signals to the user that there is an error
 '''
 ERROR_COLOR = "#FF0000"
@@ -61,7 +77,7 @@ EXTRUDER_DIES = {
   "Select": ["None"],
   "Process 11mm": ["Select", "1-0.5mm", "1-1mm", "1-2mm", "1-2.5mm", "1-3mm"],
   "27mm Entek": ["Select", "2-4.5mm", "3-3mm", "3-4.5mm", "3-5mm", "5-2mm", "7-1mm"],
-  "27mm Leistritz": ["Select", "3-3mm", "5-3mm"],
+  "27mm Leistritz": ["Select", "3-4.5mm", "5-3mm"],
   "33mm Entek": ["Select", "7-4.5mm", "10-3.5mm", "16-2mm"],
   "35mm Leistritz": ["Select", "7-4.5mm", "10-3.5mm", "16-2mm"]}
 
@@ -154,6 +170,11 @@ FEEDER_TUBES = {
   "K-tron S60-S60": ["Select", "15", "25", "40", "60"]}
 
 '''
+The following variable contains the label name for the From entry widget
+'''
+FROM_LABEL = "From:"
+
+'''
 The following list contains the numbers from 0 to 4
 '''
 NUM = [0, 1, 2, 3, 4]
@@ -162,6 +183,17 @@ NUM = [0, 1, 2, 3, 4]
 The following list contains the numbers from 1 to 4
 '''
 NUM_NO_ZERO = [1, 2, 3, 4]
+
+'''
+The following list contains all the possible number of data points for capturing the data from the extruder
+'''
+NUM_OF_DATA_POINTS = ["Select", "1", "2", "3", "4", "5", "All"]
+
+'''
+The following list contains the label text for that drop down menu that contains all the possible number of data points
+for capturing the data from the extruder
+'''
+NUM_OF_DATA_POINTS_LABEL = "# of Total Data Points:"
 
 '''
 The following list contains all the possible pelletizing options that the user can choose
@@ -230,6 +262,11 @@ STRAND_COOLING_OPTIONS_SECTION_TITLE = "Strand Cooling Options"
 The following directory contains the title for the "Update" panel
 '''
 TITLE = "Extruder Workshop"
+
+'''
+The following variable contains the label text for the To entry widget
+'''
+TO_LABEL = "To:"
 
 '''
 The following function returns a confirmation that tells the calling code which configuration file this function

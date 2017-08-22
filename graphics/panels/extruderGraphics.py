@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 03/23/2017
-Last Updated: 08/16/2017
+Last Updated: 08/22/2017
 Version: 1.0.0
 Description:
     The following python file contains the class and functions for the "Extruder" panel
@@ -67,6 +67,8 @@ class ExtruderG:
     self.feederSpeedScale = None
     self.pumpSpeedScale = None
     self.pelletizingComments = None
+    self.fromEntry = None
+    self.toEntry = None
 
   '''
   The following function returns the configuration file for this instance of the "ExtruderG" class
@@ -445,6 +447,30 @@ class ExtruderG:
     self.pelletizingComments = pelletizingComments
 
   '''
+  The following function returns the Tkinter entry for the from timeslot
+  '''
+  def getFromEntry(self):
+    return self.fromEntry
+
+  '''
+  The following function sets the Tkinter entry for the from timeslot
+  '''
+  def setFromEntry(self, fromEntry):
+    self.fromEntry = fromEntry
+
+  '''
+  The following function returns the Tkinter entry for the to timeslot
+  '''
+  def getToEntry(self):
+    return self.toEntry
+
+  '''
+  The following function sets the Tkinter entry for the to timeslot
+  '''
+  def setToEntry(self, toEntry):
+    self.toEntry = toEntry
+
+  '''
   The following function builds the components for the extruder options section within the "Extruder" panel
   '''
   def __buildExtruderOptions(self, frame):
@@ -633,9 +659,53 @@ class ExtruderG:
   '''
   def __buildCaptureOptions(self, frame):
 
-    # Build and add the "Coming Soon" label
-    label = self.getBuilder().buildH2Label(frame, "Coming Soon")
-    label.grid(row=0, column=0, padx=(100, 100), pady=(35, 35), sticky=tk.W)
+    # Build and add the "Data Point Every" drop down menu
+    dataLabel = self.getBuilder().buildH3Label(frame, self.getConfig().DATA_POINT_EVERY_LABEL)
+    dataLabel.grid(row=0, column=0, padx=(50, 0), pady=(25, 0), sticky=tk.W)
+    self.labels[self.getConfig().CAPTURING_SECTION_TITLE][self.getConfig().DATA_POINT_EVERY_LABEL] = dataLabel
+    dataMenu, dataVariable = self.getBuilder().buildStringDropDown(self.getActions().selectDropDown,
+                                                                   self.getConfig().CAPTURING_SECTION_TITLE, dataLabel,
+                                                                   frame, 9, self.getConfig().DATA_POINT_EVERY)
+    self.getData().setDataShiftVariable(dataVariable)
+    dataMenu.grid(row=0, column=0, padx=(180, 0), pady=(25, 0), sticky=tk.W)
+
+    # Build and add the "# of Data Points" drop down menu
+    numLabel = self.getBuilder().buildH3Label(frame, self.getConfig().NUM_OF_DATA_POINTS_LABEL)
+    numLabel.grid(row=0, column=0, padx=(335, 0), pady=(25, 0), sticky=tk.W)
+    self.labels[self.getConfig().CAPTURING_SECTION_TITLE][self.getConfig().NUM_OF_DATA_POINTS_LABEL] = numLabel
+    numMenu, numVariable = self.getBuilder().buildStringDropDown(self.getActions().selectDropDown,
+                                                                 self.getConfig().CAPTURING_SECTION_TITLE, numLabel,
+                                                                 frame, 8, self.getConfig().NUM_OF_DATA_POINTS)
+    self.getData().setNumDataVariable(numVariable)
+    numMenu.grid(row=0, column=0, padx=(500, 50), pady=(25, 0), sticky=tk.W)
+
+    # Build and add the "From" Entry
+    fromLabel = self.getBuilder().buildH3Label(frame, self.getConfig().FROM_LABEL)
+    fromLabel.grid(row=1, column=0, padx=(50, 0), pady=(15, 35), sticky=tk.W)
+    self.labels[self.getConfig().CAPTURING_SECTION_TITLE][self.getConfig().FROM_LABEL] = fromLabel
+    self.setFromEntry(tk.Entry(frame, width=6))
+    self.getFromEntry().grid(row=1, column=0, padx=(102, 0), pady=(16, 35), sticky=tk.W)
+    fromRadios, fromVariable = self.getBuilder().buildRadio(self.getActions().checkLabel,
+                                                            self.getConfig().CAPTURING_SECTION_TITLE, fromLabel, frame,
+                                                            self.getConfig().AM_PM_RADIO_NAMES)
+    self.getData().setFromVariable(fromVariable)
+    self.getData().getFromVariable().set(1)
+    fromRadios[0].grid(row=1, column=0, padx=(175, 0), pady=(16, 35), sticky=tk.W)
+    fromRadios[1].grid(row=1, column=0, padx=(225, 0), pady=(16, 35), sticky=tk.W)
+
+    # Build and add the "To" Entry
+    toLabel = self.getBuilder().buildH3Label(frame, self.getConfig().TO_LABEL)
+    toLabel.grid(row=1, column=0, padx=(335, 0), pady=(15, 35), sticky=tk.W)
+    self.labels[self.getConfig().CAPTURING_SECTION_TITLE][self.getConfig().TO_LABEL] = toLabel
+    self.setToEntry(tk.Entry(frame, width=6))
+    self.getToEntry().grid(row=1, column=0, padx=(368, 0), pady=(16, 35), sticky=tk.W)
+    toRadios, toVariable = self.getBuilder().buildRadio(self.getActions().checkLabel,
+                                                        self.getConfig().CAPTURING_SECTION_TITLE, toLabel, frame,
+                                                        self.getConfig().AM_PM_RADIO_NAMES)
+    self.getData().setToVariable(toVariable)
+    self.getData().getToVariable().set(1)
+    toRadios[0].grid(row=1, column=0, padx=(441, 0), pady=(16, 35), sticky=tk.W)
+    toRadios[1].grid(row=1, column=0, padx=(491, 0), pady=(16, 35), sticky=tk.W)
 
   '''
   The following function builds the initial state for the "Extruder" panel
@@ -723,6 +793,7 @@ class ExtruderG:
     # Build and add the "Capture Extruder" button
     captureButton = self.getBuilder().buildBottomButton(frame, "Capture Extruder")
     captureButton.grid(row=10, column=0, padx=(500, 0), pady=(50, 75), sticky=tk.W)
+    captureButton.configure(command=lambda: self.getActions().checkForCapture())
 
   '''
   The following function changes the drop down menu contents of the "Die Options" and the "Pre-Die"

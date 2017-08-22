@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 03/29/2017
-Last Updated: 08/16/2017
+Last Updated: 08/22/2017
 Version: 1.0.0
 Description:
     The following python file contains the reaction functions for the "Extruder" panel for the GUI in the ICSM program
@@ -318,6 +318,16 @@ class ExtruderA:
     ready, errors, errorTextLabels = self.getData().checkForUpdate()
     if ready:
       self.getData().updateWorkflow()
+    else:
+      self.getGraphics().displayUpdateError(errors, errorTextLabels)
+
+  '''
+  The following function responds to the user clicking on the large "Capture Extruder" button on the bottom of the GUI
+  '''
+  def checkForCapture(self):
+    ready, errors, errorTextLabels = self.getData().checkForCapture()
+    if ready:
+      self.getData().captureExtruder()
     else:
       self.getGraphics().displayUpdateError(errors, errorTextLabels)
 
