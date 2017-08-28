@@ -14,6 +14,7 @@ Description:
 Imported files/libraries
 '''
 import sys
+import datetime
 from types import ModuleType
 import Tkinter as tk
 import tkMessageBox
@@ -69,6 +70,7 @@ class ExtruderG:
     self.pelletizingComments = None
     self.fromEntry = None
     self.toEntry = None
+    self.calendarEntry = None
 
   '''
   The following function returns the configuration file for this instance of the "ExtruderG" class
@@ -471,6 +473,18 @@ class ExtruderG:
     self.toEntry = toEntry
 
   '''
+  The following function returns the Tkinter entry for the date
+  '''
+  def getCalendarEntry(self):
+    return self.calendarEntry
+
+  '''
+  The following function sets the Tkinter entry for the date
+  '''
+  def setCalendarEntry(self, calendarEntry):
+    self.calendarEntry = calendarEntry
+
+  '''
   The following function builds the components for the extruder options section within the "Extruder" panel
   '''
   def __buildExtruderOptions(self, frame):
@@ -706,6 +720,14 @@ class ExtruderG:
     self.getData().getToVariable().set(1)
     toRadios[0].grid(row=1, column=0, padx=(441, 0), pady=(16, 35), sticky=tk.W)
     toRadios[1].grid(row=1, column=0, padx=(491, 0), pady=(16, 35), sticky=tk.W)
+
+    # Build and add the date entry
+    calLabel = self.getBuilder().buildH3Label(frame, "Date:")
+    calLabel.grid(row=1, column=0, padx=(600, 0), pady=(15, 35), sticky=tk.W)
+    self.labels[self.getConfig().CAPTURING_SECTION_TITLE]["Date:"] = calLabel
+    self.setCalendarEntry(tk.Entry(frame, width=10))
+    self.getCalendarEntry().grid(row=1, column=0, padx=(648, 50), pady=(16, 35), sticky=tk.W)
+    self.getCalendarEntry().insert(0, str(datetime.date.today()))
 
   '''
   The following function builds the initial state for the "Extruder" panel

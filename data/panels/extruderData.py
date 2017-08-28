@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 08/07/2017
-Last Updated: 08/22/2017
+Last Updated: 08/24/2017
 Version: 1.0.0
 Description:
     The following python file contains the model code functions for the "Extruder" panel for the ICSM program
@@ -15,6 +15,7 @@ Imported files/libraries
 '''
 import os
 import sys
+import json
 from types import ModuleType
 import openpyxl
 from openpyxl.styles import colors
@@ -374,7 +375,12 @@ class ExtruderD:
   The following function returns a boolen value dictating on whether or not the application is connected to the server
   '''
   def areConnected(self):
-    return False
+    try:
+      self.getSocket().send("check")
+      x = self.getSocket().recv(1024)
+      return True
+    except:
+      return False
 
   '''
   The following function returns a boolean value dictating on whether or not the server is mounted to the local machine
@@ -607,7 +613,11 @@ class ExtruderD:
 
     # Check on Server connection
     if self.areConnected():
-      print "" # Finish code
+      # FINISH CODE
+      if self.editXLSXFile(update):
+        self.getGraphics().displayMessage("Workflow was Updated")
+      else:
+        self.getGraphics().displayError("Workflow was not updated")
     elif self.areMounted():
       if self.editXLSXFile(update):
         self.getGraphics().displayMessage("Workflow was Updated")
@@ -625,7 +635,12 @@ class ExtruderD:
     # Build the initial dictionary variable
     capture = {}
 
-    # Add the data on the Classified Section
+    # Check workflow file name
+    if self.getWorkflowFileName() is None:
+      self.getGraphics().displayError("Please Select a Workflow")
+      return 0
+
+    # Add the data on the Capturing Section
     section = self.getConfig().CAPTURING_SECTION_TITLE
     capture[section] = {"Data": self.getDataShiftVariable().get()}
     capture[section]["Num"] = self.getNumDataVariable().get()
@@ -637,10 +652,18 @@ class ExtruderD:
       capture[section]["To"] = [self.getGraphics().getToEntry().get(), self.getToVariable().get()]
     else:
       capture[section]["To"] = 0
+    capture[section]["Date"] = self.getGraphics().getCalendarEntry().get()
 
     # Check on Server connection
-    if True:#self.areConnected():
-      print capture # Finish code
+    if self.areConnected():
+      self.getSocket().send("capture")
+      print self.getSocket().recv(1024)
+      self.getSocket().send("27Entek")
+      print self.getSocket().recv(1024)
+      self.getSocket().send(self.getWorkflowFileName())
+      print self.getSocket().recv(1024)
+      self.getSocket().send(json.dumps(capture))
+      print "Received Message: ", self.getSocket().recv(1024)
     else:
       self.getGraphics().displayError("The Appication is Unable to Connect to the Server")
       return 0

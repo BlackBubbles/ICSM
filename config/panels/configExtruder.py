@@ -52,7 +52,7 @@ COMMENTS_COLOR = "#000000"
 '''
 The following variable contains all possible time spaces for getting data from the extruder
 '''
-DATA_POINT_EVERY = ["Select", "15 secs", "30 secs", "1 min", "2 min", "5 min", "10 mins"]
+DATA_POINT_EVERY = ["Select", "15 secs", "30 secs", "1 min", "2 min", "5 min", "10 min"]
 
 '''
 The following variable contains the string for the drop down menu for all the possible time spaces for getting data

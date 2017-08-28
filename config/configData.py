@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 03/05/2017
-Last Updated: 08/09/2017
+Last Updated: 08/24/2017
 Version: 1.0.0
 Description:
     The following python file contains the configuration data for the Model
@@ -22,7 +22,20 @@ from panels import configProject as configP
 '''
 Global variables
 '''
-# NONE
+'''
+The following variable contains the TCP IP address for the server
+'''
+TCP_IP = "192.168.0.150"
+
+'''
+The following variable contains the TCP IP port for the ICSM program on the server
+'''
+TCP_PORT = 1234
+
+'''
+The following variable contains the TCP Buffer Size for the socket
+'''
+BUFFER_SIZE = 1024
 
 '''
 The following function returns the configuration module for the GUI frame

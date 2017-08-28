@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 02/26/2017
-Last Updated: 08/16/2017
+Last Updated: 08/24/2017
 Version: 1.0.0
 Description:
     The following python file contains multiple interaction functions for the Graphical User Interface for the ICSM
@@ -417,6 +417,7 @@ class Graphics:
       self.getProjectGraphics().buildPanel(self, self.getFrameGraphics().getFrame("Project"))
 
     # Activate the GUI
+    self.getData().connectSocket()
     self.getGUI().mainloop()
 
   '''

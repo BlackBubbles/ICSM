@@ -4,7 +4,7 @@
 Program: Interfacial Consultant's Systems and Management - ICSM
 Programmer: Talib M. Khan
 Date Created: 03/05/2017
-Last Updated: 08/17/2017
+Last Updated: 08/24/2017
 Version: 1.0.0
 Description:
     The following python file contains multiple interaction functions for the model of the program
@@ -15,6 +15,7 @@ Imported files/libraries
 '''
 import sys
 from types import ModuleType
+import socket
 import frameData as frameD
 from panels import quickAccessData as qaD
 from panels import projectData as projectD
@@ -45,7 +46,7 @@ class Data:
     # Set initial values for this instance of the "Data" class
     self.actions = None
     self.graphics = None
-    self.socket = None
+    self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     doesWork, message = self.setFrameData(frameD.FrameD(self.getConfig().getConfigFrame()))
     if not doesWork:
       print message
@@ -142,7 +143,7 @@ class Data:
     # Check to make sure that the inputted value is an instance of the "Graphics" class
     if hasattr(graphics, "confirm"):
       if graphics.confirm("Graphics"):
-        self.actions = graphics
+        self.graphics = graphics
       else:
         doesWork = False
         message = "%s:\ninputted file for Data is not a Graphics class file" % ERROR
@@ -161,7 +162,7 @@ class Data:
   The following function returns the socket that connects to the server
   '''
   def getSocket(self):
-    return self.getSocket()
+    return self.socket
 
   '''
   The following function returns the model code for the GUI frame for this instance of the "Data" class
@@ -315,6 +316,18 @@ class Data:
 
     # Return boolean variable and error message
     return doesWork, message
+
+  '''
+  The following function attempts to connect to the server. If the program does not connect then the program will show
+  a warning message
+  '''
+  def connectSocket(self):
+    try:
+      self.getSocket().connect((self.getConfig().TCP_IP, self.getConfig().TCP_PORT))
+      self.getSocket().send("App-0")
+      x = self.getSocket().recv(self.getConfig().BUFFER_SIZE)
+    except:
+      self.getGraphics().getExtruderGraphics().displayError("Unable to connect to the server")
 
   '''
   The following function returns a confirmation that tells the calling code which class file this function belongs to
