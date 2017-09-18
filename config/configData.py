@@ -25,7 +25,7 @@ Global variables
 '''
 The following variable contains the TCP IP address for the server
 '''
-TCP_IP = "192.168.0.150"
+TCP_IP = "192.168.0.23"
 
 '''
 The following variable contains the TCP IP port for the ICSM program on the server

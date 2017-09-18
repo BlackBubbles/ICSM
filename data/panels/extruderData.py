@@ -15,11 +15,8 @@ Imported files/libraries
 '''
 import os
 import sys
-import json
+import datetime
 from types import ModuleType
-import openpyxl
-from openpyxl.styles import colors
-from openpyxl.styles import Border, Side
 from add import feederData
 
 '''
@@ -54,12 +51,15 @@ class ExtruderD:
     self.portVariables = []
     self.sideVariables = []
     self.feeders = {}
+    self.feederdatas = {}
+    self.setpointvariable = None
     self.strandCoolingFrameVariable = None
     self.separatorVariable = None
     self.fansVariable = None
     self.airKnivesVariable = None
     self.numAirKnivesVariable = None
     self.beltMisters = []
+    self.usesluice = None
     self.sluiceMisters = []
     self.pelletizierVariable = None
     self.classifiedVariable = None
@@ -209,6 +209,15 @@ class ExtruderD:
   def getFeeders(self):
     return self.feeders
 
+  def getFeederDatas(self):
+    return self.feederdatas
+
+  def get_set_point_variable(self):
+    return self.setpointvariable
+
+  def set_set_point_variable(self, setpointvariable):
+    self.setpointvariable = setpointvariable
+
   '''
   The following function returns the variable for the strand cooling frame
   '''
@@ -280,6 +289,12 @@ class ExtruderD:
   '''
   def setBeltMisters(self, beltMisters):
     self.beltMisters = beltMisters
+
+  def get_use_sluice(self):
+    return self.usesluice
+
+  def set_use_sluice(self, usesluice):
+    self.usesluice = usesluice
 
   '''
   The following function returns the list of sluice mister varibles
@@ -376,8 +391,8 @@ class ExtruderD:
   '''
   def areConnected(self):
     try:
-      self.getSocket().send("check")
-      x = self.getSocket().recv(1024)
+      self.getSocket().getSocket().send("check")
+      x = self.getSocket().getSocket().recv(1024)
       return True
     except:
       return False
@@ -466,6 +481,10 @@ class ExtruderD:
       ready = False
       errors.append("Need at least one \"Feeder\"\n")
       labels.append("")
+    elif self.getTotalPercentage() < 100.0:
+      ready = False
+      errors.append("Total % for \"Feeders\" is less than 100%\n")
+      labels.append("")
 
     # Check the strand cooling section
     errorTextLabels[self.getConfig().STRAND_COOLING_OPTIONS_SECTION_TITLE] = []
@@ -540,6 +559,41 @@ class ExtruderD:
       errors.append("Choose total # of \"Data Points\"\n")
       labels.append(self.getConfig().NUM_OF_DATA_POINTS_LABEL)
 
+    # Check the timeslot entries
+    if not self.getGraphics().getFromEntry().get():
+      ready = False
+      errors.append("Enter Timeslot into \"From\"\n")
+      labels.append(self.getConfig().FROM_LABEL)
+    else:
+      try:
+        datetime.datetime.strptime(self.getGraphics().getFromEntry().get(), '%I:%M')
+      except:
+        ready = False
+        errors.append("Entry in \"From\" is not a Timeslot\n")
+        labels.append(self.getConfig().FROM_LABEL)
+    if not self.getGraphics().getToEntry().get():
+      ready = False
+      errors.append("Enter Timeslot into \"To\"\n")
+      labels.append(self.getConfig().TO_LABEL)
+    else:
+      try:
+        datetime.datetime.strptime(self.getGraphics().getToEntry().get(), '%I:%M')
+      except:
+        ready = False
+        errors.append("Entry in \"To\" is not a Timeslot\n")
+        labels.append(self.getConfig().TO_LABEL)
+    if not self.getGraphics().getCalendarEntry().get():
+      ready = False
+      errors.append("Enter Date into \"Date\"\n")
+      labels.append("Date:")
+    else:
+      try:
+        datetime.datetime.strptime(self.getGraphics().getCalendarEntry().get(), '%Y-%m-%d')
+      except:
+        ready = False
+        errors.append("Entry in \"Date\" is not a date\n")
+        labels.append("Date:")
+
     # Return the error variables
     return ready, errors, errorTextLabels
 
@@ -563,10 +617,12 @@ class ExtruderD:
     section = self.getConfig().PORT_OPTIONS_SECTION_TITLE
     update[section] = {"Ports": self.__toValues(self.getPortVariables())}
     update[section]["Sides"] = self.__toValues(self.getSideVariables())
+    update[section]["Length"] = self.getConfig().EXTRUDER_PORT_SIZES[self.getExtruderVariable().get()][0]
 
     # Add the data on the Feeders
     section = self.getConfig().FEEDERS_SECTION_TITLE
     update[section] = {"Feeders": self.listFeeders()}
+    update[section]["Set"] = self.get_set_point_variable().get()
 
     # Add the data on the Strand Cooling Section
     section = self.getConfig().STRAND_COOLING_OPTIONS_SECTION_TITLE
@@ -575,6 +631,8 @@ class ExtruderD:
          self.getStrandCoolingFrameVariable().get() is 3:
       update[section]["Separator"] = self.getSeparatorVariable().get()
       update[section]["Fans"] = self.getFansVariable().get()
+    if self.getStrandCoolingFrameVariable().get() is 1 or self.getStrandCoolingFrameVariable().get() is 2:
+      update[section]["BeltSpeed"] = self.getGraphics().get_belt_speed_scale().get()
     if self.getStrandCoolingFrameVariable().get() is 2 or self.getStrandCoolingFrameVariable().get() is 3:
       update[section]["AirKnives"] = self.getAirKnivesVariable().get()
       if self.getAirKnivesVariable().get():
@@ -584,8 +642,10 @@ class ExtruderD:
       update[section]["WaterTemp"] = self.getGraphics().getWaterTempScale().get()
     if self.getStrandCoolingFrameVariable().get() is 3:
       update[section]["LengthOfBath"] = self.getGraphics().getLengthEntry().get()
+      update[section]["WaterTemp"] = self.getGraphics().get_water_temp_entry().get()
     if self.getStrandCoolingFrameVariable().get() is 4:
       update[section]["BeltMisters"] = self.__toValues(self.getBeltMisters())
+      update[section]["UseSluice"] = self.get_use_sluice().get()
       update[section]["SluiceMisters"] = self.__toValues(self.getSluiceMisters())
       update[section]["Conveyor"] = self.getGraphics().getConveyorScale().get()
       update[section]["Blower"] = self.getGraphics().getBlowerScale().get()
@@ -610,19 +670,16 @@ class ExtruderD:
     if self.getWorkflowFileName() is None:
       self.getGraphics().displayError("Please Select a Workflow")
       return 0
+    update["Workflow"] = self.getWorkflowFileName()
 
     # Check on Server connection
     if self.areConnected():
-      # FINISH CODE
-      if self.editXLSXFile(update):
-        self.getGraphics().displayMessage("Workflow was Updated")
+      message = self.getSocket().send("update", self.getWorkflowFileName(), "Extruder", update)
+      print "Message - ", message
+      if message == "1":
+        self.getGraphics().displayMessage("Project was Updated")
       else:
-        self.getGraphics().displayError("Workflow was not updated")
-    elif self.areMounted():
-      if self.editXLSXFile(update):
-        self.getGraphics().displayMessage("Workflow was Updated")
-      else:
-        self.getGraphics().displayError("Workflow was not updated")
+        self.getGraphics().displayError("Project was not updated")
     else:
       self.getGraphics().displayError("The Appication is Unable to Connect to the Workflow")
       return 0
@@ -640,6 +697,10 @@ class ExtruderD:
       self.getGraphics().displayError("Please Select a Workflow")
       return 0
 
+    # Add the extruder data
+    capture['Extruder'] = '27mm Entek'
+    # FINISH SOON
+
     # Add the data on the Capturing Section
     section = self.getConfig().CAPTURING_SECTION_TITLE
     capture[section] = {"Data": self.getDataShiftVariable().get()}
@@ -653,155 +714,15 @@ class ExtruderD:
     else:
       capture[section]["To"] = 0
     capture[section]["Date"] = self.getGraphics().getCalendarEntry().get()
+    capture["Workflow"] = self.getWorkflowFileName()
 
     # Check on Server connection
     if self.areConnected():
-      self.getSocket().send("capture")
-      print self.getSocket().recv(1024)
-      self.getSocket().send("27Entek")
-      print self.getSocket().recv(1024)
-      self.getSocket().send(self.getWorkflowFileName())
-      print self.getSocket().recv(1024)
-      self.getSocket().send(json.dumps(capture))
-      print "Received Message: ", self.getSocket().recv(1024)
+      message = self.getSocket().send("capture", self.getWorkflowFileName(), "Extruder", capture)
+      print "Received Message: ", message
     else:
       self.getGraphics().displayError("The Appication is Unable to Connect to the Server")
       return 0
-
-  '''
-  The following function updates the workflow with the edited information
-  '''
-  def editXLSXFile(self, update):
-
-    # Open the Workflow
-    wb = openpyxl.load_workbook("/Volumes/Workflow/TK_WF_DONT_TOUCH/wf_template_new.xlsx")
-
-    # Edit the extruding area
-    extruderDict = update["Extruder Options"]
-    wb["TK_Compounding"]["A6"] = extruderDict["Extruder"]
-    wb["TK_Compounding"]["C6"] = extruderDict["Die"].split("-")[0]
-    wb["TK_Compounding"]["D6"] = extruderDict["Die"].split("-")[1]
-    wb["TK_Compounding"]["F6"] = extruderDict["Pre-Die"]
-    if extruderDict["Screen Pack"] is 1:
-      wb["TK_Compounding"]["D8"] = "Yes"
-    else:
-      wb["TK_Compounding"]["D8"] = "No"
-    wb["TK_Compounding"]["D9"] = extruderDict["Mesh"]
-
-    # Edit the Port set-up area
-    portDict = update["Port Set-Up"]
-    ports = portDict["Ports"]
-    sides = portDict["Sides"]
-
-    # Edit the Feeder area
-    feederDict = update["Feeders"]
-    feeders = feederDict["Feeders"]
-    for row in [13, 14, 15, 20, 25, 30, 35, 37, 62, 70]:
-      for column in range(1, 22):
-        wb["TK_Compounding"].cell(row=row, column=column).border = Border(bottom=Side(border_style="medium",
-                                                                                      color=colors.BLACK))
-    index = 0
-    for feeder in feeders:
-      row = (index * 5) + 16
-      wb["TK_Compounding"]["B" + str(row)] = feeder["Feeder"]
-      if "Tube" in feeder:
-        wb["TK_Compounding"]["E" + str(row)] = feeder["Tube"]
-      wb["TK_Compounding"]["G" + str(row)] = feeder["Screw"]
-      if feeder["Location"] is 2:
-        wb["TK_Compounding"]["L" + str(row)] = "Side Stuffer"
-      else:
-        wb["TK_Compounding"]["L" + str(row)] = "Throat"
-      index2 = 0
-      for RM, per in feeder["RM"].iteritems():
-        wb["TK_Compounding"]["N" + str(row + index2)] = RM
-        wb["TK_Compounding"]["R" + str(row + index2)] = str(per)
-        if feeder["Set Point"] is 1:
-          wb["TK_Compounding"]["T" + str(row + index2)] = "lbs/hr"
-        else:
-          wb["TK_Compounding"]["T" + str(row + index2)] = "kg/hr"
-        index2 = index2 + 1
-      index = index + 1
-
-    # Edit the Strand Cooling area
-    strandDict = update["Strand Cooling Options"]
-    if strandDict["Strand Cooling"] is 1:
-      cooling = "Belt"
-    elif strandDict["Strand Cooling"] is 2:
-      cooling = "Belt with Mister"
-    elif strandDict["Strand Cooling"] is 3:
-      cooling = "Water Bath"
-    elif strandDict["Strand Cooling"] is 4:
-      cooling = "Spray Belt"
-    elif strandDict["Strand Cooling"] is 5:
-      cooling = "UWP"
-    else:
-      cooling = "Other"
-    wb["TK_Compounding"]["L6"] = cooling
-    wb["TK_Compounding"]["E64"] = cooling
-    if strandDict["Strand Cooling"] is 1 or strandDict["Strand Cooling"] is 2 or strandDict["Strand Cooling"] is 3:
-      if strandDict["Separator"] is 1:
-        wb["TK_Compounding"]["E66"] = "Yes"
-      else:
-        wb["TK_Compounding"]["E66"] = "No"
-      wb["TK_Compounding"]["I66"] = strandDict["Fans"]
-    if strandDict["Strand Cooling"] is 2 or strandDict["Strand Cooling"] is 3:
-      if strandDict["AirKnives"] is 1:
-        wb["TK_Compounding"]["S64"] = "Yes"
-        wb["TK_Compounding"]["S65"] = strandDict["AirKnivesNum"]
-        wb["TK_Compounding"]["R66"] = strandDict["Location"]
-      else:
-        wb["TK_Compounding"]["S64"] = "No"
-    if strandDict["Strand Cooling"] is 2:
-      wb["TK_Compounding"]["K66"] = "Water Temp:"
-      wb["TK_Compounding"]["M66"] = strandDict["WaterTemp"]
-    if strandDict["Strand Cooling"] is 3:
-      wb["TK_Compounding"]["K66"] = "Length of Dip"
-      wb["TK_Compounding"]["M66"] = strandDict["LengthOfBath"]
-    if strandDict["Strand Cooling"] is 4:
-      wb["TK_Compounding"]["R69"] = strandDict["Conveyor"]
-      wb["TK_Compounding"]["S69"] = strandDict["Blower"]
-      wb["TK_Compounding"]["T69"] = strandDict["BlowerVac"]
-      wb["TK_Compounding"]["U69"] = strandDict["WaterTemp"]
-      index = 0
-      for mister in strandDict["BeltMisters"]:
-        if mister[1] is 1:
-          row = 69
-          value = "On"
-        else:
-          row = 70
-          value = "Off"
-        wb["TK_Compounding"].cell(row=row, column=(3 + index), value=value)
-        index = index + 1
-      index = 0
-      for sluice in strandDict["SluiceMisters"]:
-        if sluice[1] is 1:
-          row = 69
-          value = "On"
-        else:
-          row = 70
-          value = "Off"
-        wb["TK_Compounding"].cell(row=row, column=(16 + index), value=value)
-        index = index + 1
-
-    # Edit the Pelletizier area
-    pelletizierDict = update["Pelletizier Options"]
-    wb["TK_Compounding"]["P6"] = pelletizierDict["Pelletizier"]
-    wb["TK_Compounding"]["S6"] = pelletizierDict["Feed Roll"]
-    wb["TK_Compounding"]["S8"] = pelletizierDict["Rotor"]
-    if "Feeder Speed" in pelletizierDict:
-      feederSpeed = pelletizierDict["Feeder Speed"]
-    if "Pump Speed" in pelletizierDict:
-      pumpSpeed = pelletizierDict["Pump Speed"]
-    comments = pelletizierDict["Comments"]
-
-    # Edit the classified area
-    classifiedDict = update["Classified Options"]
-    wb["TK_Compounding"]["U6"] = classifiedDict["Classified"]
-
-    # Save the Workflow
-    wb.save("/Volumes/Workflow/TK_WF_DONT_TOUCH/wf_modified.xlsx")
-
-    return True
 
   '''
   The following function returns a confirmation that tells the calling code which class file this function belongs to

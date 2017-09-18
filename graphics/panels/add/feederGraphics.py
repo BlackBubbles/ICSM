@@ -50,6 +50,7 @@ class FeederG:
     self.RMFrame = None
     self.RMCodeEntry = None
     self.RMPercentEntry = None
+    self.sections = {}
     self.labels = {}
 
   '''
@@ -207,6 +208,9 @@ class FeederG:
   def setRMPercentEntry(self, RMPercentEntry):
     self.RMPercentEntry = RMPercentEntry
 
+  def getSections(self):
+    return self.sections
+
   '''
   The following function returns the dictionary of labels that contain the title of the selections their next to
   '''
@@ -222,7 +226,7 @@ class FeederG:
   '''
   The following function builds the "Feeder" section for the feeder GUI
   '''
-  def __buildFeeder(self, frame):
+  def __buildFeeder(self, frame, edit=False, data=None):
 
     # Build and add the "Feeder" drop down menu
     text = "Feeder"
@@ -234,6 +238,8 @@ class FeederG:
                                                                        feederLabel, frame, 15,
                                                                        self.getConfig().FEEDERS)
     self.getData().setFeederVariable(feederVariable)
+    if edit:
+      self.getData().getFeederVariable().set(data['Feeder'])
     feederMenu.grid(row=1, column=0, padx=(40, 0), pady=(0, 0), sticky=tk.W)
 
     # Build and add the "Tube" drop down menu
@@ -241,12 +247,16 @@ class FeederG:
     tubeLabel = self.getBuilder().buildH3Label(frame, text)
     tubeLabel.grid(row=0, column=0, padx=(250, 0), pady=(25, 0), sticky=tk.W)
     self.getLabels()[self.getConfig().FEEDER_OPTIONS_TITLE][text] = tubeLabel
+    index = self.getConfig().FEEDERS.index(self.getData().getFeederVariable().get())
     tubeMenu, tubeVariable = self.getBuilder().buildStringDropDown(self.getActions().respondToMenu,
                                                                    self.getConfig().FEEDER_OPTIONS_TITLE,
                                                                    tubeLabel, frame, 15,
                                                                    self.getConfig().FEEDER_TUBES[
-                                                                     self.getConfig().FEEDERS[0]])
+                                                                     self.getConfig().FEEDERS[index]])
     self.getData().setFeederTubeVariable(tubeVariable)
+    if edit:
+      if 'Tube' in data:
+        self.getData().getFeederTubeVariable().set(data['Tube'])
     self.setFeederTubeMenu(tubeMenu)
     tubeMenu.grid(row=1, column=0, padx=(240, 50), pady=(0, 0), sticky=tk.W)
 
@@ -259,50 +269,44 @@ class FeederG:
                                                                      self.getConfig().FEEDER_OPTIONS_TITLE,
                                                                      screwLabel, frame, 15,
                                                                      self.getConfig().FEEDER_SCREWS[
-                                                                       self.getConfig().FEEDERS[0]])
+                                                                       self.getConfig().FEEDERS[index]])
     self.getData().setFeederScrewVariable(screwVariable)
+    if edit:
+      self.getData().getFeederScrewVariable().set(data['Screw'])
     self.setFeederScrewMenu(screwMenu)
     screwMenu.grid(row=3, column=0, padx=(40, 0), pady=(0, 35), sticky=tk.W)
 
   '''
   The following function builds the "Location/Measurement" section for the feeder GUI
   '''
-  def __buildLocationMeasure(self, frame):
+  def __buildLocationMeasure(self, frame, edit=False, data=None):
 
     # Build and add the radio buttons for "location"
     text = "Location:"
     locLabel = self.getBuilder().buildH3Label(frame, text)
-    locLabel.grid(row=0, column=0, padx=(50, 0), pady=(25, 0), sticky=tk.W)
+    locLabel.grid(row=0, column=0, padx=(50, 0), pady=(25, 35), sticky=tk.W)
     self.getLabels()[self.getConfig().RADIO_BUTTON_TITLE][text] = locLabel
     locRadios, locVariable = self.getBuilder().buildRadio(self.getActions().respondToRadio,
                                                           self.getConfig().RADIO_BUTTON_TITLE, locLabel, frame,
                                                           self.getConfig().FEEDER_LOCATIONS)
     self.getData().setLocationVariable(locVariable)
-    for radio in locRadios:
-      radio.grid(row=0, column=locRadios.index(radio) + 1, padx=(0, 0), pady=(25, 0), sticky=tk.W)
-
-    # Build and add the radio buttons for "location"
-    text = "Set Point:"
-    setLabel = self.getBuilder().buildH3Label(frame, text)
-    setLabel.grid(row=1, column=0, padx=(50, 0), pady=(15, 35), sticky=tk.W)
-    self.getLabels()[self.getConfig().RADIO_BUTTON_TITLE][text] = setLabel
-    setRadios, setVariable = self.getBuilder().buildRadio(self.getActions().respondToRadio,
-                                                          self.getConfig().RADIO_BUTTON_TITLE, setLabel, frame,
-                                                          self.getConfig().FEEDER_SET_POINTS)
-    self.getData().setSetPointVariable(setVariable)
-    for radio in setRadios:
-      radio.grid(row=1, column=setRadios.index(radio) + 1, padx=(0, 0), pady=(15, 35), sticky=tk.W)
+    if edit:
+      self.getData().getLocationVariable().set(data['Location'])
+    locRadios[0].grid(row=0, column=1, padx=(0, 0), pady=(25, 35), sticky=tk.W)
+    locRadios[1].grid(row=0, column=2, padx=(0, 50), pady=(25, 35), sticky=tk.W)
 
   '''
   The following function builds the "RM Code" section for the feeder GUI
   '''
-  def __buildRMCode(self, frame):
+  def __buildRMCode(self, frame, edit=False, data=None):
 
     # Build and add the two Entry slots
     self.setRMCodeEntry(tk.Entry(frame, width=21))
     self.getRMCodeEntry().grid(row=0, column=0, padx=(25, 0), pady=(25, 0), sticky=tk.W)
     self.setRMPercentEntry(tk.Entry(frame, width=6))
     self.getRMPercentEntry().grid(row=0, column=1, padx=(5, 0), pady=(25, 0), sticky=tk.W)
+    per = 100.0 - (self.getData().getCompletePercentage() + self.getData().getTotalPercentage())
+    self.getRMPercentEntry().insert(0, str(per))
 
     # Build and add the "Add" button
     button = self.getBuilder().buildButton(frame, "Add RM")
@@ -313,10 +317,15 @@ class FeederG:
     self.setRMFrame(self.getBuilder().buildFrame(frame))
     self.getRMFrame().grid(row=1, column=0, columnspan=20, padx=(0, 35), pady=(0, 35), sticky=tk.W)
 
+    '''Check 'edit' and add any RM codes'''
+    if edit:
+      for rm, per in data['RM'].iteritems():
+        self.addRM(rm, str(per))
+
   '''
   The following function builds the initial GUI for the feeder selection
   '''
-  def buildGUI(self):
+  def buildGUI(self, edit=False, data=None, back=None):
 
     # Build the initial frame and give it a title
     gui = tk.Toplevel()
@@ -339,27 +348,30 @@ class FeederG:
     tempFrame = self.getBuilder().buildFrame(frame)
     tempFrame.grid(row=0, column=0, columnspan=20, padx=(0, 0), pady=(0, 0), sticky=tk.W)
     feederFrame, feederLabel = self.getBuilder().buildSection(tempFrame, self.getConfig().FEEDER_OPTIONS_TITLE)
+    self.sections[self.getConfig().FEEDER_OPTIONS_TITLE] = feederFrame
     self.labels[self.getConfig().FEEDER_OPTIONS_TITLE] = {self.getConfig().FEEDER_OPTIONS_TITLE: feederLabel}
-    self.__buildFeeder(feederFrame)
+    self.__buildFeeder(feederFrame, edit=edit, data=data)
 
     # Build and add the feeder radio buttons options frame
     tempFrame = self.getBuilder().buildFrame(frame)
     tempFrame.grid(row=1, column=0, columnspan=20, padx=(0, 0), pady=(0, 0), sticky=tk.W)
     LMFrame, LMLabel = self.getBuilder().buildSection(tempFrame, self.getConfig().RADIO_BUTTON_TITLE)
+    self.sections[self.getConfig().RADIO_BUTTON_TITLE] = LMFrame
     self.labels[self.getConfig().RADIO_BUTTON_TITLE] = {self.getConfig().RADIO_BUTTON_TITLE: LMLabel}
-    self.__buildLocationMeasure(LMFrame)
+    self.__buildLocationMeasure(LMFrame, edit=edit, data=data)
 
     # Build and add the feeder RM Code section frame
     tempFrame = self.getBuilder().buildFrame(frame)
     tempFrame.grid(row=2, column=0, columnspan=20, padx=(0, 0), pady=(0, 0), sticky=tk.W)
     RMFrame, RMLabel = self.getBuilder().buildSection(tempFrame, self.getConfig().RM_TITLE)
+    self.sections[self.getConfig().RM_TITLE] = RMFrame
     self.labels[self.getConfig().RM_TITLE] = {self.getConfig().RM_TITLE: RMLabel}
-    self.__buildRMCode(RMFrame)
+    self.__buildRMCode(RMFrame, edit=edit, data=data)
 
     # Build and add the "Apply" button on the bottom
     applyButton = self.getBuilder().buildBottomButton(frame, "Apply")
     applyButton.grid(row=3, column=0, padx=(100, 0), pady=(35, 50), sticky=tk.W)
-    applyButton.configure(command=lambda: self.getActions().respondToApply())
+    applyButton.configure(command=lambda: self.getActions().respondToApply(edit=edit, back=back))
 
     # Build and add the "Cancel" button on the bottom
     cancelButton = self.getBuilder().buildBottomButton(frame, "Cancel")
@@ -405,7 +417,7 @@ class FeederG:
     frame.pack()
 
     # Create the RM Label
-    label = self.getBuilder().buildLabel(frame, RM + "-" + Percent)
+    label = self.getBuilder().buildLabel(frame, RM + "   ==   " + Percent)
     label.grid(row=0, column=0, padx=(50, 0), pady=(15, 0), sticky=tk.W)
 
     # Create the RM delete button
@@ -427,6 +439,7 @@ class FeederG:
         break
     if allNormal:
       labels[section]["foreground"] = self.getConfig().ACTIVE_BACKGROUND
+      self.sections[section].config(highlightbackground=self.getConfig().ACTIVE_BACKGROUND)
 
   '''
   The following function displays an error message to the user
@@ -438,6 +451,7 @@ class FeederG:
       labels = self.getLabels()[section]
       if not len(list) is 0:
         labels[section]["foreground"] = self.getConfig().ERROR_COLOR
+        self.sections[section].config(highlightbackground=self.getConfig().ERROR_COLOR)
         for item in list:
           if item == "":
             continue

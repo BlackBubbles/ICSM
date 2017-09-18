@@ -211,6 +211,9 @@ class FeederD:
   def getCompletePercentage(self):
     return self.completePercentage
 
+  def setCompletePercentage(self, completePercentage):
+    self.completePercentage = completePercentage
+
   '''
   The following function returns the total percentage of all the RM codes in the list
   '''
@@ -268,12 +271,6 @@ class FeederD:
       errors.append("Choose a \"Location\" for the Feeder\n")
       labels.append("Location:")
 
-    # Check the "Set Point" radio buttons
-    if self.getSetPointVariable().get() is 0:
-      ready = False
-      errors.append("Choose a \"Set Point\" for the Feeder\n")
-      labels.append("Set Point:")
-
     # Check the RM Code section
     errorTextLabels[self.getConfig().RM_TITLE] = []
     labels = errorTextLabels[self.getConfig().RM_TITLE]
@@ -304,7 +301,6 @@ class FeederD:
 
     # Add the Location/Measurment Data
     dictionary["Location"] = self.getLocationVariable().get()
-    dictionary["Set Point"] = self.getSetPointVariable().get()
 
     # Add the RM Code Data
     dictionary["RM"] = self.getRMList()

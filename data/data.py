@@ -15,7 +15,7 @@ Imported files/libraries
 '''
 import sys
 from types import ModuleType
-import socket
+import appSocket
 import frameData as frameD
 from panels import quickAccessData as qaD
 from panels import projectData as projectD
@@ -46,7 +46,7 @@ class Data:
     # Set initial values for this instance of the "Data" class
     self.actions = None
     self.graphics = None
-    self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    self.socket = appSocket.Socket()
     doesWork, message = self.setFrameData(frameD.FrameD(self.getConfig().getConfigFrame()))
     if not doesWork:
       print message
@@ -322,12 +322,9 @@ class Data:
   a warning message
   '''
   def connectSocket(self):
-    try:
-      self.getSocket().connect((self.getConfig().TCP_IP, self.getConfig().TCP_PORT))
-      self.getSocket().send("App-0")
-      x = self.getSocket().recv(self.getConfig().BUFFER_SIZE)
-    except:
-      self.getGraphics().getExtruderGraphics().displayError("Unable to connect to the server")
+    result = self.getSocket().connect()
+    if not result is 2:
+      self.getGraphics().getExtruderGraphics().displayError("Could Not Connect to the Server")
 
   '''
   The following function returns a confirmation that tells the calling code which class file this function belongs to

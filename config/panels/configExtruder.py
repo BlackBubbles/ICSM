@@ -229,7 +229,7 @@ PRE_DIE = ["Select", "Melt Pump", "Breaker Plate", "Through"]
 '''
 The following string holds the title for the feeder gui with the two radio button selections
 '''
-RADIO_BUTTON_TITLE = "Location/Measurement"
+RADIO_BUTTON_TITLE = "Location"
 
 '''
 The following string holds the title for the RM Code section in the feeder GUI

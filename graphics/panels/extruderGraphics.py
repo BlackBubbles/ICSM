@@ -53,12 +53,15 @@ class ExtruderG:
     self.pelletMillFrame = None
     self.portSetUpFrame = None
     self.strandCoolingFrame = None
+    self.sections = {}
     self.labels = {}
     self.dieMenu = None
     self.meshEntry = None
     self.airKnivesFrame = None
+    self.beltspeedscale = None
     self.waterTempScale = None
     self.lengthEntry = None
+    self.watertempentry = None
     self.locationEntry = None
     self.conveyorScale = None
     self.blowerScale = None
@@ -274,6 +277,9 @@ class ExtruderG:
     # Return the initial variables
     return doesWork, message
 
+  def getSections(self):
+    return self.sections
+
   '''
   The following function returns the entire list of labels
   '''
@@ -316,6 +322,9 @@ class ExtruderG:
   def setAirKnivesFrame(self, airKnivesFrame):
     self.airKnivesFrame = airKnivesFrame
 
+  def get_belt_speed_scale(self):
+    return self.beltspeedscale
+
   '''
   The following function returns the Tkinter scale for the water temp
   '''
@@ -339,6 +348,9 @@ class ExtruderG:
   '''
   def setLengthEntry(self, lengthEntry):
     self.lengthEntry = lengthEntry
+
+  def get_water_temp_entry(self):
+    return self.watertempentry
 
   '''
   The following function returns the Tkinter entry for the location of the air knives
@@ -567,14 +579,28 @@ class ExtruderG:
   '''
   def __buildAddFeedersOptions(self, frame):
 
+    # Build and add the 'Set Point' Radio buttons
+    text = "Set Point:"
+    label = self.getBuilder().buildH3Label(frame, text)
+    label.grid(row=0, column=0, padx=(50, 0), pady=(25, 0), sticky=tk.W)
+    self.getLabels()[self.getConfig().FEEDERS_SECTION_TITLE][text] = label
+    setRadios, setVariable = self.getBuilder().buildRadio(self.getActions().checkLabel,
+                                                          self.getConfig().FEEDERS_SECTION_TITLE, label, frame,
+                                                          self.getConfig().FEEDER_SET_POINTS)
+    setVariable.set(2)
+    self.getData().set_set_point_variable(setVariable)
+    setRadios[0].grid(row=0, column=1, padx=(0, 0), pady=(25, 0), sticky=tk.W)
+    setRadios[1].grid(row=0, column=2, padx=(0, 50), pady=(25, 0), sticky=tk.W)
+
+
     # Build and add the "Add Feeder" Button
     button = self.getBuilder().buildButton(frame, "Add Feeder")
     button.configure(command=lambda: self.getActions().addFeeder())
-    button.grid(row=0, column=0, padx=(50, 50), pady=(25, 0), sticky=tk.W)
+    button.grid(row=1, column=0, columnspan=3, padx=(75, 50), pady=(15, 0), sticky=tk.W)
 
     # Build and add the frame that will hold all the labels with data on the feeders
     self.setFeedersFrame(self.getBuilder().buildFrame(frame))
-    self.getFeedersFrame().grid(row=1, column=0, padx=(15, 15), pady=(5, 15), sticky=tk.W)
+    self.getFeedersFrame().grid(row=2, column=0, columnspan=100, padx=(15, 15), pady=(5, 15), sticky=tk.W)
 
   '''
   The following function builds the components for the strand cooling options section within the "Extruder" panel
@@ -624,13 +650,13 @@ class ExtruderG:
     # Build and add the "Feed Roll" scrollbar
     feedLabel = self.getBuilder().buildH3Label(frame, "Feed Roll:")
     feedLabel.grid(row=2, column=0, padx=(50, 0), pady=(18, 0), sticky=tk.W)
-    self.setFeedRollScale(self.getBuilder().buildScale(frame, 0, 1000))
+    self.setFeedRollScale(self.getBuilder().buildScale(frame, 30, 638))
     self.getFeedRollScale().grid(row=2, column=1, padx=(0, 0), pady=(0, 0), sticky=tk.W)
 
     # Build and add the "Rotor" scrollbar
     rotorLabel = self.getBuilder().buildH3Label(frame, "Rotor:")
     rotorLabel.grid(row=2, column=2, padx=(25, 0), pady=(18, 0), sticky=tk.W)
-    self.setRotorScale(self.getBuilder().buildScale(frame, 0, 1000))
+    self.setRotorScale(self.getBuilder().buildScale(frame, 60, 834))
     self.getRotorScale().grid(row=2, column=3, padx=(0, 25), pady=(0, 0), sticky=tk.W)
 
     # Build and add the pellet mill additional frame
@@ -660,6 +686,7 @@ class ExtruderG:
     radios, variable = self.getBuilder().buildRadio(self.getActions().checkLabel,
                                                     self.getConfig().CLASSIFIED_OPTIONS_SECTION_TITLE, classifiedLabel,
                                                     frame, self.getConfig().CLASSIFIED_RADIO_BUTTON_NAMES)
+    variable.set(1)
     self.getData().setClassifiedVariable(variable)
     for radio in radios:
       radio.grid(row=0, column=radios.index(radio) + 1, padx=(0, 0), pady=(25, 0), sticky=tk.W)
@@ -699,6 +726,9 @@ class ExtruderG:
     self.labels[self.getConfig().CAPTURING_SECTION_TITLE][self.getConfig().FROM_LABEL] = fromLabel
     self.setFromEntry(tk.Entry(frame, width=6))
     self.getFromEntry().grid(row=1, column=0, padx=(102, 0), pady=(16, 35), sticky=tk.W)
+    self.getFromEntry().bind("<Key>",
+                             lambda event: self.getActions().checkLabel([self.getConfig().CAPTURING_SECTION_TITLE,
+                                                                         fromLabel]))
     fromRadios, fromVariable = self.getBuilder().buildRadio(self.getActions().checkLabel,
                                                             self.getConfig().CAPTURING_SECTION_TITLE, fromLabel, frame,
                                                             self.getConfig().AM_PM_RADIO_NAMES)
@@ -713,6 +743,9 @@ class ExtruderG:
     self.labels[self.getConfig().CAPTURING_SECTION_TITLE][self.getConfig().TO_LABEL] = toLabel
     self.setToEntry(tk.Entry(frame, width=6))
     self.getToEntry().grid(row=1, column=0, padx=(368, 0), pady=(16, 35), sticky=tk.W)
+    self.getToEntry().bind("<Key>",
+                           lambda event: self.getActions().checkLabel([self.getConfig().CAPTURING_SECTION_TITLE,
+                                                                       toLabel]))
     toRadios, toVariable = self.getBuilder().buildRadio(self.getActions().checkLabel,
                                                         self.getConfig().CAPTURING_SECTION_TITLE, toLabel, frame,
                                                         self.getConfig().AM_PM_RADIO_NAMES)
@@ -727,6 +760,9 @@ class ExtruderG:
     self.labels[self.getConfig().CAPTURING_SECTION_TITLE]["Date:"] = calLabel
     self.setCalendarEntry(tk.Entry(frame, width=10))
     self.getCalendarEntry().grid(row=1, column=0, padx=(648, 50), pady=(16, 35), sticky=tk.W)
+    self.getCalendarEntry().bind("<Key>",
+                                 lambda event: self.getActions().checkLabel([self.getConfig().CAPTURING_SECTION_TITLE,
+                                                                             calLabel]))
     self.getCalendarEntry().insert(0, str(datetime.date.today()))
 
   '''
@@ -746,6 +782,7 @@ class ExtruderG:
     extruderOptionsFrame, extruderOptionsLabel = self.getBuilder().buildSection(tempFrame,
                                                                                 self.getConfig().
                                                                                 EXTRUDER_OPTIONS_SECTION_TITLE)
+    self.sections[self.getConfig().EXTRUDER_OPTIONS_SECTION_TITLE] = extruderOptionsFrame
     self.labels[self.getConfig().EXTRUDER_OPTIONS_SECTION_TITLE] = {self.getConfig().EXTRUDER_OPTIONS_SECTION_TITLE:
                                                                       extruderOptionsLabel}
     self.__buildExtruderOptions(extruderOptionsFrame)
@@ -755,6 +792,7 @@ class ExtruderG:
     tempFrame.grid(row=4, column=0, columnspan=20, padx=(0, 0), pady=(0, 0), sticky=tk.W)
     portOptionsFrame, portOptionsLabel = self.getBuilder().buildSection(tempFrame,
                                                                         self.getConfig().PORT_OPTIONS_SECTION_TITLE)
+    self.sections[self.getConfig().PORT_OPTIONS_SECTION_TITLE] = portOptionsFrame
     self.labels[self.getConfig().PORT_OPTIONS_SECTION_TITLE] = {self.getConfig().PORT_OPTIONS_SECTION_TITLE:
                                                                   portOptionsLabel}
     self.__buildPortOptions(portOptionsFrame)
@@ -763,6 +801,7 @@ class ExtruderG:
     tempFrame = self.getBuilder().buildFrame(frame)
     tempFrame.grid(row=5, column=0, columnspan=20, padx=(0, 0), pady=(0, 0), sticky=tk.W)
     feedersFrame, feedersLabel  = self.getBuilder().buildSection(tempFrame, self.getConfig().FEEDERS_SECTION_TITLE)
+    self.sections[self.getConfig().FEEDERS_SECTION_TITLE] = feedersFrame
     self.labels[self.getConfig().FEEDERS_SECTION_TITLE] = {self.getConfig().FEEDERS_SECTION_TITLE:feedersLabel}
     self.__buildAddFeedersOptions(feedersFrame)
 
@@ -771,6 +810,7 @@ class ExtruderG:
     tempFrame.grid(row=6, column=0, columnspan=20, padx=(0, 0), pady=(0, 0), sticky=tk.W)
     strandCoolingOptionsFrame, strandCoolingOptionsLabel = self.getBuilder().buildSection(tempFrame,
                                                                 self.getConfig().STRAND_COOLING_OPTIONS_SECTION_TITLE)
+    self.sections[self.getConfig().STRAND_COOLING_OPTIONS_SECTION_TITLE] = strandCoolingOptionsFrame
     self.labels[self.getConfig().STRAND_COOLING_OPTIONS_SECTION_TITLE] = {self.getConfig().
                                                                           STRAND_COOLING_OPTIONS_SECTION_TITLE:
                                                                             strandCoolingOptionsLabel}
@@ -782,6 +822,7 @@ class ExtruderG:
     pelletizingOptionsFrame, pelletizingOptionsLabel = self.getBuilder().buildSection(tempFrame,
                                                                                       self.getConfig().
                                                                                       PELLETIZING_OPTIONS_SECTION_TITLE)
+    self.sections[self.getConfig().PELLETIZING_OPTIONS_SECTION_TITLE] = pelletizingOptionsFrame
     self.labels[self.getConfig().PELLETIZING_OPTIONS_SECTION_TITLE] = {self.getConfig().
                                                                        PELLETIZING_OPTIONS_SECTION_TITLE:
                                                                          pelletizingOptionsLabel}
@@ -793,6 +834,7 @@ class ExtruderG:
     classifiedOptionsFrame, classifiedOptionsLabel = self.getBuilder().buildSection(tempFrame,
                                                                                     self.getConfig().
                                                                                     CLASSIFIED_OPTIONS_SECTION_TITLE)
+    self.sections[self.getConfig().CLASSIFIED_OPTIONS_SECTION_TITLE] = classifiedOptionsFrame
     self.labels[self.getConfig().CLASSIFIED_OPTIONS_SECTION_TITLE] = {self.getConfig().
                                                                       CLASSIFIED_OPTIONS_SECTION_TITLE:
                                                                         classifiedOptionsLabel}
@@ -803,6 +845,7 @@ class ExtruderG:
     tempFrame.grid(row=9, column=0, columnspan=20, padx=(0, 0), pady=(0, 0), sticky=tk.W)
     captureOptionsFrame, captureOptionsLabel = self.getBuilder().buildSection(tempFrame,
                                                                               self.getConfig().CAPTURING_SECTION_TITLE)
+    self.sections[self.getConfig().CAPTURING_SECTION_TITLE] = captureOptionsFrame
     self.labels[self.getConfig().CAPTURING_SECTION_TITLE] = {self.getConfig().CAPTURING_SECTION_TITLE:
                                                                captureOptionsLabel}
     self.__buildCaptureOptions(captureOptionsFrame)
@@ -897,10 +940,6 @@ class ExtruderG:
       location = "Side Stuffer"
     else:
       location = "Throat"
-    if feeder["Location"] is 1:
-      set = "lbs/hr"
-    else:
-      set = "kg/hr"
     RM = "{"
     first = True
     for key, val in feeder["RM"].iteritems():
@@ -910,7 +949,7 @@ class ExtruderG:
       else:
         RM = RM + ", " + key + ":" + str(val)
     RM = RM + "}"
-    string = string + " - Location: " + location + " - Weight In: " + set + " - RM: " + RM
+    string = string + " - Location: " + location + " - RM: " + RM
     string = string + " - Total %: " + str(feeder["Total"])
 
     # Return the initial string variable
@@ -919,13 +958,16 @@ class ExtruderG:
   '''
   The following function adds the feeder labels to the GUI
   '''
-  def addFeederLabel(self, feeder):
+  def addFeederLabel(self, feeder, edit=False, back=None):
 
     # Build the initial frame
-    frame = self.getBuilder().buildFrame(self.getFeedersFrame())
-    frame.configure(highlightbackground=self.getConfig().COMMENTS_COLOR,
-                    highlightcolor=self.getConfig().COMMENTS_COLOR, highlightthickness=2)
-    frame.pack(fill=tk.X)
+    if not edit:
+      frame = self.getBuilder().buildFrame(self.getFeedersFrame())
+      frame.configure(highlightbackground=self.getConfig().COMMENTS_COLOR,
+                      highlightcolor=self.getConfig().COMMENTS_COLOR, highlightthickness=2)
+      frame.pack(fill=tk.X)
+    else:
+      frame = back
 
     # Build the label that will be used
     text = self.buildFeederLabelString(feeder)
@@ -933,9 +975,11 @@ class ExtruderG:
     label.grid(row=0, column=0, padx=(50, 0), pady=(15, 15), sticky=tk.W)
 
     # Build the edit button
-    delete = self.getBuilder().buildButton(frame, "Edit")
-    delete.grid(row=0, column=1, padx=(25, 0), pady=(15, 15), sticky=tk.W)
-    delete.configure(command=lambda: self.getActions().respondToEdit(frame))
+    # '''
+    edit = self.getBuilder().buildButton(frame, "Edit")
+    edit.grid(row=0, column=1, padx=(25, 0), pady=(15, 15), sticky=tk.W)
+    edit.configure(command=lambda: self.getActions().respondToEdit(frame))
+    # '''
 
     # Build the delete buton
     delete = self.getBuilder().buildButton(frame, "Delete")
@@ -951,30 +995,39 @@ class ExtruderG:
   def __buildWaterTemp(self, frame):
     label = self.getBuilder().buildH3Label(frame, "Water Temp " + u"\u00b0" + "C:")
     label.grid(row=0, column=0, padx=(50, 0), pady=(15, 0), sticky=tk.W)
-    self.setWaterTempScale(self.getBuilder().buildScale(frame, 55, 80))
+    self.setWaterTempScale(self.getBuilder().buildScale(frame, 10, 30))
     self.getWaterTempScale().grid(row=0, column=0, padx=(175, 0), pady=(0, 0), sticky=tk.W)
 
   '''
   The following hidden function builds the two components found on each of the belt, mister and bath
   '''
-  def __buildStrandAndFans(self, frame):
+  def __buildStrandAndFans(self, frame, addbelt):
+
+    # Build and add the belt speed scale
+    start = 0
+    if addbelt:
+      beltlabel = self.getBuilder().buildH3Label(frame, "Belt Speed:")
+      beltlabel.grid(row=0, column=0, padx=(50, 0), pady=(15, 0), sticky=tk.W)
+      self.beltspeedscale = self.getBuilder().buildScale(frame, 10, 50)
+      self.beltspeedscale.grid(row=0, column=0, padx=(145, 0), pady=(0, 0), sticky=tk.W)
+      start = 345
 
     # Build and add the strand seperator check box
     strandLabel = self.getBuilder().buildH3Label(frame, "Strand Separator:")
-    strandLabel.grid(row=0, column=0, padx=(50, 0), pady=(15, 0), sticky=tk.W)
+    strandLabel.grid(row=0, column=0, padx=(start + 50, 0), pady=(15, 0), sticky=tk.W)
     strandCheck, strandVariable = self.getBuilder().buildCheckBox(frame, "")
     self.getData().setSeparatorVariable(strandVariable)
-    strandCheck.grid(row=0, column=0, padx=(185, 0), pady=(16, 0), sticky=tk.W)
+    strandCheck.grid(row=0, column=0, padx=(start + 185, 0), pady=(16, 0), sticky=tk.W)
 
     # Build and add the "# of fans" drop down menu
     fansLabel = self.getBuilder().buildH3Label(frame, "# of Fans:")
-    fansLabel.grid(row=0, column=0, padx=(250, 0), pady=(15, 0), sticky=tk.W)
+    fansLabel.grid(row=0, column=0, padx=(start + 250, 0), pady=(15, 0), sticky=tk.W)
     fansMenu, fansVariable = self.getBuilder().buildStringDropDown(self.getActions().selectDropDown,
                                                                    self.getConfig().
                                                                      STRAND_COOLING_OPTIONS_SECTION_TITLE,
                                                                    fansLabel, frame, 4, self.getConfig().NUM)
     self.getData().setFansVariable(fansVariable)
-    fansMenu.grid(row=0, column=0, padx=(330, 0), pady=(16, 0), sticky=tk.W)
+    fansMenu.grid(row=0, column=0, padx=(start + 330, 0), pady=(16, 0), sticky=tk.W)
 
   '''
   The following hidden function builds the air knives section
@@ -1025,7 +1078,7 @@ class ExtruderG:
   The following function builds the user options for the strand cooling "Belt" option
   '''
   def buildSCBelt(self):
-    self.__buildStrandAndFans(self.getStrandCoolingFrame())
+    self.__buildStrandAndFans(self.getStrandCoolingFrame(), True)
 
   '''
   The following function builds the user options for the strand cooling "Belt w/ Mister" option
@@ -1040,7 +1093,7 @@ class ExtruderG:
     # Build and add the "strand seperator" checkbox and the "# of fans" drop down menu
     frame = self.getBuilder().buildFrame(self.getStrandCoolingFrame())
     frame.grid(row=1, column=0, padx=(0, 0), pady=(0, 0), sticky=tk.W)
-    self.__buildStrandAndFans(frame)
+    self.__buildStrandAndFans(frame, True)
 
     # Build and add the "air knives" section
     frame = self.getBuilder().buildFrame(self.getStrandCoolingFrame())
@@ -1064,10 +1117,16 @@ class ExtruderG:
                                                                             STRAND_COOLING_OPTIONS_SECTION_TITLE,
                                                                            label]))
 
+    # Build and add the option water temp entry
+    waterlabel = self.getBuilder().buildH3Label(self.getStrandCoolingFrame(), 'Water Temp(Optional):')
+    waterlabel.grid(row=0, column=0, padx=(450, 0), pady=(15, 0), sticky=tk.W)
+    self.watertempentry = tk.Entry(self.getStrandCoolingFrame(), width=5)
+    self.watertempentry.grid(row=0, column=0, padx=(625, 0), pady=(15, 0), sticky=tk.W)
+
     # Build and add the "strand seperator" checkbox and the "# of fans" drop down menu
     frame = self.getBuilder().buildFrame(self.getStrandCoolingFrame())
     frame.grid(row=1, column=0, padx=(0, 0), pady=(0, 0), sticky=tk.W)
-    self.__buildStrandAndFans(frame)
+    self.__buildStrandAndFans(frame, False)
 
     # Build and add the "air knives" section
     frame = self.getBuilder().buildFrame(self.getStrandCoolingFrame())
@@ -1081,7 +1140,7 @@ class ExtruderG:
 
     # Build and add misters frame
     frame = self.getBuilder().buildFrame(self.getStrandCoolingFrame())
-    frame.grid(row=0, column=0, columnspan=20, padx=(0, 0), pady=(0, 0), sticky=tk.W)
+    frame.grid(row=0, column=0, columnspan=100, padx=(0, 0), pady=(0, 0), sticky=tk.W)
 
     # Build and add the "Misters" radio buttons
     mistersLabel = self.getBuilder().buildH3Label(frame, "Belt Misters")
@@ -1106,9 +1165,13 @@ class ExtruderG:
         mistersRadio[1].grid(row=3, column=index, padx=(0, 0), pady=(0, 0), sticky=tk.W)
     self.getData().setBeltMisters(misters)
 
-    # Build and add the "Belt Misters" radio buttons
+    # Build and add the "Sluice Misters" radio buttons
     sluicelabel = self.getBuilder().buildH3Label(frame, "Sluice Misters")
     sluicelabel.grid(row=0, column=0, columnspan=20, padx=(685, 0), pady=(15, 0), sticky=tk.W)
+    usecheck, usevar = self.getBuilder().buildCheckBox(frame, 'Use')
+    usecheck.config(command=lambda: self.getActions().check_use())
+    self.getData().set_use_sluice(usevar)
+    usecheck.grid(row=0, column=0, columnspan=20, padx=(800, 0), pady=(16, 0), sticky=tk.W)
     sluices = []
     for index in range(0, 2):
       label = self.getBuilder().buildLabel(frame, 2 - index)
@@ -1193,6 +1256,7 @@ class ExtruderG:
         break
     if allNormal:
       labels[section]["foreground"] = self.getConfig().ACTIVE_BACKGROUND
+      self.sections[section].config(highlightbackground=self.getConfig().ACTIVE_BACKGROUND)
 
   '''
   The following function destroy's all the content on a frame
@@ -1224,6 +1288,7 @@ class ExtruderG:
       labels = self.getLabels()[section]
       if not len(list) is 0:
         labels[section]["foreground"] = self.getConfig().ERROR_COLOR
+        self.sections[section].config(highlightbackground=self.getConfig().ERROR_COLOR)
       for item in list:
         if item == "":
           continue

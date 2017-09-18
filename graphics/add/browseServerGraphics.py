@@ -30,8 +30,8 @@ def browseServer(graphics, title, label):
   # Build the GUI and record the file name of the file selected
   filename = tkFileDialog.askopenfilename(parent=graphics.getGUI(),
                                           filetypes=[('all files', '.*'),
-                                                     ('text files', '.txt'),
-                                                     ('excel files', '.xlsx')],
+                                                     ('excel files', '.xlsx'),
+                                                     ('modified excel files', '.xlsm')],
                                           title="Browse for a file...")
   
   # Change the browse label to inform the user what file was selected and return the filepath

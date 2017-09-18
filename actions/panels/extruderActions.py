@@ -188,13 +188,16 @@ class ExtruderA:
   '''
   The following function responds to the user clicking on the "apply" button on the feeder GUI
   '''
-  def addFeederLabel(self, feeder):
+  def addFeederLabel(self, feeder, feederD, edit=False, back=None):
 
     # Build the Feeder frame on the ICSM GUI
-    frame = self.getGraphics().addFeederLabel(feeder)
+    if edit:
+      self.getGraphics().destroyAllWidgets(back)
+    frame = self.getGraphics().addFeederLabel(feeder, edit=edit, back=back)
 
     # Add feeder to Data
     self.getData().getFeeders()[frame] = feeder
+    self.getData().getFeederDatas()[frame] = feederD
 
     # Check the header label
     self.getGraphics().checkSectionLabels(self.getConfig().FEEDERS_SECTION_TITLE)
@@ -206,6 +209,7 @@ class ExtruderA:
 
     # Remove the feeder data from the list of feeders in the Data
     del self.getData().getFeeders()[frame]
+    del self.getData().getFeederDatas()[frame]
 
     # Destroy the feeder frame
     frame.destroy()
@@ -218,7 +222,23 @@ class ExtruderA:
   The following function responds to the user clicking on an edit button next to a feeder label
   '''
   def respondToEdit(self, frame):
-    print "respondToEdit"
+    """
+    :param frame:
+    :return:
+    """
+    '''Get the variables'''
+    data = self.getData().getFeeders()[frame]
+    feederD = self.getData().getFeederDatas()[frame]
+
+    '''Link the classes'''
+    self.getFeederActions().setData(feederD)
+    feederD.setActions(self.getFeederActions())
+    feederD.setGraphics(self.getGraphics().getFeederGraphics())
+    self.getGraphics().getFeederGraphics().setData(feederD)
+
+    '''Build the GUI and Populate the data'''
+    feederD.setCompletePercentage(self.getData().getTotalPercentage() - feederD.getTotalPercentage())
+    self.getGraphics().getFeederGraphics().buildGUI(edit=True, data=data, back=frame)
 
   '''
   The following function repsonds to the user selecting the type of cooling he/she would like to use
@@ -270,6 +290,15 @@ class ExtruderA:
   def checkMisters(self, input):
     if not isinstance(input, tk.IntVar):
       return 0
+
+  def check_use(self):
+    sluices = self.getData().getSluiceMisters()
+    if self.getData().get_use_sluice().get() is 1:
+      for sluice in sluices:
+        sluice[1].set(2)
+    else:
+      for sluice in sluices:
+        sluice[1].set(0)
 
   '''
   The following function responds to the user selecting an option from the "Pelletizier" drop down menu

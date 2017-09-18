@@ -153,6 +153,30 @@ class FeederA:
     self.getData().getFeederScrewVariable().set(value)
     self.respondToMenu(section, label)
 
+  def _is_rm(self, rm):
+      if len(rm.split('-')) is 3:
+          return False
+      elif len(rm.split('-')) is 2:
+          try:
+              if int(rm.split('-')[0]) > 99999 or int(rm.split('-')[0]) < 1000:
+                  return False
+          except ValueError:
+              return False
+      else:
+          if rm.lower()[-1] is 'x':
+              rm = rm[:-1]
+              if len(rm) is 5:
+                  return False
+          else:
+              if len(rm) is 3:
+                  return False
+          try:
+              if int(rm.split('-')[0]) > 99999 or int(rm.split('-')[0]) < 100:
+                  return False
+          except ValueError:
+              return False
+      return True
+
   '''
   The following function responds to the user clicking on the "Add" button to add an RM Code slot
   '''
@@ -173,6 +197,8 @@ class FeederA:
       tkMessageBox.showerror("ERROR", "Total Percentage is Over 100.0")
     elif RM in self.getData().getRMList():
       tkMessageBox.showerror("ERROR", "RM is Already in Use")
+    elif not self._is_rm(RM):
+      tkMessageBox.showerror("ERROR", "Invalid RM Entry")
     else:
 
       # Remove original contents from Entries
@@ -184,6 +210,8 @@ class FeederA:
 
       # Add the RM code slot to the list
       self.getData().setTotalPercentage(self.getData().getTotalPercentage() + float(Percent))
+      self.getGraphics().getRMPercentEntry().insert(
+          0, str(100.0 - (self.getData().getCompletePercentage() + self.getData().getTotalPercentage())))
       self.getData().getRMList()[RM] = float(Percent)
       self.getGraphics().addRM(RM, Percent)
 
@@ -204,6 +232,11 @@ class FeederA:
 
     # Destroy the frame
     frame.destroy()
+
+    # Reset the RM Percent entry
+    self.getGraphics().getRMPercentEntry().delete(0, "end")
+    self.getGraphics().getRMPercentEntry().insert(
+        0, str(100.0 - (self.getData().getCompletePercentage() + self.getData().getTotalPercentage())))
 
   '''
   The following function responds to the user selection an option from the default drop down menu
@@ -238,10 +271,10 @@ class FeederA:
   '''
   The following function responds to the user clicking on the "Apply" button on the bottom
   '''
-  def respondToApply(self):
+  def respondToApply(self, edit=False, back=None):
     ready, errors, errorTextLabels = self.getData().checkForApply()
     if ready:
-      self.respond(self.getData().toDictionary())
+      self.respond(self.getData().toDictionary(), self.getData(), edit=edit, back=back)
       self.getGraphics().getGUI().destroy()
     else:
       self.getGraphics().displayErrorMessage(errors, errorTextLabels)
